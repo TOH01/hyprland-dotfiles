@@ -1,0 +1,47 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 35,
+
+    "modules-left": ["custom/sysinfo"],
+    "modules-center": ["clock"],
+    "modules-right": ["custom/weather", "custom/mode_selector","custom/reboot", "custom/power"],
+
+    "clock": {
+        "interval": 1,
+        "format": "{:%A, %d %B %Y | %H:%M:%S}"
+    },
+
+    "custom/weather": {
+        "exec": "curl -s 'https://wttr.in/Wandlitz?format=%t+%C'",
+        "interval": 600
+    },
+
+    "custom/reboot": {
+        "format": "  ",
+        "tooltip": false,
+        "on-click": "reboot"
+    },
+
+    "custom/power": {
+        "format": "  ",
+        "tooltip": false,
+        "on-click": "shutdown now"
+    },
+    
+    "custom/sysinfo": {
+        "exec": "~/.config/waybar/cpu_gpu_toggle.sh",
+        "interval": 1,
+        "return-type": "",
+        "tooltip": false
+    },
+   
+    "custom/mode_selector": {
+        "exec": "~/.config/waybar/mode_toggle.sh",
+        "return-type": "json",
+        "on-click": "~/.config/waybar/mode_toggle.sh next",
+        "signal": 8,
+        "interval": "once",
+	"tooltip": false
+   }
+}

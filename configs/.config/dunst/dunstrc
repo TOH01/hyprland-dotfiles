@@ -1,0 +1,42 @@
+[global]
+    follow = keyboard
+    
+    origin = bottom-right
+    
+    offset = (20, 20)
+    
+    width = (0, 400)
+    height = (0, 150)
+    
+    corner_radius = 12
+    
+    font = JetBrains Mono 11
+    
+    padding = 18
+    horizontal_padding = 18
+    text_icon_padding = 10
+    
+    progress_bar = true
+    progress_bar_height = 4
+    progress_bar_frame_width = 0
+    progress_bar_corner_radius = 2
+
+    background = "#1a1b26ff" 
+    foreground = "#c0caf5"
+    frame_color = "#7aa2f7"
+    frame_width = 1
+
+    timeout = 5
+
+[urgency_low]
+    background = "#1a1b26f2"
+    foreground = "#c0caf5"
+
+[urgency_normal]
+    background = "#1a1b26f2"
+    foreground = "#c0caf5"
+
+[urgency_critical]
+    background = "#f7768eff"
+    foreground = "#ffffff"
+    frame_color = "#ff0000"

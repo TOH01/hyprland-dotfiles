@@ -1,0 +1,89 @@
+configuration {
+    modi:                       "drun";
+    show-icons:                 true; 
+    drun-display-format:        "{name}";
+    font:                       "JetBrains Mono 11";
+}
+
+@theme "/dev/null"
+
+* {
+    bg:          #11111bf6; 
+    fg:          #cdd6f4;
+    accent:      #b4befe;
+}
+
+window {
+    transparency:                "real";
+    location:                    center;
+    anchor:                      center;
+    width:                       600px;
+    enabled:                     true;
+    border:                      2px solid;
+    border-color:                @accent;
+    border-radius:               12px;
+    background-color:            @bg;
+}
+
+mainbox {
+    enabled:                     true;
+    background-color:            transparent;
+    children:                    [ "inputbar", "listview" ];
+}
+
+inputbar {
+    enabled:                     true;
+    padding:                     30px 30px 15px 30px; /* Adjusted padding */
+    background-color:            transparent;
+    /* REMOVED "prompt" from children so 'Apps' disappears */
+    children:                    [ "entry" ]; 
+}
+
+entry {
+    enabled:                     true;
+    background-color:            transparent;
+    text-color:                  @fg;
+    cursor:                      text;
+    placeholder:                 "Search Applications...";
+    placeholder-color:           #a6adc8; /* Subtle gray for placeholder */
+    horizontal-align:            0.0;
+}
+
+listview {
+    enabled:                     true;
+    columns:                     1;
+    lines:                       8;
+    cycle:                       true;
+    dynamic:                     true;
+    scrollbar:                   false;
+    layout:                      vertical;
+    
+    spacing:                     5px;
+    padding:                     10px 30px 30px 30px;
+    background-color:            transparent;
+}
+
+element {
+    enabled:                     true;
+    spacing:                     15px;
+    padding:                     10px;
+    border-radius:               8px;
+    background-color:            transparent;
+    text-color:                  @fg;
+}
+
+element selected.normal {
+    background-color:            @accent;
+    text-color:                  #11111b;
+}
+
+element-icon {
+    background-color:            transparent;
+    size:                        36px; /* Slightly larger icons for 'Kool' feel */
+}
+
+element-text {
+    background-color:            transparent;
+    text-color:                  inherit;
+    vertical-align:              0.5;
+}

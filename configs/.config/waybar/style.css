@@ -1,0 +1,52 @@
+@define-color barbg rgba(17, 17, 27, 0.94);
+@define-color fg #cdd6f4;
+@define-color accent #b4befe;
+
+window#waybar {
+  background: @barbg;
+}
+
+* {
+  font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", monospace;
+  font-size: 17px;
+  font-weight: 500;
+  color: @fg;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  text-shadow: none;
+  background: transparent;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+#clock,
+#custom-sysinfo,
+#custom-weather,
+#custom-mode_selector,
+#custom-reboot,
+#custom-power {
+  padding: 0 10px;
+}
+
+#clock {
+  background: transparent;
+  color: @accent;
+}
+
+#custom-mode_selector:hover,
+#custom-reboot:hover,
+#custom-power:hover {
+  background: rgba(180, 190, 254, 0.1);
+  color: @accent;
+  border-radius: 8px;
+}
