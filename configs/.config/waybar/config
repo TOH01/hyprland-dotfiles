@@ -18,13 +18,13 @@
     },
 
     "custom/reboot": {
-        "format": "  ",
+        "format": "",
         "tooltip": false,
         "on-click": "reboot"
     },
 
     "custom/power": {
-        "format": "  ",
+        "format": "",
         "tooltip": false,
         "on-click": "shutdown now"
     },

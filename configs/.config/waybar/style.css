@@ -47,14 +47,23 @@ button {
   margin-left: 6px;
 }
 
+#custom-weather,
+#custom-mode_selector,
+#custom-reboot {
+  margin-right: 2px;
+}
+
 #custom-power {
   margin-right: 6px;
+}
+
+#custom-reboot,
+#custom-power {
+  min-width: 1.2em;
 }
 
 #custom-mode_selector:hover,
 #custom-reboot:hover,
 #custom-power:hover {
-  background: {{THEME_HOVER_RGBA}};
-  color: @accent;
-  border-radius: 8px;
+  border-color: @accent;
 }
