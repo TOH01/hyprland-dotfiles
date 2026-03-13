@@ -78,4 +78,12 @@ if pgrep -x waybar > /dev/null 2>&1; then
     pkill -SIGUSR2 -x waybar
 fi
 
+if pgrep -x dunst > /dev/null 2>&1; then
+    if command -v dunstctl > /dev/null 2>&1; then
+        dunstctl reload > /dev/null 2>&1 || true
+    else
+        pkill -HUP -x dunst || true
+    fi
+fi
+
 printf 'Applied %s to %s\n' "${THEME_NAME:-${scheme_name}}" "${HOME}"

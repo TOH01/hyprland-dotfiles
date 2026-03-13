@@ -21,7 +21,7 @@
     progress_bar_frame_width = 0
     progress_bar_corner_radius = 2
 
-    background = "{{THEME_BG_FLOATING_HEX}}" 
+    background = "{{THEME_ACTIVE_SURFACE_HEX}}" 
     foreground = "{{THEME_TEXT_HEX}}"
     frame_color = "{{THEME_BORDER_HEX}}"
     frame_width = 1
@@ -29,11 +29,11 @@
     timeout = 5
 
 [urgency_low]
-    background = "{{THEME_BG_FLOATING_HEX}}"
+    background = "{{THEME_ACTIVE_SURFACE_HEX}}"
     foreground = "{{THEME_TEXT_HEX}}"
 
 [urgency_normal]
-    background = "{{THEME_BG_FLOATING_HEX}}"
+    background = "{{THEME_ACTIVE_SURFACE_HEX}}"
     foreground = "{{THEME_TEXT_HEX}}"
 
 [urgency_critical]

@@ -1,4 +1,4 @@
-@define-color barbg {{THEME_BG_FLOATING_RGBA}};
+@define-color barbg {{THEME_ACTIVE_SURFACE_RGBA}};
 @define-color fg {{THEME_TEXT_HEX}};
 @define-color accent {{THEME_ACCENT_HEX}};
 @define-color border {{THEME_BORDER_SOFT_RGBA}};
@@ -10,7 +10,7 @@ window#waybar {
 * {
   font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", monospace;
   font-size: 17px;
-  font-weight: 500;
+  font-weight: 400;
   color: @fg;
   margin: 0;
   padding: 0;
@@ -41,10 +41,6 @@ button {
   background: @barbg;
   border: 2px solid @border;
   border-radius: 12px;
-}
-
-#clock {
-  color: @accent;
 }
 
 #custom-sysinfo {
