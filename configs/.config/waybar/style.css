@@ -37,7 +37,7 @@ button {
 #custom-reboot,
 #custom-power {
   padding: 0 9px;
-  margin-top: 4px;
+  margin-top: 3px;
   background: @barbg;
   border: 2px solid @border;
   border-radius: 12px;
@@ -48,11 +48,11 @@ button {
 }
 
 #custom-sysinfo {
-  margin-left: 10px;
+  margin-left: 6px;
 }
 
 #custom-power {
-  margin-right: 10px;
+  margin-right: 6px;
 }
 
 #custom-mode_selector:hover,
