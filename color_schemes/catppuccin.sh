@@ -16,6 +16,7 @@ export THEME_NAME="catppuccin-mocha"
 
 export THEME_ACTIVE_OPACITY="0.96"
 export THEME_INACTIVE_OPACITY="0.94"
+export THEME_WAYBAR_OPACITY="0.86"
 export THEME_BG_HEX="#11111b"
 export THEME_TERMINAL_BG_HEX="#0b0b12"
 export THEME_SURFACE_HEX="#313244"
@@ -41,9 +42,12 @@ bg_r="$(hex_channel_to_decimal "${bg_rgb:0:2}")"
 bg_g="$(hex_channel_to_decimal "${bg_rgb:2:2}")"
 bg_b="$(hex_channel_to_decimal "${bg_rgb:4:2}")"
 active_alpha_hex="$(opacity_to_hex "${THEME_ACTIVE_OPACITY}")"
+waybar_alpha_hex="$(opacity_to_hex "${THEME_WAYBAR_OPACITY}")"
 
 export THEME_ACTIVE_SURFACE_HEX="${THEME_BG_HEX}${active_alpha_hex}"
 export THEME_ACTIVE_SURFACE_RGBA="rgba(${bg_r}, ${bg_g}, ${bg_b}, ${THEME_ACTIVE_OPACITY})"
+export THEME_WAYBAR_SURFACE_HEX="${THEME_BG_HEX}${waybar_alpha_hex}"
+export THEME_WAYBAR_SURFACE_RGBA="rgba(${bg_r}, ${bg_g}, ${bg_b}, ${THEME_WAYBAR_OPACITY})"
 export THEME_DUNST_CRITICAL_BG_HEX="${THEME_ACTIVE_SURFACE_HEX}"
 
 export THEME_FASTFETCH_SWATCH_LINE='   \u001b[38;2;243;139;168m  \u001b[38;2;250;179;135m  \u001b[38;2;249;226;175m  \u001b[38;2;166;227;161m  \u001b[38;2;137;220;235m  \u001b[38;2;116;199;236m  \u001b[38;2;137;180;250m  \u001b[38;2;180;190;254m '
