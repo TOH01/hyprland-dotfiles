@@ -8,9 +8,9 @@ configuration {
 @theme "/dev/null"
 
 * {
-    bg:          #11111bf6; 
-    fg:          #cdd6f4;
-    accent:      #b4befe;
+    bg:          {{THEME_BG_FLOATING_HEX}}; 
+    fg:          {{THEME_TEXT_HEX}};
+    accent:      {{THEME_ACCENT_HEX}};
 }
 
 window {
@@ -45,7 +45,7 @@ entry {
     text-color:                  @fg;
     cursor:                      text;
     placeholder:                 "Search Applications...";
-    placeholder-color:           #a6adc8; /* Subtle gray for placeholder */
+    placeholder-color:           {{THEME_SUBTEXT_HEX}}; /* Subtle gray for placeholder */
     horizontal-align:            0.0;
 }
 
@@ -74,7 +74,7 @@ element {
 
 element selected.normal {
     background-color:            @accent;
-    text-color:                  #11111b;
+    text-color:                  {{THEME_SELECTED_FG_HEX}};
 }
 
 element-icon {
