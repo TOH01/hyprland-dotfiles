@@ -28,6 +28,8 @@ notify() {
     fi
 }
 
+notify "Launching OpenWebUI"
+
 is_webui_ready() {
     curl --silent --fail --max-time 2 "${OPENWEBUI_URL}" > /dev/null 2>&1
 }
