@@ -13,7 +13,7 @@
     },
 
     "custom/weather": {
-        "exec": "curl -s 'https://wttr.in/Wandlitz?format=%t+%C'",
+        "exec": "~/.config/waybar/weather.sh",
         "interval": 600
     },
 
