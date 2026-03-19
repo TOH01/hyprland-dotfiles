@@ -86,6 +86,3 @@ def write_config() -> None:
 def restore_config() -> None:
     rel_dirs, rel_files = get_relative_structure()
     copy_structure(REPO_BACKUP_DIR, HOME_DIR, rel_dirs, rel_files)
-
-
-write_config()
