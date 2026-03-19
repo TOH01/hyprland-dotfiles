@@ -49,7 +49,7 @@ if (( auto_confirm == 0 )); then
         exit 1
     fi
 
-    printf 'This will overwrite matching files in %s using the %s scheme.\n' "${HOME}" "${THEME_NAME:-${scheme_name}}"
+    printf 'This will overwrite matching files in %s using the %s scheme.\n' "${HOME}" "${NAME:-${scheme_name}}"
     printf 'Create a backup first? [Y/n] '
     read -r backup_reply
     if [[ ! "${backup_reply:-}" =~ ^([nN][oO]?|[nN])$ ]]; then
@@ -86,4 +86,4 @@ if pgrep -x dunst > /dev/null 2>&1; then
     fi
 fi
 
-printf 'Applied %s to %s\n' "${THEME_NAME:-${scheme_name}}" "${HOME}"
+printf 'Applied %s to %s\n' "${NAME:-${scheme_name}}" "${HOME}"
