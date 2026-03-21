@@ -2,12 +2,14 @@ from pathlib import Path
 import shutil
 import re
 import json
+import subprocess
 
 # repo paths
 REPO_ROOT = Path(__file__).resolve().parent.parent
 REPO_CONF_DIR = REPO_ROOT / "configs"
 REPO_BACKUP_DIR = REPO_ROOT / "backup"
 REPO_MASTER_CONFIG = REPO_ROOT / "theme.json"
+REPO_DEPENDENCY_LIST = REPO_ROOT / "dependencies.json"
 
 # local filesystem paths
 HOME_DIR = Path.home()
@@ -86,3 +88,32 @@ def write_config() -> None:
 def restore_config() -> None:
     rel_dirs, rel_files = get_relative_structure()
     copy_structure(REPO_BACKUP_DIR, HOME_DIR, rel_dirs, rel_files)
+
+
+def check_dependencies() -> tuple[list[str], list[str], list[str]]:
+    missing = []
+    version_mismatch = []
+    fulfilled = []
+    dependencies = json.loads(REPO_DEPENDENCY_LIST.read_text())
+
+    for dependency, check in dependencies.items():
+        try:
+            res = subprocess.run([dependency, check["cmd"]], text=True,
+                                 stdout=subprocess.PIPE)
+            version = check.get("version")
+            if version and check["version"] not in res.stdout:
+                match = re.search(r'v?(\d+\.\d+(?:\.\d+)*)', res.stdout)
+                found_version = "unknown"
+
+                if match:
+                    found_version = match.group(1)
+
+                version_mismatch.append(f"Found dependency '{dependency}'"
+                                        f" {found_version}, "
+                                        f"expected {check["version"]}")
+            else:
+                fulfilled.append(f"Satisfied dependency '{dependency}'")
+        except FileNotFoundError:
+            missing.append(f"Missing dependency '{dependency}'")
+
+    return (missing, version_mismatch, fulfilled)
