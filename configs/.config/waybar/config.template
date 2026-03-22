@@ -13,7 +13,7 @@
     },
 
     "custom/weather": {
-        "exec": "~/.config/waybar/weather.sh",
+        "exec": "LOCATION={{$LOCATION}} ~/.local/bin/waybar/weather.py",
         "interval": 600
     },
 
@@ -30,18 +30,18 @@
     },
     
     "custom/sysinfo": {
-        "exec": "~/.config/waybar/cpu_gpu_toggle.sh",
+        "exec": "~/.local/bin/waybar/cpu_gpu_stats.py",
         "interval": 1,
         "return-type": "",
         "tooltip": false
     },
    
     "custom/mode_selector": {
-        "exec": "~/.config/waybar/mode_toggle.sh",
+        "exec": "CC_USER={{$CC_USER}} CC_PW={{$CC_PW}} CC_AFK={{$CC_AFK}} CC_WORK={{$CC_WORK}} CC_GAMING={{$CC_GAMING}} ~/.local/bin/waybar/mode_toggle.py --apply",
         "return-type": "json",
-        "on-click": "~/.config/waybar/mode_toggle.sh next",
+        "on-click": "CC_USER={{$CC_USER}} CC_PW={{$CC_PW}} CC_AFK={{$CC_AFK}} CC_WORK={{$CC_WORK}} CC_GAMING={{$CC_GAMING}} ~/.local/bin/waybar/mode_toggle.py",        
         "signal": 8,
         "interval": "once",
-	"tooltip": false
+	    "tooltip": false
    }
 }

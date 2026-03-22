@@ -8,11 +8,13 @@ import subprocess
 REPO_ROOT = Path(__file__).resolve().parent.parent
 REPO_CONF_DIR = REPO_ROOT / "configs"
 REPO_BACKUP_DIR = REPO_ROOT / "backup"
-REPO_MASTER_CONFIG = REPO_ROOT / "theme.json"
+REPO_THEME_CONFIG = REPO_ROOT / "theme.json"
+REPO_ENV_CONFIG = REPO_ROOT / "env.json"
 REPO_DEPENDENCY_LIST = REPO_ROOT / "dependencies.json"
 
 # local filesystem paths
 HOME_DIR = Path.home()
+SCRIPT_DIR = HOME_DIR / ".local" / "bin"
 
 
 def get_dir_contents(paths: list[Path]) -> tuple[list[Path], list[Path]]:
@@ -34,10 +36,13 @@ def get_dir_contents(paths: list[Path]) -> tuple[list[Path], list[Path]]:
 
 
 def write_template_file(src: Path, dest: Path) -> None:
-    values = json.loads(REPO_MASTER_CONFIG.read_text())
+    theme = json.loads(REPO_THEME_CONFIG.read_text())
+    env = json.loads(REPO_ENV_CONFIG.read_text())
     text = src.read_text()
     result = re.sub(r'\{\{(\w+)\}\}',
-                    lambda m: values.get(m.group(1), m.group(0)), text)
+                    lambda m: theme.get(m.group(1), m.group(0)), text)
+    result = re.sub(r'\{\{\$(\w+)\}\}',
+                    lambda m: env.get(m.group(1), m.group(0)), result)
     dest.with_suffix("").write_text(result)
 
 
@@ -53,7 +58,7 @@ def copy_structure(base_src: Path, base_dest: Path,
         dest_file = base_dest / file
 
         if src_file.exists():
-            if src_file.suffix == ".tmpl":
+            if src_file.suffix == ".template":
                 write_template_file(src_file, dest_file)
             else:
                 shutil.copy2(src_file, dest_file)
@@ -83,6 +88,14 @@ def backup() -> None:
 def write_config() -> None:
     rel_dirs, rel_files = get_relative_structure()
     copy_structure(REPO_CONF_DIR, HOME_DIR, rel_dirs, rel_files)
+
+
+def make_scripts_executable() -> None:
+    _, files = get_dir_contents([SCRIPT_DIR])
+    for file in files:
+        if file.suffix == ".py":
+            python_script = Path(file)
+            python_script.chmod(python_script.stat().st_mode | 0o111)
 
 
 def restore_config() -> None:
