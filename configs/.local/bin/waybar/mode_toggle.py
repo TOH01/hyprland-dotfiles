@@ -26,7 +26,7 @@ modes_settings = {
         },
     "WORK":
         {
-            "power_profile": "balanced",
+            "power_profile": "performance", # performance due to llm worlkloads
             "hdr": False,
             "icon": "󰇄 ",
             "llm": True
