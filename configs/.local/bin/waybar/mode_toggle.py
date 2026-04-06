@@ -13,6 +13,7 @@ MONITOR_HDR_SETTING = BASE_MONITOR_SETTING + ",cm,hdr,sdrbrightness," \
 STATE_FILE = f"{user_cache_dir()}/waybar_mode"
 COOLER_CONTROLLER_URL = "http://localhost:11987"
 CC_CREDENTIALS = f"{os.getenv('CC_USER', 'CCAdmin')}:{os.getenv('CC_PW', '')}"
+SERVICE_NAME = "llama-gemma"
 
 modes_ordered = ["AFK", "WORK", "GAMING"]
 modes_settings = {
@@ -20,19 +21,22 @@ modes_settings = {
         {
             "power_profile": "power-saver",
             "hdr": False,
-            "icon": "󰒲 "
+            "icon": "󰒲 ",
+            "llm": False
         },
     "WORK":
         {
             "power_profile": "balanced",
             "hdr": False,
-            "icon": "󰇄 "
+            "icon": "󰇄 ",
+            "llm": True
         },
     "GAMING":
         {
             "power_profile": "performance",
             "hdr": True,
-            "icon": "󰓓 "
+            "icon": "󰓓 ",
+            "llm": False
         }
 }
 
@@ -68,6 +72,13 @@ def apply_mode(mode: str):
     subprocess.run(["powerprofilesctl", "set", settings["power_profile"]],
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
+    if settings["llm"]:
+        subprocess.run(["systemctl", "--user", "start", SERVICE_NAME],
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    else:
+        subprocess.run(["systemctl", "--user", "stop", SERVICE_NAME],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
     if settings["hdr"]:
         monitor_settings = MONITOR_HDR_SETTING
     else:
@@ -95,3 +106,4 @@ if __name__ == "__main__":
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     print('{"text":"' + modes_settings[state]["icon"] + '"}')
+
