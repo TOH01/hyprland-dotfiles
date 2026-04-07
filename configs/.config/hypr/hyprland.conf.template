@@ -42,7 +42,7 @@ exec-once = waybar
 exec-once = dunst
 exec-once = hyprpaper
 exec-once = hyprctl setcursor Bibata-Modern-Ice 24
-exec-once = ~/.config/waybar/mode_toggle.sh apply 
+exec-once = CC_USER={{$CC_USER}} CC_PW={{$CC_PW}} CC_AFK={{$CC_AFK}} CC_WORK={{$CC_WORK}} CC_GAMING={{$CC_GAMING}} ~/.local/bin/waybar/mode_toggle.py --apply
 exec-once = clipse -listen 
 
 #############################
