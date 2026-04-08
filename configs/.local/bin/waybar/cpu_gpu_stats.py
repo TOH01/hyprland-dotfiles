@@ -60,7 +60,7 @@ def print_gpu_usage() -> None:
     vram_total = int(vram_total_match.group(1)) / 1024**3 if vram_total_match else 0
 
     print(f"󰢮  {usage}%  {temp}°C  "
-          f"{int(vram_usage) / 1024**3:.1f}/{int(vram_total) / 1024**3:.0f}GB")
+          f"{vram_usage:.1f}/{math.ceil(vram_total):.0f}GB")
 
 
 if __name__ == "__main__":
