@@ -5,6 +5,7 @@ from platformdirs import user_cache_dir
 import argparse
 import os
 import requests
+import sys
 
 
 BASE_MONITOR_SETTING = "DP-1,2560x1440@360,0x0,1.33,bitdepth,10"
@@ -93,6 +94,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--apply", action="store_true")
     args = parser.parse_args()
+    
+    # Validate required environment variables
+    required_vars = ["CC_USER", "CC_PW"]
+    missing_vars = [var for var in required_vars if not os.getenv(var)]
+    if missing_vars:
+        print(f"Error: Missing required environment variables: {', '.join(missing_vars)}")
+        sys.exit(1)
+    
     state = read_state()
 
     if args.apply:

@@ -36,6 +36,11 @@ def get_dir_contents(paths: list[Path]) -> tuple[list[Path], list[Path]]:
 
 
 def write_template_file(src: Path, dest: Path) -> None:
+    if not REPO_THEME_CONFIG.exists():
+        raise FileNotFoundError(f"Theme config not found: {REPO_THEME_CONFIG}")
+    if not REPO_ENV_CONFIG.exists():
+        raise FileNotFoundError(f"Environment config not found: {REPO_ENV_CONFIG}")
+    
     theme = json.loads(REPO_THEME_CONFIG.read_text())
     env = json.loads(REPO_ENV_CONFIG.read_text())
     text = src.read_text()

@@ -42,6 +42,6 @@
         "on-click": "CC_USER={{$CC_USER}} CC_PW={{$CC_PW}} CC_AFK={{$CC_AFK}} CC_WORK={{$CC_WORK}} CC_GAMING={{$CC_GAMING}} ~/.local/bin/waybar/mode_toggle.py",        
         "signal": 8,
         "interval": "once",
-	    "tooltip": false
+        "tooltip": false
    }
 }
