@@ -60,7 +60,6 @@ Item {
     property int draggingFromWorkspace: -1
     property int draggingTargetWorkspace: -1
     property string draggingTargetSpecialWorkspace: ""
-
     property int previewRecaptureToken: 0
     property var allWorkspaces: HyprlandData.allWorkspaces
     property bool previewsEnabled: Config.options.overview.previewsEnabled
@@ -202,7 +201,7 @@ Item {
         } else if (targetId > maxWorkspaceId) {
             targetId = minWorkspaceId;
         }
-        Hyprland.dispatch(`focusworkspaceoncurrentmonitor ${targetId}`);
+        Hyprland.dispatch(`workspace ${targetId}`);
     }
 
     function isSpecialWorkspace(windowData) {
@@ -520,9 +519,8 @@ Item {
                                 acceptedButtons: Qt.LeftButton
                                 onClicked: {
                                     if (root.draggingTargetWorkspace === -1) {
-                                        Hyprland.dispatch(`focusmonitor ${root.monitor.name}`)
-                                        Hyprland.dispatch(`focusworkspaceoncurrentmonitor ${workspaceValue}`)
                                         GlobalStates.overviewOpen = false
+                                        Hyprland.dispatch(`workspace ${workspaceValue}`)
                                     }
                                 }
                             }

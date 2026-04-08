@@ -175,7 +175,7 @@ Scope {
 
                     if (targetId !== null) {
                         const clampedTarget = Math.max(minWorkspaceId, Math.min(maxWorkspaceId, targetId));
-                        Hyprland.dispatch("focusworkspaceoncurrentmonitor " + clampedTarget);
+                        Hyprland.dispatch("workspace " + clampedTarget);
                         event.accepted = true;
                     }
                 }
