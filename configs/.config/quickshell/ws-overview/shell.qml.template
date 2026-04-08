@@ -27,6 +27,7 @@ ShellRoot {
     readonly property color colOutlineVariant:    "{{COLOR0_HEX}}"
     readonly property color colSubtext:           "{{SUBTEXT_HEX}}"
     readonly property color colBg:                "{{BG_HEX}}"
+    readonly property color colSurfaceAlt:        "{{SURFACE_ALT_HEX}}"
     readonly property color colSelectedFg:        "{{SELECTED_FG_HEX}}"
 
     // ── IPC ─────────────────────────────────────────────────────────────
@@ -193,7 +194,7 @@ print(json.dumps(R))
                         anchors.centerIn: parent
                         width: grid.width + 28; height: grid.height + 28
                         radius: 12
-                        color: shell.colBg
+                        color: shell.colSurfaceAlt
                         border.width: 2; border.color: shell.colPrimary
 
                         MouseArea { anchors.fill: parent } // block scrim

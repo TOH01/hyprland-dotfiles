@@ -1,6 +1,6 @@
 {
     "NAME": "catppuccin-mocha",
-    "ACTIVE_OPACITY": "0.96",
+    "ACTIVE_OPACITY": "1.0",
     "INACTIVE_OPACITY": "0.94",
     "WAYBAR_OPACITY": "0.86",
     "DUNST_OPACITY": "0.92",

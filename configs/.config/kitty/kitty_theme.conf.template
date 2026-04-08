@@ -1,5 +1,5 @@
 foreground              {{TEXT_HEX}}
-background              {{TERMINAL_BG_HEX}}
+background              {{SURFACE_ALT_HEX}}
 cursor                  {{TEXT_HEX}}
 cursor_text_color       {{TERMINAL_BG_HEX}}
 
