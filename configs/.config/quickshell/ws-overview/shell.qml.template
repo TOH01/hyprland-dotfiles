@@ -1,0 +1,313 @@
+//@ pragma UseQApplication
+//@ pragma Env QT_QUICK_CONTROLS_STYLE=Basic
+
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Io
+import Quickshell.Hyprland
+import Quickshell.Wayland
+
+ShellRoot {
+    id: shell
+
+    property bool shown: false
+    property var clientData: []
+    property var monitorData: []
+    property int activeWsId: 1
+    property var iconMap: ({})
+
+    // ── Colors (replaced by theme system) ───────────────────────────────
+    readonly property color colPrimary:           "{{ACCENT_HEX}}"
+    readonly property color colOnSurface:         "{{TEXT_HEX}}"
+    readonly property color colSurfaceContainer:  "{{SURFACE_HEX}}"
+    readonly property color colSurfaceHigh:       "{{COLOR0_HEX}}"
+    readonly property color colSurfaceLow:        "{{SURFACE_ALT_HEX}}"
+    readonly property color colOutline:           "{{COLOR8_HEX}}"
+    readonly property color colOutlineVariant:    "{{COLOR0_HEX}}"
+    readonly property color colSubtext:           "{{SUBTEXT_HEX}}"
+    readonly property color colBg:                "{{BG_HEX}}"
+    readonly property color colSelectedFg:        "{{SELECTED_FG_HEX}}"
+
+    // ── IPC ─────────────────────────────────────────────────────────────
+    IpcHandler {
+        target: "overview"
+        function toggle(): void { shell.shown = !shell.shown }
+        function open(): void  { shell.shown = true }
+        function close(): void { shell.shown = false }
+    }
+
+    // ── Icon map using GTK icon theme (same lookup rofi uses) ───────────
+    Process {
+        id: iconMapProc
+        command: ["python3", "-c", `
+import json,os,configparser,glob
+try:
+    import gi
+    gi.require_version('Gtk','3.0')
+    from gi.repository import Gtk
+    theme=Gtk.IconTheme.get_default()
+except:
+    theme=None
+R={}
+for f in glob.glob('/usr/share/applications/*.desktop')+glob.glob(os.path.expanduser('~/.local/share/applications/*.desktop'))+glob.glob('/var/lib/flatpak/exports/share/applications/*.desktop')+glob.glob(os.path.expanduser('~/.local/share/flatpak/exports/share/applications/*.desktop')):
+    cp=configparser.ConfigParser(interpolation=None)
+    try: cp.read(f)
+    except: continue
+    if not cp.has_section('Desktop Entry'): continue
+    ic=cp.get('Desktop Entry','Icon',fallback='')
+    wm=cp.get('Desktop Entry','StartupWMClass',fallback='')
+    bn=os.path.splitext(os.path.basename(f))[0]
+    name=cp.get('Desktop Entry','Name',fallback='')
+    if not ic: continue
+    p=''
+    if ic.startswith('/'):
+        p=ic if os.path.exists(ic) else ''
+    elif theme:
+        info=theme.lookup_icon(ic,48,0)
+        p=info.get_filename() if info else ''
+    if p:
+        for k in [wm,wm.lower(),bn,bn.lower(),ic,ic.lower(),name,name.lower()]:
+            if k and k not in R: R[k]=p
+print(json.dumps(R))
+`]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try { shell.iconMap = JSON.parse(this.text) }
+                catch(e) {}
+            }
+        }
+    }
+
+    function iconFor(cls) {
+        if (!cls) return ""
+        return iconMap[cls] || iconMap[cls.toLowerCase()] || ""
+    }
+
+    // ── Data fetching ───────────────────────────────────────────────────
+    onShownChanged: { if (shown) refresh() }
+
+    function refresh() {
+        pClients.running = true
+        pMonitors.running = true
+        pActiveWs.running = true
+    }
+
+    Connections {
+        target: Hyprland
+        function onRawEvent(event) {
+            if (!shell.shown) return
+            var n = (event.name !== undefined) ? event.name : ""
+            if (["openwindow","closewindow","movewindow","movewindowv2",
+                 "workspace","workspacev2","focusedmon","activewindow",
+                 "activewindowv2"].indexOf(n) !== -1)
+                debounce.restart()
+        }
+    }
+    Timer { id: debounce; interval: 80; onTriggered: shell.refresh() }
+    Timer { running: shell.shown; interval: 800; repeat: true; onTriggered: shell.refresh() }
+
+    Process { id: pClients; command: ["hyprctl","clients","-j"]; running: false
+        stdout: StdioCollector { onStreamFinished: { try { shell.clientData = JSON.parse(this.text) } catch(e){} } } }
+    Process { id: pMonitors; command: ["hyprctl","monitors","-j"]; running: false
+        stdout: StdioCollector { onStreamFinished: { try { shell.monitorData = JSON.parse(this.text) } catch(e){} } } }
+    Process { id: pActiveWs; command: ["hyprctl","activeworkspace","-j"]; running: false
+        stdout: StdioCollector { onStreamFinished: { try { shell.activeWsId = JSON.parse(this.text).id } catch(e){} } } }
+
+    // ── Workspace switch ────────────────────────────────────────────────
+    function go(wsId) {
+        Hyprland.dispatch("focusworkspaceoncurrentmonitor " + wsId)
+        shell.shown = false
+    }
+
+    // ── Monitor helpers ─────────────────────────────────────────────────
+    readonly property real mW: monitorData.length > 0 ? monitorData[0].width / (monitorData[0].scale||1) : 1920
+    readonly property real mH: monitorData.length > 0 ? monitorData[0].height / (monitorData[0].scale||1) : 1080
+    readonly property real mX: monitorData.length > 0 ? monitorData[0].x : 0
+    readonly property real mY: monitorData.length > 0 ? monitorData[0].y : 0
+
+    function monOff(id) {
+        for (var i = 0; i < monitorData.length; i++)
+            if (monitorData[i].id === id)
+                return { x: monitorData[i].x, y: monitorData[i].y }
+        return { x: mX, y: mY }
+    }
+
+    // ── Grid config ─────────────────────────────────────────────────────
+    readonly property real bw: 240
+    readonly property real bh: bw * (mH / mW)
+    readonly property real sp: 10
+
+    function wCol(id) { return (id-1) % 5 }
+    function wRow(id) { return Math.floor((id-1) / 5) }
+    function wClients(id) {
+        var r = []
+        for (var i = 0; i < clientData.length; i++) {
+            var c = clientData[i]
+            if (c.workspace && c.workspace.id === id && !c.hidden) r.push(c)
+        }
+        return r
+    }
+
+    readonly property var visWins: {
+        var r = []
+        for (var i = 0; i < clientData.length; i++) {
+            var c = clientData[i]
+            if (c.workspace && c.workspace.id >= 1 && c.workspace.id <= 10 && !c.hidden) r.push(c)
+        }
+        return r
+    }
+
+    // ── Overlay ─────────────────────────────────────────────────────────
+    Variants {
+        model: Quickshell.screens
+        PanelWindow {
+            required property var modelData
+            screen: modelData
+            visible: shell.shown
+
+            WlrLayershell.layer: WlrLayer.Overlay
+            WlrLayershell.namespace: "quickshell:ws-overview"
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+            anchors { top: true; bottom: true; left: true; right: true }
+            exclusionMode: ExclusionMode.Ignore
+            color: "transparent"
+
+            Item {
+                anchors.fill: parent
+                focus: shell.shown
+                Keys.onPressed: event => {
+                    if (event.key === Qt.Key_Escape || event.key === Qt.Key_Return) {
+                        shell.shown = false; event.accepted = true
+                    }
+                }
+
+                // Scrim
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: shell.shown = false
+
+                    // Grid panel
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: grid.width + 28; height: grid.height + 28
+                        radius: 12
+                        color: shell.colBg
+                        border.width: 2; border.color: shell.colPrimary
+
+                        MouseArea { anchors.fill: parent } // block scrim
+
+                        Item {
+                            id: grid
+                            anchors.centerIn: parent
+                            width: 5 * shell.bw + 4 * shell.sp
+                            height: 2 * shell.bh + shell.sp
+
+                            // Workspace boxes
+                            Repeater {
+                                model: 10
+                                Rectangle {
+                                    id: ws
+                                    required property int index
+                                    property int wid: index + 1
+                                    property bool act: wid === shell.activeWsId
+                                    property var wcl: shell.wClients(wid)
+                                    property bool hov: false
+
+                                    x: shell.wCol(wid) * (shell.bw + shell.sp)
+                                    y: shell.wRow(wid) * (shell.bh + shell.sp)
+                                    width: shell.bw; height: shell.bh; radius: 8
+
+                                    color: act ? Qt.rgba(shell.colPrimary.r, shell.colPrimary.g, shell.colPrimary.b, 0.15)
+                                               : shell.colSurfaceHigh
+                                    border.width: act ? 2 : 1
+                                    border.color: act ? shell.colPrimary : shell.colOutlineVariant
+                                    scale: hov ? 1.02 : 1.0
+                                    Behavior on scale { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
+
+                                    // Workspace number
+                                    Text {
+                                        anchors.centerIn: parent; text: ws.wid
+                                        font.pixelSize: parent.height * 0.32
+                                        font.weight: Font.Bold
+                                        font.family: "JetBrains Mono"
+                                        color: Qt.rgba(shell.colOnSurface.r, shell.colOnSurface.g, shell.colOnSurface.b,
+                                            ws.wcl.length === 0 ? 0.12 : 0.05)
+                                    }
+
+                                    // Active dot
+                                    Rectangle {
+                                        visible: ws.act
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        anchors.bottom: parent.bottom; anchors.bottomMargin: 5
+                                        width: 6; height: 6; radius: 3; color: shell.colPrimary
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent; hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+                                        onEntered: ws.hov = true; onExited: ws.hov = false
+                                        onClicked: shell.go(ws.wid)
+                                    }
+                                }
+                            }
+
+                            // Window previews
+                            Item {
+                                anchors.fill: parent; z: 10
+                                Repeater {
+                                    model: ScriptModel { values: shell.visWins }
+                                    Item {
+                                        required property var modelData
+                                        property var c: modelData
+                                        property var mo: shell.monOff(c.monitor)
+                                        property real sx: shell.bw / shell.mW
+                                        property real sy: shell.bh / shell.mH
+                                        property real ox: shell.wCol(c.workspace.id) * (shell.bw + shell.sp)
+                                        property real oy: shell.wRow(c.workspace.id) * (shell.bh + shell.sp)
+
+                                        x: ox + Math.max(0, Math.min((c.at[0]-mo.x)*sx, shell.bw-width))
+                                        y: oy + Math.max(0, Math.min((c.at[1]-mo.y)*sy, shell.bh-height))
+                                        width:  Math.max(14, Math.min(c.size[0]*sx, shell.bw))
+                                        height: Math.max(10, Math.min(c.size[1]*sy, shell.bh))
+
+                                        Rectangle {
+                                            anchors.fill: parent; anchors.margins: 1
+                                            radius: 4
+                                            color: shell.colSurfaceContainer
+                                            border.width: 1; border.color: shell.colOutline
+                                            clip: true
+
+                                            // App icon (GTK theme resolved, same as rofi)
+                                            Image {
+                                                id: ico; anchors.centerIn: parent
+                                                property real sz: Math.min(parent.width*0.5, parent.height*0.5, 28)
+                                                width: sz; height: sz
+                                                source: shell.iconFor(c["class"])
+                                                sourceSize: Qt.size(Math.max(1,Math.round(sz)), Math.max(1,Math.round(sz)))
+                                                visible: source !== "" && status === Image.Ready && parent.width > 20
+                                                asynchronous: true; cache: true
+                                            }
+
+                                            // Fallback letter
+                                            Text {
+                                                anchors.centerIn: parent
+                                                visible: !ico.visible && parent.width > 20
+                                                text: (c["class"]||"?").charAt(0).toUpperCase()
+                                                font.pixelSize: Math.min(parent.width,parent.height)*0.3
+                                                font.weight: Font.Medium
+                                                font.family: "JetBrains Mono"
+                                                color: shell.colSubtext
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

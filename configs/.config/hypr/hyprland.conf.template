@@ -43,7 +43,7 @@ exec-once = hyprpaper
 exec-once = hyprctl setcursor Bibata-Modern-Ice 24
 exec-once = CC_USER={{$CC_USER}} CC_PW={{$CC_PW}} CC_AFK={{$CC_AFK}} CC_WORK={{$CC_WORK}} CC_GAMING={{$CC_GAMING}} ~/.local/bin/waybar/mode_toggle.py --apply
 exec-once = clipse -listen 
-exec-once = qs -c overview  # Added quickshell overview
+exec-once = qs -c ws-overview
 
 #############################
 ### ENVIRONMENT VARIABLES ###
@@ -282,7 +282,7 @@ bind = $mainMod SHIFT, 0, movetoworkspace, 10
 bind = $mainMod SHIFT, V, exec, kitty --class clipse -e clipse
 bind = $mainMod, S, exec, bash -c 'grim -g "$(slurp)" - | swappy -f -'
 bind = $mainMod SHIFT, S, exec, bash -c 'notify-send -t 1500 "Screenshot" "Area capture starts in 3 seconds"; sleep 3; grim -g "$(slurp)" - | swappy -f -'
-bind = Super, TAB, exec, qs -c overview ipc call overview toggle
+bind = Super, TAB, exec, qs ipc -c ws-overview call overview toggle
 
 # Move/resize windows with mainMod + LMB/RMB and dragging
 bindm = $mainMod, mouse:272, movewindow
