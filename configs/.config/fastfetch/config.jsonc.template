@@ -58,10 +58,6 @@
             "type": "custom",
             "format": " ─────────────────────────── "
         },
-        {
-            "type": "custom",
-            "format": "{{FASTFETCH_SWATCH_LINE}}"
-        },
 		"break"
     ]
 }

@@ -56,5 +56,9 @@
     "python": {
         "cmd": "--version",
         "version": "3.14.2"
+    },
+    "quickshell": {
+        "cmd": "--version",
+        "version": "0.2.1"
     }
 }

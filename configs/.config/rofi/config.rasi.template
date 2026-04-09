@@ -8,7 +8,7 @@ configuration {
 @theme "/dev/null"
 
 * {
-    bg:          {{SURFACE_ALT_HEX}}; 
+    bg:          {{TERMINAL_BG_HEX}}; 
     fg:          {{TEXT_HEX}};
     accent:      {{ACCENT_HEX}};
 }

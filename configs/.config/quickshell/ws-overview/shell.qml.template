@@ -26,7 +26,7 @@ ShellRoot {
     readonly property color colOutline:           "{{COLOR8_HEX}}"
     readonly property color colOutlineVariant:    "{{COLOR0_HEX}}"
     readonly property color colSubtext:           "{{SUBTEXT_HEX}}"
-    readonly property color colBg:                "{{BG_HEX}}"
+    readonly property color colBg:                "{{TERMINAL_BG_HEX}}"
     readonly property color colSurfaceAlt:        "{{SURFACE_ALT_HEX}}"
     readonly property color colSelectedFg:        "{{SELECTED_FG_HEX}}"
 

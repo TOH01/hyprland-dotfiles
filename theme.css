@@ -1,0 +1,87 @@
+/* colors.css */
+:root {
+    /* --- Base Palette --- */
+    --bg: #11111b;
+    --fg: #cdd6f4;
+    --accent: #b4befe;
+    --surface: #313244;
+    --surface-alt: #1e1e2e;
+    --text-sub: #a6adc8;
+    --error: #f38ba8;
+    --border: #b4befe;
+    --terminal-bg: #0b0b12;
+
+    /* Terminal Colors (Catppuccin Mocha) */
+    --color0: #45475a;
+    --color1: #f38ba8;
+    --color2: #a6e3a1;
+    --color3: #f9e2af;
+    --color4: #89b4fa;
+    --color5: #f5c2e7;
+    --color6: #94e2d5;
+    --color7: #bac2de;
+    --color8: #585b70;
+    
+    /* Hyprland specific bases */
+    --hypr-inactive-border: #6c7086;
+    --hypr-shadow: #11111b;
+
+    /* --- Mappings --- */
+    /* Syntax: @map OUTPUT_KEY: --variable, [alpha], [format] */
+    /* Formats: hex, rgba, hypr, literal */
+
+    /* Waybar */
+    /* @map WAYBAR_SURFACE_HEX: --bg, , hex */
+    /* @map WAYBAR_SURFACE_RGBA: --bg, 0.86, rgba */
+    /* @map TEXT_HEX: --fg, , hex */
+    /* @map ACCENT_HEX: --accent, , hex */
+    /* @map BORDER_SOFT_RGBA: --accent, 0.24, rgba */
+
+    /* Hyprland */
+    /* @map HYPR_ACTIVE_BORDER_RGBA: --accent, 0.93, hypr */
+    /* @map HYPR_INACTIVE_BORDER_RGBA: --hypr-inactive-border, 0.41, hypr */
+    /* @map HYPR_SHADOW_RGBA: --hypr-shadow, 0.74, hypr */
+    /* @map ACTIVE_OPACITY: 0.96, , literal */
+    /* @map INACTIVE_OPACITY: 0.92, , literal */
+    /* @map ACTIVE_SURFACE_HEX: --bg, 0.96, hex_alpha */
+
+    /* Dunst */
+    /* @map DUNST_SURFACE_HEX: --bg, , hex_alpha */ /* Custom: hex with alpha */
+    /* @map DUNST_SURFACE_RGBA: --bg, 0.92, rgba */
+    /* @map DUNST_CRITICAL_BG_HEX: --error, , hex_alpha */
+    /* @map DUNST_CRITICAL_FG_HEX: --fg, , hex */
+    /* @map DUNST_CRITICAL_FRAME_HEX: --error, , hex */
+    /* @map DUNST_OPACITY: 0.92, , literal */
+
+    /* Terminal */
+    /* @map TERMINAL_BG_HEX: --terminal-bg, , hex */
+    /* @map COLOR0_HEX: --color0, , hex */
+    /* @map COLOR1_HEX: --color1, , hex */
+    /* @map COLOR2_HEX: --color2, , hex */
+    /* @map COLOR3_HEX: --color3, , hex */
+    /* @map COLOR4_HEX: --color4, , hex */
+    /* @map COLOR5_HEX: --color5, , hex */
+    /* @map COLOR6_HEX: --color6, , hex */
+    /* @map COLOR7_HEX: --color7, , hex */
+    /* @map COLOR8_HEX: --color8, , hex */
+    /* @map COLOR9_HEX: --color1, , hex */
+    /* @map COLOR10_HEX: --color2, , hex */
+    /* @map COLOR11_HEX: --color3, , hex */
+    /* @map COLOR12_HEX: --color4, , hex */
+    /* @map COLOR13_HEX: --color5, , hex */
+    /* @map COLOR14_HEX: --color6, , hex */
+    /* @map COLOR15_HEX: --text-sub, , hex */
+
+    /* Misc */
+    /* @map WAYBAR_OPACITY: 0.86, , literal */
+    /* @map DUNST_OPACITY: 0.92, , literal */
+    /* @map ACTIVE_SURFACE_RGBA: --bg, 0.96, rgba */
+    /* @map SELECTED_FG_HEX: --bg, , hex */
+    /* @map BG_HEX: --bg, , hex */
+    /* @map SURFACE_HEX: --surface, , hex */
+    /* @map SURFACE_ALT_HEX: --surface-alt, , hex */
+    /* @map SUBTEXT_HEX: --text-sub, , hex */
+    /* @map ALERT_HEX: --error, , hex */
+    /* @map BORDER_HEX: --border, , hex */
+    /* @map HOVER_RGBA: --accent, 0.10, rgba */
+}
