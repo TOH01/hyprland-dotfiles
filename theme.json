@@ -42,5 +42,6 @@
   "SUBTEXT_HEX": "#a6adc8",
   "ALERT_HEX": "#f38ba8",
   "BORDER_HEX": "#b4befe",
-  "HOVER_RGBA": "rgba(180, 190, 254, 0.1)"
+  "HOVER_RGBA": "rgba(180, 190, 254, 0.1)",
+  "TERMINAL_BG_ROFI": "#0b0b12e0"
 }

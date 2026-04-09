@@ -84,4 +84,5 @@
     /* @map ALERT_HEX: --error, , hex */
     /* @map BORDER_HEX: --border, , hex */
     /* @map HOVER_RGBA: --accent, 0.10, rgba */
+    /* @map TERMINAL_BG_ROFI: --terminal-bg, 0.88, hex_alpha */
 }
