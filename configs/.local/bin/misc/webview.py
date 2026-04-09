@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-import gi, sys
-gi.require_version('Gtk', '4.0')
-gi.require_version('WebKit', '6.0')
+import sys
 from gi.repository import Gtk, WebKit
 
 url = sys.argv[1]
