@@ -17,7 +17,6 @@ ShellRoot {
     property int activeWsId: 1
     property var iconMap: ({})
 
-    // ── Colors (replaced by theme system) ───────────────────────────────
     readonly property color colPrimary:           "{{ACCENT_HEX}}"
     readonly property color colOnSurface:         "{{FG_HEX}}"
     readonly property color colSurfaceContainer:  "{{SURFACE_HEX}}"
@@ -30,7 +29,6 @@ ShellRoot {
     readonly property color colSurfaceAlt:        "{{SURFACE_ALT_HEX}}"
     readonly property color colSelectedFg:        "{{OVERLAY_BG_HEX}}"
 
-    // ── IPC ─────────────────────────────────────────────────────────────
     IpcHandler {
         target: "overview"
         function toggle(): void { shell.shown = !shell.shown }
@@ -38,40 +36,9 @@ ShellRoot {
         function close(): void { shell.shown = false }
     }
 
-    // ── Icon map using GTK icon theme (same lookup rofi uses) ───────────
     Process {
         id: iconMapProc
-        command: ["python3", "-c", `
-import json,os,configparser,glob
-try:
-    import gi
-    gi.require_version('Gtk','3.0')
-    from gi.repository import Gtk
-    theme=Gtk.IconTheme.get_default()
-except:
-    theme=None
-R={}
-for f in glob.glob('/usr/share/applications/*.desktop')+glob.glob(os.path.expanduser('~/.local/share/applications/*.desktop'))+glob.glob('/var/lib/flatpak/exports/share/applications/*.desktop')+glob.glob(os.path.expanduser('~/.local/share/flatpak/exports/share/applications/*.desktop')):
-    cp=configparser.ConfigParser(interpolation=None)
-    try: cp.read(f)
-    except: continue
-    if not cp.has_section('Desktop Entry'): continue
-    ic=cp.get('Desktop Entry','Icon',fallback='')
-    wm=cp.get('Desktop Entry','StartupWMClass',fallback='')
-    bn=os.path.splitext(os.path.basename(f))[0]
-    name=cp.get('Desktop Entry','Name',fallback='')
-    if not ic: continue
-    p=''
-    if ic.startswith('/'):
-        p=ic if os.path.exists(ic) else ''
-    elif theme:
-        info=theme.lookup_icon(ic,48,0)
-        p=info.get_filename() if info else ''
-    if p:
-        for k in [wm,wm.lower(),bn,bn.lower(),ic,ic.lower(),name,name.lower()]:
-            if k and k not in R: R[k]=p
-print(json.dumps(R))
-`]
+        command: ["sh", "-c", "python3 ~/.local/bin/misc/icon_lookup.py"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -86,7 +53,6 @@ print(json.dumps(R))
         return iconMap[cls] || iconMap[cls.toLowerCase()] || ""
     }
 
-    // ── Data fetching ───────────────────────────────────────────────────
     onShownChanged: { if (shown) refresh() }
 
     function refresh() {
@@ -116,13 +82,11 @@ print(json.dumps(R))
     Process { id: pActiveWs; command: ["hyprctl","activeworkspace","-j"]; running: false
         stdout: StdioCollector { onStreamFinished: { try { shell.activeWsId = JSON.parse(this.text).id } catch(e){} } } }
 
-    // ── Workspace switch ────────────────────────────────────────────────
     function go(wsId) {
         Hyprland.dispatch("focusworkspaceoncurrentmonitor " + wsId)
         shell.shown = false
     }
 
-    // ── Monitor helpers ─────────────────────────────────────────────────
     readonly property real mW: monitorData.length > 0 ? monitorData[0].width / (monitorData[0].scale||1) : 1920
     readonly property real mH: monitorData.length > 0 ? monitorData[0].height / (monitorData[0].scale||1) : 1080
     readonly property real mX: monitorData.length > 0 ? monitorData[0].x : 0
@@ -135,7 +99,6 @@ print(json.dumps(R))
         return { x: mX, y: mY }
     }
 
-    // ── Grid config ─────────────────────────────────────────────────────
     readonly property real bw: 240
     readonly property real bh: bw * (mH / mW)
     readonly property real sp: 10
@@ -160,7 +123,6 @@ print(json.dumps(R))
         return r
     }
 
-    // ── Overlay ─────────────────────────────────────────────────────────
     Variants {
         model: Quickshell.screens
         PanelWindow {
@@ -184,12 +146,10 @@ print(json.dumps(R))
                     }
                 }
 
-                // Scrim
                 MouseArea {
                     anchors.fill: parent
                     onClicked: shell.shown = false
 
-                    // Grid panel
                     Rectangle {
                         anchors.centerIn: parent
                         width: grid.width + 28; height: grid.height + 28
@@ -197,7 +157,7 @@ print(json.dumps(R))
                         color: shell.colSurfaceAlt
                         border.width: 2; border.color: shell.colPrimary
 
-                        MouseArea { anchors.fill: parent } // block scrim
+                        MouseArea { anchors.fill: parent }
 
                         Item {
                             id: grid
@@ -205,7 +165,6 @@ print(json.dumps(R))
                             width: 5 * shell.bw + 4 * shell.sp
                             height: 2 * shell.bh + shell.sp
 
-                            // Workspace boxes
                             Repeater {
                                 model: 10
                                 Rectangle {
@@ -227,19 +186,17 @@ print(json.dumps(R))
                                     scale: hov ? 1.02 : 1.0
                                     Behavior on scale { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
 
-                                    // Workspace number
                                     Text {
                                         anchors.centerIn: parent; text: ws.wid
+                                        visible: ws.wcl.length === 0
                                         font.pixelSize: parent.height * 0.32
                                         font.weight: Font.Bold
                                         font.family: "{{FONT_FAMILY}}"
-                                        color: Qt.rgba(shell.colOnSurface.r, shell.colOnSurface.g, shell.colOnSurface.b,
-                                            ws.wcl.length === 0 ? 0.12 : 0.05)
+                                        color: Qt.rgba(shell.colOnSurface.r, shell.colOnSurface.g, shell.colOnSurface.b, 0.12)
                                     }
 
-                                    // Active dot
                                     Rectangle {
-                                        visible: ws.act
+                                        visible: ws.act && ws.wcl.length === 0
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.bottom: parent.bottom; anchors.bottomMargin: 5
                                         width: 6; height: 6; radius: 3; color: shell.colPrimary
@@ -254,7 +211,6 @@ print(json.dumps(R))
                                 }
                             }
 
-                            // Window previews
                             Item {
                                 anchors.fill: parent; z: 10
                                 Repeater {
@@ -280,7 +236,6 @@ print(json.dumps(R))
                                             border.width: 1; border.color: shell.colOutline
                                             clip: true
 
-                                            // App icon (GTK theme resolved, same as rofi)
                                             Image {
                                                 id: ico; anchors.centerIn: parent
                                                 property real sz: Math.min(parent.width*0.5, parent.height*0.5, 28)
@@ -291,10 +246,9 @@ print(json.dumps(R))
                                                 asynchronous: true; cache: true
                                             }
 
-                                            // Fallback letter
                                             Text {
                                                 anchors.centerIn: parent
-                                                visible: !ico.visible && parent.width > 20
+                                                visible: false
                                                 text: (c["class"]||"?").charAt(0).toUpperCase()
                                                 font.pixelSize: Math.min(parent.width,parent.height)*0.3
                                                 font.weight: Font.Medium
