@@ -8,8 +8,8 @@ window#waybar {
 }
 
 * {
-  font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", monospace;
-  font-size: 17px;
+  font-family: "{{FONT_FAMILY}}", monospace;
+  font-size: {{FONT_SIZE_LARGE}}px;
   font-weight: 400;
   color: @fg;
   margin: 0;

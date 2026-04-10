@@ -21,6 +21,12 @@
 
   --terminal-bg:    #0b0b12;
 
+  /* — Typography — */
+  /* @map FONT_FAMILY:       JetBrainsMono Nerd Font, , literal */
+  /* @map FONT_SIZE_SMALL:   10, , literal */
+  /* @map FONT_SIZE_MEDIUM:  11, , literal */
+  /* @map FONT_SIZE_LARGE:   17, , literal */
+  
   /* — Opacity literals — */
   /* @map OPACITY_WINDOW_ACTIVE:    0.96, , literal */
   /* @map OPACITY_WINDOW_INACTIVE:  0.92, , literal */
@@ -31,10 +37,12 @@
   /* @map OVERLAY_BG_HEX_ALPHA:     --ctp-crust, 0.92, hex_alpha */
   /* @map SURFACE_HEX:              --ctp-surface0, , hex */
   /* @map SURFACE_ALT_HEX:          --ctp-base, , hex */
+  /* @map SELECTION_BG_HEX:         --ctp-lavender, , hex */
 
   /* — Foreground / text — */
   /* @map FG_HEX:                   --ctp-text, , hex */
   /* @map FG_MUTED_HEX:             --ctp-subtext0, , hex */
+  /* @map SELECTION_FG_HEX:         --ctp-crust, , hex */
 
   /* — Accent / border / critical — */
   /* @map ACCENT_HEX:               --ctp-lavender, , hex */

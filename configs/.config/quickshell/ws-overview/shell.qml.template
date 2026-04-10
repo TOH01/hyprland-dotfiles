@@ -232,7 +232,7 @@ print(json.dumps(R))
                                         anchors.centerIn: parent; text: ws.wid
                                         font.pixelSize: parent.height * 0.32
                                         font.weight: Font.Bold
-                                        font.family: "JetBrains Mono"
+                                        font.family: "{{FONT_FAMILY}}"
                                         color: Qt.rgba(shell.colOnSurface.r, shell.colOnSurface.g, shell.colOnSurface.b,
                                             ws.wcl.length === 0 ? 0.12 : 0.05)
                                     }
@@ -298,7 +298,7 @@ print(json.dumps(R))
                                                 text: (c["class"]||"?").charAt(0).toUpperCase()
                                                 font.pixelSize: Math.min(parent.width,parent.height)*0.3
                                                 font.weight: Font.Medium
-                                                font.family: "JetBrains Mono"
+                                                font.family: "{{FONT_FAMILY}}"
                                                 color: shell.colSubtext
                                             }
                                         }

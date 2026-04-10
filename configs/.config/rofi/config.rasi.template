@@ -2,7 +2,7 @@ configuration {
     modi:                       "drun";
     show-icons:                 true; 
     drun-display-format:        "{name}";
-    font:                       "JetBrains Mono 11";
+    font:                       "{{FONT_FAMILY}} {{FONT_SIZE_MEDIUM}}";
 }
 
 @theme "/dev/null"
