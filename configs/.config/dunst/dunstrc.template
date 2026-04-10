@@ -23,22 +23,22 @@
     progress_bar_frame_width = 0
     progress_bar_corner_radius = 2
 
-    background = "{{DUNST_SURFACE_HEX}}"
-    foreground = "{{TEXT_HEX}}"
+    background = "{{OVERLAY_BG_HEX_ALPHA}}"
+    foreground = "{{FG_HEX}}"
     frame_color = "{{BORDER_HEX}}"
-    frame_width = 1
+    frame_width = 2
 
     timeout = 5
 
 [urgency_low]
-    background = "{{DUNST_SURFACE_HEX}}"
-    foreground = "{{TEXT_HEX}}"
+    background = "{{OVERLAY_BG_HEX_ALPHA}}"
+    foreground = "{{FG_HEX}}"
 
 [urgency_normal]
-    background = "{{DUNST_SURFACE_HEX}}"
-    foreground = "{{TEXT_HEX}}"
+    background = "{{OVERLAY_BG_HEX_ALPHA}}"
+    foreground = "{{FG_HEX}}"
 
 [urgency_critical]
-    background = "{{DUNST_CRITICAL_BG_HEX}}"
-    foreground = "{{DUNST_CRITICAL_FG_HEX}}"
-    frame_color = "{{DUNST_CRITICAL_FRAME_HEX}}"
+    background = "{{OVERLAY_BG_HEX_ALPHA}}"
+    foreground = "{{FG_HEX}}"
+    frame_color = "{{CRITICAL_HEX}}"

@@ -1,7 +1,7 @@
-@define-color barbg {{WAYBAR_SURFACE_RGBA}};
-@define-color fg {{TEXT_HEX}};
+@define-color barbg {{OVERLAY_BG_RGBA}};
+@define-color fg {{FG_HEX}};
 @define-color accent {{ACCENT_HEX}};
-@define-color border {{BORDER_SOFT_RGBA}};
+@define-color border {{ACCENT_SOFT_RGBA}};
 
 window#waybar {
   background: transparent;

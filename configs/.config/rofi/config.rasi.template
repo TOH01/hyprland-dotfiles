@@ -8,8 +8,8 @@ configuration {
 @theme "/dev/null"
 
 * {
-    bg:          {{TERMINAL_BG_ROFI}}; 
-    fg:          {{TEXT_HEX}};
+    bg:          {{TERMINAL_BG_HEX_ALPHA}}; 
+    fg:          {{FG_HEX}};
     accent:      {{ACCENT_HEX}};
 }
 
@@ -45,7 +45,7 @@ entry {
     text-color:                  @fg;
     cursor:                      text;
     placeholder:                 "Search Applications...";
-    placeholder-color:           {{SUBTEXT_HEX}}; /* Subtle gray for placeholder */
+    placeholder-color:           {{FG_MUTED_HEX}}; /* Subtle gray for placeholder */
     horizontal-align:            0.0;
 }
 
@@ -74,7 +74,7 @@ element {
 
 element selected.normal {
     background-color:            @accent;
-    text-color:                  {{SELECTED_FG_HEX}};
+    text-color:                  {{OVERLAY_BG_HEX}};
 }
 
 element-icon {

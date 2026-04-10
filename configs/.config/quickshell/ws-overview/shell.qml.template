@@ -19,16 +19,16 @@ ShellRoot {
 
     // ── Colors (replaced by theme system) ───────────────────────────────
     readonly property color colPrimary:           "{{ACCENT_HEX}}"
-    readonly property color colOnSurface:         "{{TEXT_HEX}}"
+    readonly property color colOnSurface:         "{{FG_HEX}}"
     readonly property color colSurfaceContainer:  "{{SURFACE_HEX}}"
     readonly property color colSurfaceHigh:       "{{COLOR0_HEX}}"
     readonly property color colSurfaceLow:        "{{SURFACE_ALT_HEX}}"
     readonly property color colOutline:           "{{COLOR8_HEX}}"
     readonly property color colOutlineVariant:    "{{COLOR0_HEX}}"
-    readonly property color colSubtext:           "{{SUBTEXT_HEX}}"
+    readonly property color colSubtext:           "{{FG_MUTED_HEX}}"
     readonly property color colBg:                "{{TERMINAL_BG_HEX}}"
     readonly property color colSurfaceAlt:        "{{SURFACE_ALT_HEX}}"
-    readonly property color colSelectedFg:        "{{SELECTED_FG_HEX}}"
+    readonly property color colSelectedFg:        "{{OVERLAY_BG_HEX}}"
 
     // ── IPC ─────────────────────────────────────────────────────────────
     IpcHandler {

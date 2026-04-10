@@ -1,16 +1,16 @@
-foreground              {{TEXT_HEX}}
+foreground              {{FG_HEX}}
 background              {{TERMINAL_BG_HEX}}
-cursor                  {{TEXT_HEX}}
+cursor                  {{FG_HEX}}
 cursor_text_color       {{TERMINAL_BG_HEX}}
 
 active_tab_foreground   {{TERMINAL_BG_HEX}}
 active_tab_background   {{ACCENT_HEX}}
-inactive_tab_foreground {{TEXT_HEX}}
-inactive_tab_background {{BG_HEX}}
+inactive_tab_foreground {{FG_HEX}}
+inactive_tab_background {{OVERLAY_BG_HEX}}
 
 active_border_color     {{BORDER_HEX}}
 inactive_border_color   {{SURFACE_HEX}}
-bell_border_color       {{ALERT_HEX}}
+bell_border_color       {{CRITICAL_HEX}}
 
 color0      {{COLOR0_HEX}}
 color1      {{COLOR1_HEX}}
