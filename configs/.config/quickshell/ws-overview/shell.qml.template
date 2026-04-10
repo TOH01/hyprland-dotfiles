@@ -21,13 +21,10 @@ ShellRoot {
     readonly property color colOnSurface:         "{{FG_HEX}}"
     readonly property color colSurfaceContainer:  "{{SURFACE_HEX}}"
     readonly property color colSurfaceHigh:       "{{COLOR0_HEX}}"
-    readonly property color colSurfaceLow:        "{{SURFACE_ALT_HEX}}"
     readonly property color colOutline:           "{{COLOR8_HEX}}"
     readonly property color colOutlineVariant:    "{{COLOR0_HEX}}"
     readonly property color colSubtext:           "{{FG_MUTED_HEX}}"
-    readonly property color colBg:                "{{TERMINAL_BG_HEX}}"
     readonly property color colSurfaceAlt:        "{{SURFACE_ALT_HEX}}"
-    readonly property color colSelectedFg:        "{{OVERLAY_BG_HEX}}"
 
     IpcHandler {
         target: "overview"
@@ -53,7 +50,33 @@ ShellRoot {
         return iconMap[cls] || iconMap[cls.toLowerCase()] || ""
     }
 
-    onShownChanged: { if (shown) refresh() }
+    readonly property var wlByAddr: {
+        var m = ({})
+        try {
+            var vals = (Hyprland.toplevels && Hyprland.toplevels.values) ? Hyprland.toplevels.values : []
+            for (var i = 0; i < vals.length; i++) {
+                var t = vals[i]
+                if (!t || !t.address) continue
+                var a = String(t.address)
+                m[a] = t.wayland
+                if (a.indexOf("0x") === 0) m[a.substring(2)] = t.wayland
+                else m["0x" + a] = t.wayland
+            }
+        } catch (e) {}
+        return m
+    }
+
+    function toplevelFor(addr) {
+        if (!addr) return null
+        return wlByAddr[addr] || wlByAddr[String(addr).toLowerCase()] || null
+    }
+
+    onShownChanged: {
+        if (shown) {
+            refresh()
+            if (typeof Hyprland.refreshToplevels === "function") Hyprland.refreshToplevels()
+        }
+    }
 
     function refresh() {
         pClients.running = true
@@ -87,6 +110,23 @@ ShellRoot {
         shell.shown = false
     }
 
+    function focusWin(addr) {
+        if (!addr) return
+        Hyprland.dispatch("focuswindow address:" + addr)
+        shell.shown = false
+    }
+
+    function closeWin(addr) {
+        if (!addr) return
+        Hyprland.dispatch("closewindow address:" + addr)
+    }
+
+    function moveWinToWs(addr, wsId) {
+        if (!addr || !wsId) return
+        Hyprland.dispatch("movetoworkspacesilent " + wsId + ",address:" + addr)
+        debounce.restart()
+    }
+
     readonly property real mW: monitorData.length > 0 ? monitorData[0].width / (monitorData[0].scale||1) : 1920
     readonly property real mH: monitorData.length > 0 ? monitorData[0].height / (monitorData[0].scale||1) : 1080
     readonly property real mX: monitorData.length > 0 ? monitorData[0].x : 0
@@ -105,6 +145,7 @@ ShellRoot {
 
     function wCol(id) { return (id-1) % 5 }
     function wRow(id) { return Math.floor((id-1) / 5) }
+
     function wClients(id) {
         var r = []
         for (var i = 0; i < clientData.length; i++) {
@@ -174,17 +215,33 @@ ShellRoot {
                                     property bool act: wid === shell.activeWsId
                                     property var wcl: shell.wClients(wid)
                                     property bool hov: false
+                                    property bool dragHover: false
 
                                     x: shell.wCol(wid) * (shell.bw + shell.sp)
                                     y: shell.wRow(wid) * (shell.bh + shell.sp)
                                     width: shell.bw; height: shell.bh; radius: 8
 
-                                    color: act ? Qt.rgba(shell.colPrimary.r, shell.colPrimary.g, shell.colPrimary.b, 0.15)
-                                               : shell.colSurfaceHigh
-                                    border.width: act ? 2 : 1
-                                    border.color: act ? shell.colPrimary : shell.colOutlineVariant
+                                    color: dragHover
+                                               ? Qt.rgba(shell.colPrimary.r, shell.colPrimary.g, shell.colPrimary.b, 0.22)
+                                               : (act ? Qt.rgba(shell.colPrimary.r, shell.colPrimary.g, shell.colPrimary.b, 0.15)
+                                                      : shell.colSurfaceHigh)
+                                    border.width: (act || dragHover) ? 2 : 1
+                                    border.color: (act || dragHover) ? shell.colPrimary : shell.colOutlineVariant
                                     scale: hov ? 1.02 : 1.0
                                     Behavior on scale { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
+
+                                    DropArea {
+                                        anchors.fill: parent
+                                        onEntered: ws.dragHover = true
+                                        onExited:  ws.dragHover = false
+                                        onDropped: drop => {
+                                            ws.dragHover = false
+                                            var src = drop.source
+                                            if (src && src.winAddress)
+                                                shell.moveWinToWs(src.winAddress, ws.wid)
+                                            drop.accept(Qt.MoveAction)
+                                        }
+                                    }
 
                                     Text {
                                         anchors.centerIn: parent; text: ws.wid
@@ -205,7 +262,8 @@ ShellRoot {
                                     MouseArea {
                                         anchors.fill: parent; hoverEnabled: true
                                         cursorShape: Qt.PointingHandCursor
-                                        onEntered: ws.hov = true; onExited: ws.hov = false
+                                        onEntered: ws.hov = true
+                                        onExited: ws.hov = false
                                         onClicked: shell.go(ws.wid)
                                     }
                                 }
@@ -216,6 +274,7 @@ ShellRoot {
                                 Repeater {
                                     model: ScriptModel { values: shell.visWins }
                                     Item {
+                                        id: winItem
                                         required property var modelData
                                         property var c: modelData
                                         property var mo: shell.monOff(c.monitor)
@@ -224,36 +283,79 @@ ShellRoot {
                                         property real ox: shell.wCol(c.workspace.id) * (shell.bw + shell.sp)
                                         property real oy: shell.wRow(c.workspace.id) * (shell.bh + shell.sp)
 
+                                        property string winAddress: c.address || ""
+                                        property real homeX: 0
+                                        property real homeY: 0
+
                                         x: ox + Math.max(0, Math.min((c.at[0]-mo.x)*sx, shell.bw-width))
                                         y: oy + Math.max(0, Math.min((c.at[1]-mo.y)*sy, shell.bh-height))
                                         width:  Math.max(14, Math.min(c.size[0]*sx, shell.bw))
                                         height: Math.max(10, Math.min(c.size[1]*sy, shell.bh))
 
+                                        Drag.active: winMA.drag.active
+                                        Drag.source: winItem
+
                                         Rectangle {
+                                            id: thumb
                                             anchors.fill: parent; anchors.margins: 1
                                             radius: 4
                                             color: shell.colSurfaceContainer
-                                            border.width: 1; border.color: shell.colOutline
+                                            border.width: (winMA.drag.active || winMA.containsMouse) ? 2 : 1
+                                            border.color: (winMA.drag.active || winMA.containsMouse) ? shell.colPrimary : shell.colOutline
+                                            opacity: winMA.drag.active ? 0.75 : 1.0
                                             clip: true
 
-                                            Image {
-                                                id: ico; anchors.centerIn: parent
-                                                property real sz: Math.min(parent.width*0.5, parent.height*0.5, 28)
-                                                width: sz; height: sz
-                                                source: shell.iconFor(c["class"])
-                                                sourceSize: Qt.size(Math.max(1,Math.round(sz)), Math.max(1,Math.round(sz)))
-                                                visible: source !== "" && status === Image.Ready && parent.width > 20
-                                                asynchronous: true; cache: true
+                                            ScreencopyView {
+                                                id: scv
+                                                anchors.fill: parent
+                                                anchors.margins: 1
+                                                live: shell.shown
+                                                paintCursor: false
+                                                captureSource: shell.toplevelFor(winItem.c.address)
+                                                visible: hasContent
+                                                opacity: 0.45
                                             }
 
-                                            Text {
+                                            Image {
+                                                id: ico
                                                 anchors.centerIn: parent
-                                                visible: false
-                                                text: (c["class"]||"?").charAt(0).toUpperCase()
-                                                font.pixelSize: Math.min(parent.width,parent.height)*0.3
-                                                font.weight: Font.Medium
-                                                font.family: "{{FONT_FAMILY}}"
-                                                color: shell.colSubtext
+                                                property real sz: Math.min(parent.width*0.38, parent.height*0.38, 40)
+                                                width: sz; height: sz
+                                                source: shell.iconFor(winItem.c["class"])
+                                                sourceSize: Qt.size(Math.max(1,Math.round(sz)),
+                                                                    Math.max(1,Math.round(sz)))
+                                                visible: source !== "" && status === Image.Ready
+                                                asynchronous: true; cache: true
+                                            }
+                                        }
+
+                                        MouseArea {
+                                            id: winMA
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            cursorShape: Qt.PointingHandCursor
+                                            drag.target: winItem
+                                            drag.threshold: 6
+                                            preventStealing: true
+                                            acceptedButtons: Qt.LeftButton | Qt.MiddleButton
+                                            onPressed: mouse => {
+                                                winItem.homeX = winItem.x
+                                                winItem.homeY = winItem.y
+                                                winItem.Drag.hotSpot.x = mouse.x
+                                                winItem.Drag.hotSpot.y = mouse.y
+                                                winItem.z = 100
+                                            }
+                                            onReleased: {
+                                                winItem.Drag.drop()
+                                                winItem.z = 0
+                                                winItem.x = winItem.homeX
+                                                winItem.y = winItem.homeY
+                                            }
+                                            onClicked: mouse => {
+                                                if (mouse.button === Qt.MiddleButton)
+                                                    shell.closeWin(winItem.c.address)
+                                                else
+                                                    shell.focusWin(winItem.c.address)
                                             }
                                         }
                                     }
