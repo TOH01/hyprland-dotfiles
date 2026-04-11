@@ -1,12 +1,11 @@
-@define-color barbg {{OVERLAY_BG_RGBA}};
+@define-color barbg {{BAR_BG_RGBA}};
 @define-color fg {{FG_HEX}};
+@define-color fg-muted {{FG_MUTED_HEX}};
 @define-color accent {{ACCENT_HEX}};
-@define-color border {{ACCENT_SOFT_RGBA}};
 
 window#waybar {
-  background: transparent;
+  background: @barbg;
 }
-
 * {
   font-family: "{{FONT_FAMILY}}", monospace;
   font-size: {{FONT_SIZE_LARGE}}px;
@@ -20,7 +19,6 @@ window#waybar {
   text-shadow: none;
   background: transparent;
 }
-
 button {
   margin: 0;
   padding: 0;
@@ -29,41 +27,35 @@ button {
   box-shadow: none;
   background: transparent;
 }
-
 #clock,
 #custom-sysinfo,
 #custom-weather,
 #custom-mode_selector,
 #custom-reboot,
 #custom-power {
-  padding: 0 9px;
+  padding: 0 10px;
   margin-top: 3px;
-  background: @barbg;
-  border: 2px solid @border;
-  border-radius: 12px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
-
 #custom-sysinfo {
-  margin-left: 6px;
+  margin-left: 8px;
+  color: @fg-muted;
 }
-
-#custom-weather,
-#custom-mode_selector,
-#custom-reboot {
-  margin-right: 2px;
+#custom-weather {
+  color: @fg-muted;
 }
-
 #custom-power {
-  margin-right: 6px;
+  margin-right: 8px;
 }
-
+#custom-mode_selector,
 #custom-reboot,
 #custom-power {
   min-width: 1.2em;
 }
-
 #custom-mode_selector:hover,
 #custom-reboot:hover,
 #custom-power:hover {
-  border-color: @accent;
+  color: @fg;
+  border-bottom: 2px solid @accent;
 }

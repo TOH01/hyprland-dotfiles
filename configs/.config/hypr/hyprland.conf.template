@@ -331,3 +331,24 @@ windowrule {
 misc {
     disable_hyprland_guiutils_check = true
 }
+
+layerrule {
+  name = waybar_blur
+  blur = on
+  ignore_alpha = 0.3
+  match:namespace = waybar
+}
+
+layerrule {
+  name = rofi_blur
+  blur = on
+  ignore_alpha = 0.3
+  match:namespace = rofi
+}
+
+layerrule {
+  name = dunst_blur
+  blur = on
+  ignore_alpha = 0.3
+  match:namespace = notifications
+}
