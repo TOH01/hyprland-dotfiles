@@ -1,2 +1,2 @@
-preload = ~/Bilder/wallpapers/sky_dark.jpg
-wallpaper = ,~/Bilder/wallpapers/sky_dark.jpg
+preload = {{$WALLPAPER}}
+wallpaper = ,{{$WALLPAPER}}

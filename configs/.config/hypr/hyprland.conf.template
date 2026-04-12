@@ -352,3 +352,10 @@ layerrule {
   ignore_alpha = 0.3
   match:namespace = notifications
 }
+
+layerrule {
+  name = quickshell_overview_blur
+  blur = on
+  ignore_alpha = 0.3
+  match:namespace = quickshell:ws-overview
+}
