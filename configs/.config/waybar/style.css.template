@@ -53,6 +53,15 @@ button {
 #custom-power {
   min-width: 1.2em;
 }
+
+#custom-power {
+  margin-right: 0;
+  padding-right: 6px;
+}
+#custom-reboot {
+  padding-right: 4px;
+}
+
 #custom-mode_selector:hover,
 #custom-reboot:hover,
 #custom-power:hover {
