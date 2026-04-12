@@ -51,7 +51,7 @@ for file_path in desktop_files:
         if os.path.exists(icon_name):
             icon_path = icon_name
     elif theme:
-        info = theme.lookup_icon(icon_name, 48, 0)
+        info = theme.lookup_icon(icon_name, 128, 0)
         if info:
             icon_path = info.get_filename()
 

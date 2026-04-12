@@ -350,7 +350,7 @@ ShellRoot {
                                             color: shell.colSurfaceContainer
                                             border.width: 1
                                             border.color: shell.colOutline
-                                            opacity: winMA.drag.active ? 0.75 : 0.9
+                                            opacity: winMA.drag.active ? 1.0 : 1.0
                                             clip: true
 
                                             ScreencopyView {
@@ -361,7 +361,7 @@ ShellRoot {
                                                 paintCursor: false
                                                 captureSource: shell.toplevelFor(winItem.c.address)
                                                 visible: hasContent
-                                                opacity: winMA.containsMouse ? 1.0 : 0.8
+                                                opacity: winMA.containsMouse ? 0.96 : 0.88
                                             }
 
                                             Image {
@@ -370,8 +370,7 @@ ShellRoot {
                                                 property real sz: Math.min(parent.width*0.38, parent.height*0.38, 40)
                                                 width: sz; height: sz
                                                 source: shell.iconFor(winItem.c["class"])
-                                                sourceSize: Qt.size(Math.max(1,Math.round(sz)),
-                                                                    Math.max(1,Math.round(sz)))
+                                                sourceSize: Qt.size(128, 128)
                                                 visible: source !== "" && status === Image.Ready
                                                 asynchronous: true; cache: true
                                             }
