@@ -350,7 +350,7 @@ ShellRoot {
                                             color: shell.colSurfaceContainer
                                             border.width: 1
                                             border.color: shell.colOutline
-                                            opacity: winMA.drag.active ? 0.75 : 1.0
+                                            opacity: winMA.drag.active ? 0.75 : 0.9
                                             clip: true
 
                                             ScreencopyView {
