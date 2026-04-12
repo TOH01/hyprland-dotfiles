@@ -281,16 +281,6 @@ ShellRoot {
                                         }
                                     }
 
-                                    Rectangle {
-                                        anchors.fill: parent
-                                        radius: ws.radius
-                                        color: "transparent"
-                                        border.width: 3
-                                        border.color: shell.colPrimary
-                                        visible: ws.act
-                                        z: 999
-                                    }
-
                                     Text {
                                         anchors.centerIn: parent; text: ws.wid
                                         visible: ws.wcl.length === 0
@@ -405,6 +395,24 @@ ShellRoot {
                                                     shell.focusWin(winItem.c.address)
                                             }
                                         }
+                                    }
+                                }
+                            }
+
+                            Item {
+                                anchors.fill: parent; z: 20
+                                Repeater {
+                                    model: shell.hasBottomRow ? 10 : 5
+                                    Rectangle {
+                                        required property int index
+                                        property int wid: index + 1
+                                        x: shell.wCol(wid) * (shell.bw + shell.sp)
+                                        y: shell.wRow(wid) * (shell.bh + shell.sp)
+                                        width: shell.bw; height: shell.bh; radius: 8
+                                        color: "transparent"
+                                        border.width: 2
+                                        border.color: shell.colPrimary
+                                        visible: wid === shell.activeWsId
                                     }
                                 }
                             }
