@@ -7,7 +7,7 @@
 button {
   font-family: "{{FONT_FAMILY}}", monospace;
   font-size: {{FONT_SIZE_LARGE}}px;
-  font-weight: 400;
+  font-weight: 500;
   color: @fg;
   margin: 0;
   padding: 0;
@@ -33,12 +33,6 @@ window#waybar {
   margin-top: 3px;
   border-bottom: 2px solid transparent;
   transition: border-color 0.15s ease, color 0.15s ease;
-}
-
-#custom-sysinfo,
-#custom-weather,
-#custom-ai_model {
-  color: @fg-muted;
 }
 
 #custom-sysinfo {
