@@ -3,10 +3,8 @@
 @define-color fg-muted {{FG_MUTED_HEX}};
 @define-color accent {{ACCENT_HEX}};
 
-window#waybar {
-  background: @barbg;
-}
-* {
+*,
+button {
   font-family: "{{FONT_FAMILY}}", monospace;
   font-size: {{FONT_SIZE_LARGE}}px;
   font-weight: 400;
@@ -19,18 +17,16 @@ window#waybar {
   text-shadow: none;
   background: transparent;
 }
-button {
-  margin: 0;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  background: transparent;
+
+window#waybar {
+  background: @barbg;
 }
+
 #clock,
 #custom-sysinfo,
 #custom-weather,
 #custom-mode_selector,
+#custom-ai_model,
 #custom-reboot,
 #custom-power {
   padding: 0 10px;
@@ -38,49 +34,35 @@ button {
   border-bottom: 2px solid transparent;
   transition: border-color 0.15s ease, color 0.15s ease;
 }
+
+#custom-sysinfo,
+#custom-weather,
+#custom-ai_model {
+  color: @fg-muted;
+}
+
 #custom-sysinfo {
   margin-left: 8px;
-  color: @fg-muted;
 }
-#custom-weather {
-  color: @fg-muted;
-}
-#custom-power {
-  margin-right: 8px;
-}
+
 #custom-mode_selector,
+#custom-ai_model,
 #custom-reboot,
 #custom-power {
   min-width: 1.2em;
 }
 
-#custom-power {
-  margin-right: 0;
-  padding-right: 6px;
-}
-#custom-reboot {
-  padding-right: 4px;
-}
+#custom-mode_selector { padding-right: 2px; }
+#custom-ai_model     { padding-left: 2px; }
+#custom-reboot       { padding-right: 4px; }
+#custom-power        { padding-right: 6px; margin-right: 8px; }
 
 #custom-mode_selector:hover,
+#custom-ai_model:hover,
 #custom-reboot:hover,
 #custom-power:hover {
   color: @fg;
-  border-bottom: 2px solid @accent;
+  border-bottom-color: @accent;
 }
 
-#custom-mode_selector {
-  padding-right: 2px;
-}
-#custom-ai_model {
-  padding: 0 10px 0 2px;
-  margin-top: 3px;
-  border-bottom: 2px solid transparent;
-  transition: border-color 0.15s ease, color 0.15s ease;
-  min-width: 1.2em;
-  color: @fg-muted;
-}
-#custom-ai_model:hover {
-  color: @fg;
-  border-bottom: 2px solid @accent;
-}
+#custom-power        { padding-right: 6px; margin-right: 0; }

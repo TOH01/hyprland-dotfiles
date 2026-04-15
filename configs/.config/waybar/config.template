@@ -14,7 +14,8 @@
 
     "custom/weather": {
         "exec": "LOCATION={{$LOCATION}} ~/.local/bin/waybar/weather.py",
-        "interval": 600
+        "interval": 300,
+        "tooltip": false,
     },
 
     "custom/reboot": {
