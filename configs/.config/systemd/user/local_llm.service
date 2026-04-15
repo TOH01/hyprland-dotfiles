@@ -1,0 +1,13 @@
+[Unit]
+Description=Generated systemd service
+After=network.target
+
+[Service]
+EnvironmentFile=%h/.cache/llm_env
+ExecStart=/bin/sh -c "${LLM_MODEL_CMD}"
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

@@ -340,7 +340,7 @@ ShellRoot {
                                             color: shell.colSurfaceContainer
                                             border.width: 1
                                             border.color: shell.colOutline
-                                            opacity: winMA.drag.active ? 1.0 : 1.0
+                                            opacity: winMA.drag.active ? 0.88 : 1.0
                                             clip: true
 
                                             ScreencopyView {
@@ -351,7 +351,7 @@ ShellRoot {
                                                 paintCursor: false
                                                 captureSource: shell.toplevelFor(winItem.c.address)
                                                 visible: hasContent
-                                                opacity: winMA.containsMouse ? 0.96 : 0.88
+                                                opacity: winMA.containsMouse ? 0.96 : 0.8
                                             }
 
                                             Image {

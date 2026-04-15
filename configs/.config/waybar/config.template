@@ -5,7 +5,7 @@
 
     "modules-left": ["custom/sysinfo"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/weather", "custom/mode_selector","custom/reboot", "custom/power"],
+    "modules-right": ["custom/weather", "custom/mode_selector", "custom/ai_model", "custom/reboot", "custom/power"],
 
     "clock": {
         "interval": 1,
@@ -43,5 +43,14 @@
         "signal": 8,
         "interval": "once",
         "tooltip": false
-   }
+   },
+
+   "custom/ai_model": {
+        "exec": "~/.local/bin/waybar/local_llm.py --apply",
+        "return-type": "json",
+        "on-click": "~/.local/bin/waybar/local_llm.py",
+        "signal": 9,
+        "interval": "once",
+        "tooltip": false
+    }
 }

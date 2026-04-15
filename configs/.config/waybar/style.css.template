@@ -68,3 +68,19 @@ button {
   color: @fg;
   border-bottom: 2px solid @accent;
 }
+
+#custom-mode_selector {
+  padding-right: 2px;
+}
+#custom-ai_model {
+  padding: 0 10px 0 2px;
+  margin-top: 3px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.15s ease, color 0.15s ease;
+  min-width: 1.2em;
+  color: @fg-muted;
+}
+#custom-ai_model:hover {
+  color: @fg;
+  border-bottom: 2px solid @accent;
+}

@@ -49,7 +49,10 @@ def write_template_file(src: Path, dest: Path) -> None:
     result = re.sub(r'\{\{(\w+)\}\}',
                     lambda m: theme.get(m.group(1), m.group(0)), text)
     result = re.sub(r'\{\{\$(\w+)\}\}',
-                    lambda m: env.get(m.group(1), m.group(0)), result)
+        lambda m: (
+            v if isinstance(v := env.get(m.group(1), m.group(0)), str)
+            else json.dumps(v)
+        ), result)
     dest.with_suffix("").write_text(result)
 
 
@@ -71,7 +74,7 @@ def copy_structure(base_src: Path, base_dest: Path,
                 shutil.copy2(src_file, dest_file)
 
 
-def get_relative_structure(dir : str) -> tuple[list[Path], list[Path]]:
+def get_relative_structure(dir : Path) -> tuple[list[Path], list[Path]]:
     dirs, files = get_dir_contents([dir])
 
     rel_dirs = []
