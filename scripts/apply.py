@@ -9,8 +9,9 @@ if __name__ == "__main__":
     write_config()
     make_scripts_executable()
 
-    # restart waybar properly
-    subprocess.run(["pkill", "-SIGUSR2", "waybar"])
+    # restart quickshell
+    subprocess.run(["pkill", "quickshell"])
+    subprocess.Popen(["quickshell"], start_new_session=True)
 
     # restart dunst
     subprocess.run(["dunstctl", "reload"])
