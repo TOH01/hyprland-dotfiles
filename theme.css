@@ -75,6 +75,15 @@
   /* @map COLOR14_HEX:  --ctp-teal,     , hex */
   /* @map COLOR15_HEX:  --ctp-subtext0, , hex */
 
+  /* — Quickshell bar / dock / popovers — */
+  /* @map MANTLE_HEX:              --ctp-mantle,   , hex */
+  /* @map CRUST_HEX:               --ctp-crust,    , hex */
+  /* @map BASE_HEX:                --ctp-base,     , hex */
+  /* @map SURFACE1_HEX:            --ctp-surface1, , hex */
+  /* @map TEXT_HEX:                 --ctp-text,     , hex */
+  /* @map SUBTEXT0_HEX:            --ctp-subtext0, , hex */
+  /* @map LAVENDER_HEX:            --ctp-lavender, , hex */
+
   /* — Misc — */
   /* @map BAR_BG_RGBA: --ctp-crust, 0.6, rgba */
 }

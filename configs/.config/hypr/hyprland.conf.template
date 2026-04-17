@@ -37,13 +37,12 @@ $qs = quickshell  # Added quickshell alias
 ### AUTOSTART ###
 #################
 
-exec-once = waybar
+exec-once = quickshell
 exec-once = dunst
 exec-once = hyprpaper
 exec-once = hyprctl setcursor Bibata-Modern-Ice 24
 exec-once = CC_USER={{$CC_USER}} CC_PW={{$CC_PW}} CC_AFK={{$CC_AFK}} CC_WORK={{$CC_WORK}} CC_GAMING={{$CC_GAMING}} ~/.local/bin/waybar/mode_toggle.py --apply
-exec-once = clipse -listen 
-exec-once = qs -c ws-overview
+exec-once = clipse -listen
 
 #############################
 ### ENVIRONMENT VARIABLES ###
@@ -245,7 +244,8 @@ bind = $mainMod, Q, exec, $terminal
 bind = $mainMod, C, killactive,
 bind = $mainMod, E, exec, $fileManager
 bind = $mainMod, V, togglefloating,
-bind = $mainMod, R, exec, rofi -show drun
+bind = $mainMod, R, exec, qs ipc -c shell call shell togglePopup apps
+bind = $mainMod SHIFT, R, exec, rofi -show drun
 bind = $mainMod, J, togglesplit, # dwindle
 bind = $mainMod, B, exec, firefox
 
@@ -282,7 +282,7 @@ bind = $mainMod SHIFT, 0, movetoworkspace, 10
 bind = $mainMod SHIFT, V, exec, kitty --class clipse -e clipse
 bind = $mainMod, S, exec, bash -c 'grim -g "$(slurp)" - | swappy -f -'
 bind = $mainMod SHIFT, S, exec, bash -c 'notify-send -t 1500 "Screenshot" "Area capture starts in 3 seconds"; sleep 3; grim -g "$(slurp)" - | swappy -f -'
-bind = Super, TAB, exec, qs ipc -c ws-overview call overview toggle
+bind = Super, TAB, exec, qs ipc call shell togglePopup workspaces
 
 # Move/resize windows with mainMod + LMB/RMB and dragging
 bindm = $mainMod, mouse:272, movewindow
@@ -330,32 +330,4 @@ windowrule {
 
 misc {
     disable_hyprland_guiutils_check = true
-}
-
-layerrule {
-  name = waybar_blur
-  blur = on
-  ignore_alpha = 0.3
-  match:namespace = waybar
-}
-
-layerrule {
-  name = rofi_blur
-  blur = on
-  ignore_alpha = 0.3
-  match:namespace = rofi
-}
-
-layerrule {
-  name = dunst_blur
-  blur = on
-  ignore_alpha = 0.3
-  match:namespace = notifications
-}
-
-layerrule {
-  name = quickshell_overview_blur
-  blur = on
-  ignore_alpha = 0.3
-  match:namespace = quickshell:ws-overview
 }

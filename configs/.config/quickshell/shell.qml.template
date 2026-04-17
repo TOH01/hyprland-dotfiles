@@ -1,0 +1,159 @@
+//@ pragma UseQApplication
+//@ pragma Env QT_QUICK_CONTROLS_STYLE=Basic
+
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Io
+import Quickshell.Hyprland
+import Quickshell.Wayland
+
+ShellRoot {
+    id: shell
+
+    // ── Theme colors (injected from theme.json) ──
+    readonly property color colCrust:    "{{CRUST_HEX}}"
+    readonly property color colMantle:   "{{MANTLE_HEX}}"
+    readonly property color colBase:     "{{BASE_HEX}}"
+    readonly property color colSurface0: "{{SURFACE_HEX}}"
+    readonly property color colSurface1: "{{SURFACE1_HEX}}"
+    readonly property color colText:     "{{TEXT_HEX}}"
+    readonly property color colSubtext0: "{{SUBTEXT0_HEX}}"
+    readonly property color colLavender: "{{LAVENDER_HEX}}"
+
+    // ── Popup state ──
+    property string activePopup: ""
+
+    function togglePopup(name: string): void {
+        activePopup = (activePopup === name) ? "" : name
+    }
+
+    function closePopups(): void {
+        activePopup = ""
+    }
+
+    // ── IPC (so Hyprland keybinds can drive the shell) ──
+    IpcHandler {
+        target: "shell"
+        function togglePopup(name: string): void { shell.togglePopup(name) }
+        function close(): void { shell.closePopups() }
+    }
+
+    // ── Top bar ──
+    PanelWindow {
+        id: topBar
+
+        WlrLayershell.layer: WlrLayer.Top
+        WlrLayershell.namespace: "quickshell:bar"
+        anchors { top: true; left: true; right: true }
+        height: 28
+        exclusiveZone: 28
+        color: "transparent"
+
+        Rectangle {
+            anchors.fill: parent
+            color: Qt.rgba(shell.colCrust.r, shell.colCrust.g, shell.colCrust.b, 0.92)
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 12
+                anchors.rightMargin: 12
+                spacing: 0
+
+                // ── Left cluster ──
+                LeftCluster {
+                    Layout.alignment: Qt.AlignVCenter
+                }
+
+                Item { Layout.fillWidth: true }
+
+                // ── Center clock ──
+                CenterClock {
+                    Layout.alignment: Qt.AlignVCenter
+                }
+
+                Item { Layout.fillWidth: true }
+
+                // ── Right cluster ──
+                RightCluster {
+                    Layout.alignment: Qt.AlignVCenter
+                }
+            }
+        }
+    }
+
+    // ── Bottom dock ──
+    BottomDock {}
+
+    // ── Popup overlay (single layer surface, hosts all popovers) ──
+    PanelWindow {
+        id: popupOverlay
+
+        visible: shell.activePopup !== ""
+        WlrLayershell.layer: WlrLayer.Overlay
+        WlrLayershell.namespace: "quickshell:popups"
+        WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+        anchors { top: true; bottom: true; left: true; right: true }
+        exclusionMode: ExclusionMode.Ignore
+        color: "transparent"
+
+        Item {
+            anchors.fill: parent
+            focus: shell.activePopup !== ""
+
+            Keys.onPressed: event => {
+                if (event.key === Qt.Key_Escape) {
+                    shell.closePopups()
+                    event.accepted = true
+                }
+            }
+
+            // Click outside to dismiss
+            MouseArea {
+                anchors.fill: parent
+                onClicked: shell.closePopups()
+            }
+
+            // ── Popups (each positions itself) ──
+            WorkspaceOverview {
+                visible: shell.activePopup === "workspaces"
+            }
+
+            AppDrawer {
+                visible: shell.activePopup === "apps"
+            }
+
+            CalendarPopup {
+                visible: shell.activePopup === "calendar"
+            }
+
+            SysinfoPopup {
+                visible: shell.activePopup === "sysinfo"
+            }
+
+            WeatherPopup {
+                visible: shell.activePopup === "weather"
+            }
+
+            ModePopup {
+                visible: shell.activePopup === "mode"
+            }
+
+            AiModelPopup {
+                visible: shell.activePopup === "aimodel"
+            }
+
+            VolumePopup {
+                visible: shell.activePopup === "volume"
+            }
+
+            NetworkPopup {
+                visible: shell.activePopup === "network"
+            }
+
+            PowerPopup {
+                visible: shell.activePopup === "power"
+            }
+        }
+    }
+}
