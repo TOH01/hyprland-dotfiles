@@ -39,7 +39,6 @@ PanelWindow {
             // Left section
             RowLayout {
                 spacing: Theme.s2
-                Layout.alignment: Qt.AlignLeft
 
                 BarButton {
                     text: "Applications"
@@ -52,13 +51,11 @@ PanelWindow {
                 }
             }
 
-
             Item { Layout.fillWidth: true }
 
             // Center section
             RowLayout {
                 spacing: Theme.s2
-                Layout.alignment: Qt.AlignHCenter
             }
 
             Item { Layout.fillWidth: true }
@@ -66,7 +63,6 @@ PanelWindow {
             // Right section
             RowLayout {
                 spacing: Theme.s2
-                Layout.alignment: Qt.AlignRight
             }
         }
     }

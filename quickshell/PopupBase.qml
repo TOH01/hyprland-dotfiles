@@ -24,6 +24,7 @@ PanelWindow {
     Shortcut {
         sequence: "Escape"
         enabled: root.visible
+        context: Qt.ApplicationShortcut
         onActivated: PopupManager.closeCurrent()
     }
 

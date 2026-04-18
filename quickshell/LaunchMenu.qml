@@ -4,8 +4,6 @@ import QtQuick
 import "Singletons"
 
 PopupBase {
-    id: root
-    
     anchors.top: true
 
     implicitWidth: 600
