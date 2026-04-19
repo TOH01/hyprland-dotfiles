@@ -4,5 +4,6 @@ import "."
 
 ShellRoot {
     Bar {}
-    QuickLaunchMenu {}
+    LaunchMenu { id: launchMenu }
+    QuickLaunchMenu { launchMenu: launchMenu }
 }

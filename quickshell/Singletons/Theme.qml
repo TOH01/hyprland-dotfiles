@@ -19,6 +19,7 @@ QtObject {
 
     readonly property int popupGap: s2
     readonly property int belowBar: popupGap
+    readonly property int aboveDock: popupGap
 
     readonly property int   widgetRadius: 12
 

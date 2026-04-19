@@ -27,7 +27,6 @@ PanelWindow {
         color: Theme.bg
         radius: Theme.widgetRadius
 
-        LaunchMenu { id: launchMenu }
         WorkspaceOverview { id: workspaceOverview }
 
         RowLayout {
@@ -39,11 +38,6 @@ PanelWindow {
             // Left section
             RowLayout {
                 spacing: Theme.s2
-
-                BarButton {
-                    text: "Applications"
-                    onClicked: PopupManager.open(launchMenu)
-                }
 
                 BarButton {
                     text: "Workspaces"
