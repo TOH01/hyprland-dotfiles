@@ -3,21 +3,14 @@ pragma Singleton
 import QtQuick
 
 QtObject {
-    id: manager
-
     property var current: null
-    property var anchorWindow: null
 
-    function open(popup) {
+    function open(popup, anchorItem) {
         if (!popup) return
-
-        if (current === popup) {
-            closeCurrent()
-            return
-        }
-
+        if (current === popup) { closeCurrent(); return }
         if (current) current.close()
         current = popup
+        popup.anchorItem = anchorItem ?? null
         popup.open()
     }
 

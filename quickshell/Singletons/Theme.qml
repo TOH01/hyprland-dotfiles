@@ -19,7 +19,7 @@ QtObject {
 
     readonly property int popupGap: s2
     readonly property int belowBar: popupGap
-    readonly property int aboveDock: popupGap
+    readonly property int aboveDock: 66
 
     readonly property int   widgetRadius: 12
 
@@ -27,4 +27,8 @@ QtObject {
 
     readonly property string fontFamily: "JetBrainsMono Nerd Font"
     readonly property int    fontSize:   13
+
+
+    // dock
+    
 }

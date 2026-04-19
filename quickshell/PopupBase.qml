@@ -7,9 +7,31 @@ import "Singletons"
 PanelWindow {
     id: root
     visible: false
+
+    required property var bar
+    property Item anchorItem: null
     property bool anchorBottom: false
+    property int edgeMargin: Theme.s2
+
+    anchors.top: !anchorBottom
+    anchors.bottom: anchorBottom
+    anchors.left: true
+
+    implicitWidth: 400
+    implicitHeight: 200
+
     margins.top: anchorBottom ? 0 : Theme.belowBar
     margins.bottom: anchorBottom ? Theme.aboveDock : 0
+    margins.left: {
+        const screenW = root.screen?.width ?? 1920
+        if (!anchorItem || !bar)
+            return Math.max(edgeMargin, (screenW - implicitWidth) / 2)
+        const localX = anchorItem.mapToItem(null, 0, 0).x
+        const screenX = localX + bar.margins.left
+        const centered = screenX + anchorItem.width / 2 - implicitWidth / 2
+        return Math.max(edgeMargin,
+                        Math.min(screenW - implicitWidth - edgeMargin, centered))
+    }
     color: "transparent"
     exclusiveZone: 0
 
@@ -17,7 +39,6 @@ PanelWindow {
     property bool acceptsInput: false
     property int openDuration: 280
     property int closeDuration: 140
-
     focusable: acceptsInput && visible
 
     Item {
@@ -25,7 +46,6 @@ PanelWindow {
         anchors.fill: parent
         transformOrigin: root.anchorBottom ? Item.Bottom : Item.Top
         state: "hidden"
-
         states: [
             State { name: "visible"
                 PropertyChanges { target: contentItem; opacity: 1.0; scale: 1.0 } },
@@ -49,9 +69,7 @@ PanelWindow {
     }
 
     HyprlandFocusGrab {
-        windows: PopupManager.anchorWindow
-            ? [root, PopupManager.anchorWindow]
-            : [root]
+        windows: root.bar ? [root, ...BarRegistry.bars] : [root]
         active: contentItem.state === "visible"
         onCleared: PopupManager.closeCurrent()
     }
@@ -68,7 +86,6 @@ PanelWindow {
         visible = true
         contentItem.state = "visible"
     }
-
     function close() {
         if (contentItem.state === "hidden") return
         contentItem.state = "hidden"
