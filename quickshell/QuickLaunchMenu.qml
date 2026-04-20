@@ -89,31 +89,10 @@ PanelWindow {
             }
 
             // launch menu shortcut
-            Rectangle {
-                Layout.preferredWidth: 32
-                Layout.preferredHeight: 32
-                radius: 6
-                color: btnHover.hovered ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
-                Behavior on color { ColorAnimation { duration: 120 } }
-
-                // dot matrix
-                Text {
-                    id: label
-                    anchors.centerIn: parent
-                    text: "󱗼"
-                    color: Theme.fg
-                    font.family: Theme.fontFamilyIcons
-                    font.pixelSize: 18
-                }
-
-                HoverHandler {
-                    id: btnHover
-                    cursorShape: Qt.PointingHandCursor
-                }
-                
-                TapHandler {
-                    onTapped: dock.launcherRequested()
-                }
+            BarButton {
+                icon: "󱗼"
+                onClicked: dock.launcherRequested()
+                iconSize: 18
             }
         }
     }

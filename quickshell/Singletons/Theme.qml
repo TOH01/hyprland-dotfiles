@@ -29,6 +29,7 @@ QtObject {
     readonly property string fontFamilyIcons: "Symbols Nerd Font Mono"
 
     readonly property int    fontSize:   13
+    readonly property int    iconSize:   16
 
 
     // dock
@@ -37,6 +38,6 @@ QtObject {
     readonly property int barHeight: 35
 
     // launch menu
-    readonly property int launchMenuHeight: 450
+    readonly property int launchMenuHeight: 460
     readonly property int launchMenuWidth: 600
 }

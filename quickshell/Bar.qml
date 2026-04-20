@@ -76,10 +76,9 @@ PanelWindow {
                 spacing: Theme.s2 
                 BarButton {
                     id: powerButton
-                    text: ""
+                    icon: ""
                     onClicked: PopupManager.open(powerMenu, powerButton)
-                    fontFamily: Theme.fontFamilyIcons
-                    fontPixelSize: 15
+                    iconSize: 15
                 }
             }
         }
