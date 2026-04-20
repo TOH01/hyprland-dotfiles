@@ -80,6 +80,7 @@ PanelWindow {
 
             Item { Layout.fillWidth: true }
 
+            // seperator
             Rectangle {
                 Layout.preferredWidth: 2
                 Layout.preferredHeight: 28
@@ -87,6 +88,7 @@ PanelWindow {
                 color: Qt.rgba(1, 1, 1, 0.25)
             }
 
+            // launch menu shortcut
             Rectangle {
                 Layout.preferredWidth: 32
                 Layout.preferredHeight: 32
@@ -94,6 +96,7 @@ PanelWindow {
                 color: btnHover.hovered ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
                 Behavior on color { ColorAnimation { duration: 120 } }
 
+                // dot matrix
                 Text {
                     id: label
                     anchors.centerIn: parent

@@ -37,6 +37,6 @@ QtObject {
     readonly property int barHeight: 35
 
     // launch menu
-    readonly property int launchMenuHeight: 400
+    readonly property int launchMenuHeight: 450
     readonly property int launchMenuWidth: 600
 }
