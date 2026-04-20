@@ -17,7 +17,9 @@ PanelWindow {
     margins.top: Theme.s2
     margins.left: Theme.s2
     margins.right: Theme.s2
-    implicitHeight: 35
+    
+    implicitHeight: Theme.barHeight
+    
     color: "transparent"
 
     Component.onCompleted: BarRegistry.bars = [...BarRegistry.bars, root]
@@ -27,12 +29,15 @@ PanelWindow {
 
     WorkspaceOverview { id: workspaceOverview; bar: root; screen: root.screen }
     LaunchMenu        { id: launchMenu;        bar: root; screen: root.screen }
+    PowerMenu         { id: powerMenu;         bar: root; screen: root.screen }
+
     QuickLaunchMenu {
         screen: root.screen
         pinned: PopupManager.current === launchMenu
         onLauncherRequested: PopupManager.open(launchMenu, null)
     }
 
+    // main bar container
     Rectangle {
         anchors.fill: parent
         color: Theme.bg
@@ -44,6 +49,7 @@ PanelWindow {
             anchors.rightMargin: Theme.s3
             spacing: 0
 
+            // modules left
             RowLayout {
                 spacing: Theme.s2
                 BarButton {
@@ -52,10 +58,30 @@ PanelWindow {
                     onClicked: PopupManager.open(workspaceOverview, wsButton)
                 }
             }
+            
+            // spacer
             Item { Layout.fillWidth: true }
-            RowLayout { spacing: Theme.s2 }
+            
+            // modules center
+            RowLayout { 
+                spacing: Theme.s2 
+            }
+
+            
+            // spacer
             Item { Layout.fillWidth: true }
-            RowLayout { spacing: Theme.s2 }
+            
+            // modules right
+            RowLayout { 
+                spacing: Theme.s2 
+                BarButton {
+                    id: powerButton
+                    text: ""
+                    onClicked: PopupManager.open(powerMenu, powerButton)
+                    fontFamily: Theme.fontFamilyIcons
+                    fontPixelSize: 15
+                }
+            }
         }
     }
 }

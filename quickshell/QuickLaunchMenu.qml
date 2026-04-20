@@ -94,20 +94,20 @@ PanelWindow {
                 color: btnHover.hovered ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
                 Behavior on color { ColorAnimation { duration: 120 } }
 
-                Grid {
+                Text {
+                    id: label
                     anchors.centerIn: parent
-                    rows: 3; columns: 3
-                    rowSpacing: 4; columnSpacing: 4
-                    Repeater {
-                        model: 9
-                        Rectangle { width: 3; height: 3; radius: 2; color: Theme.fg }
-                    }
+                    text: "󱗼"
+                    color: Theme.fg
+                    font.family: Theme.fontFamilyIcons
+                    font.pixelSize: 18
                 }
 
                 HoverHandler {
                     id: btnHover
                     cursorShape: Qt.PointingHandCursor
                 }
+                
                 TapHandler {
                     onTapped: dock.launcherRequested()
                 }

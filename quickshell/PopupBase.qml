@@ -86,6 +86,7 @@ PanelWindow {
         visible = true
         contentItem.state = "visible"
     }
+    
     function close() {
         if (contentItem.state === "hidden") return
         contentItem.state = "hidden"

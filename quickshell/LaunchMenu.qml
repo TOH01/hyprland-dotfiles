@@ -7,10 +7,14 @@ import "Singletons"
 
 PopupBase {
     id: launchMenu
+    
     anchorBottom: true
-    implicitWidth: 600
-    implicitHeight: 400
+    
+    implicitWidth: Theme.launchMenuWidth
+    implicitHeight: Theme.launchMenuHeight
+    
     acceptsInput: true
+    
     property alias query: searchField.text
     onVisibleChanged: if (!visible) searchField.text = ""
 

@@ -26,9 +26,17 @@ QtObject {
     readonly property int   borderWidth: 2
 
     readonly property string fontFamily: "JetBrainsMono Nerd Font"
+    readonly property string fontFamilyIcons: "Symbols Nerd Font Mono"
+
     readonly property int    fontSize:   13
 
 
     // dock
-    
+
+    // bar
+    readonly property int barHeight: 35
+
+    // launch menu
+    readonly property int launchMenuHeight: 400
+    readonly property int launchMenuWidth: 600
 }
