@@ -1,7 +1,8 @@
 import Quickshell
 import Quickshell.Hyprland
 import QtQuick
-import "Singletons"
+import qs.config
+import qs.modules
 
 ShellRoot {
     Variants {

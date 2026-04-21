@@ -1,5 +1,5 @@
 import QtQuick
-import "Singletons"
+import qs.config
 
 Item {
     id: root
@@ -33,6 +33,7 @@ Item {
         anchors.fill: parent
         radius: root.radius
         color: root.bgColor
+        border.width: 0
     }
 
     Rectangle {

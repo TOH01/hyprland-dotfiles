@@ -3,7 +3,8 @@ import Quickshell
 import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Controls
-import "Singletons"
+import qs.config
+import qs.components
 
 PopupBase {
     id: launchMenu

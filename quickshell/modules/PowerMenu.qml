@@ -4,44 +4,14 @@ import Quickshell.Wayland
 import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Layouts
-import Quickshell.Io
-import "Singletons"
+import qs.config
+import qs.services
+import qs.components
 
 PopupBase {
 
-    ConfirmPopup {
-        id: confirm
-    }
+    signal requestConfirm(string action, string message)
 
-    Process {
-        id: signOut
-        command: ["hyprctl", "dispatch", "exit"]
-        running: false
-    }
-
-    Process {
-        id: lockScreen
-        command: ["hyprlock"]
-        running: false
-    }
-
-    Process {
-        id: suspend
-        command: ["systemctl", "suspend"]
-        running: false
-    }
-
-    Process {
-        id: restart
-        command: ["systemctl", "reboot"]
-        running: false
-    }
-
-    Process {
-        id: powerOff
-        command: ["systemctl", "poweroff"]
-        running: false
-    }
 
     implicitWidth: 200
     implicitHeight: 125
@@ -66,7 +36,7 @@ PopupBase {
                     Layout.fillWidth: true
                     icon: ""
                     text: "Lockscreen"
-                    onClicked: lockScreen.running = true
+                    onClicked: SystemActions.lockScreen.running = true
                 }
 
                 // sign out
@@ -74,7 +44,7 @@ PopupBase {
                     Layout.fillWidth: true
                     icon: ""
                     text: "Sign out"
-                    onClicked: signOut.running = true
+                    onClicked: SystemActions.signOut.running = true
                 }
             }
 
@@ -95,7 +65,7 @@ PopupBase {
                 // suspend button
                 BarButton {
                     icon: "󰤄"
-                    onClicked: suspend.running = true
+                    onClicked: SystemActions.suspend.running = true
                     iconSize: 18
                 }
 
@@ -106,11 +76,7 @@ PopupBase {
                     
                     onClicked: {
                         PopupManager.closeCurrent()
-                        confirm.message = "Restart system?"
-                        confirm.onConfirm = function() {
-                            restart.running = true
-                        }
-                        confirm.open()
+                        requestConfirm("restart", "Restart system?")
                     }
                 }
 
@@ -121,11 +87,7 @@ PopupBase {
 
                     onClicked: {
                         PopupManager.closeCurrent()
-                        confirm.message = "Power off system?"
-                        confirm.onConfirm = function() {
-                            powerOff.running = true
-                        }
-                        confirm.open()
+                        requestConfirm("powerOff", "Power off system?")
                     }
                 }
             }

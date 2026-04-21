@@ -4,7 +4,8 @@ import Quickshell.Wayland
 import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Layouts
-import "Singletons"
+import qs.config
+import qs.components
 
 PopupBase {
     anchors.top: true

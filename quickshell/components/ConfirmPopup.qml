@@ -4,7 +4,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
-import "Singletons"
+import qs.config
+import qs.components
 
 PanelWindow {
     id: root
@@ -34,14 +35,28 @@ PanelWindow {
         closeTimer.start()
     }
 
-    Timer {
-        id: closeTimer
-        interval: 200
-        onTriggered: root.visible = false
+    Scope {
+        Timer {
+            id: closeTimer
+            interval: 200
+            onTriggered: root.visible = false
+        }
+
+        Timer {
+            id: timer
+            interval: 1000
+            repeat: true
+            running: false
+            onTriggered: {
+                root.timeout--
+                if (root.timeout <= 0) root.close()
+            }
+        }
     }
 
     visible: false
     color: "transparent"
+    surfaceFormat.opaque: false
 
     anchors {
         top: true
@@ -50,16 +65,7 @@ PanelWindow {
         right: true
     }
 
-    Timer {
-        id: timer
-        interval: 1000
-        repeat: true
-        running: false
-        onTriggered: {
-            root.timeout--
-            if (root.timeout <= 0) root.close()
-        }
-    }
+
 
     MouseArea {
         anchors.fill: parent

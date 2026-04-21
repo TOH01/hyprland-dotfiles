@@ -3,8 +3,8 @@ import Quickshell
 import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Layouts
-import "Singletons"
-
+import qs.config
+import qs.components
 PanelWindow {
     id: dock
     signal launcherRequested()
@@ -26,6 +26,7 @@ PanelWindow {
 
     anchors.bottom: true
     color: "transparent"
+    surfaceFormat.opaque: false
 
     // Reserve only the thin bar; expansion is always overlay
     exclusiveZone: collapsedHeight + collapsedBottomMargin
@@ -49,10 +50,12 @@ PanelWindow {
         }
     }
 
-    Timer {
-        id: collapseTimer
-        interval: 180
-        onTriggered: dock.hovering = false
+    Scope {
+        Timer {
+            id: collapseTimer
+            interval: 180
+            onTriggered: dock.hovering = false
+        }
     }
 
     Rectangle {

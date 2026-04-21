@@ -2,7 +2,8 @@
 import Quickshell
 import QtQuick
 import Quickshell.Hyprland
-import "Singletons"
+import qs.config
+import qs.services
 
 PanelWindow {
     id: root
@@ -33,6 +34,7 @@ PanelWindow {
                         Math.min(screenW - implicitWidth - edgeMargin, centered))
     }
     color: "transparent"
+    surfaceFormat.opaque: false
     exclusiveZone: 0
 
     default property alias content: contentItem.data
@@ -62,10 +64,12 @@ PanelWindow {
         ]
     }
 
-    Timer {
-        id: hideTimer
-        interval: root.closeDuration
-        onTriggered: root.visible = false
+    Scope {
+        Timer {
+            id: hideTimer
+            interval: root.closeDuration
+            onTriggered: root.visible = false
+        }
     }
 
     HyprlandFocusGrab {

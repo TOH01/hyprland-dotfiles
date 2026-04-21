@@ -1,4 +1,0 @@
-singleton Theme 1.0 Theme.qml
-singleton PopupManager PopupManager.qml
-singleton BarRegistry BarRegistry.qml
-singleton IconProvider 1.0 IconProvider.qml
