@@ -14,15 +14,17 @@ PanelWindow {
     exclusionMode: ExclusionMode.Ignore
 
     property string message: ""
-    property int timeout: 60
-    property var onConfirm
+    property int defaultTimeout: 60
+    property int timeout: defaultTimeout
+    signal confirm()
 
+    property bool dismissOnOutsideClick: true
     property bool isOpened: false
 
     function open() {
         root.visible = true
         root.isOpened = true
-        root.timeout = 60
+        root.timeout = root.defaultTimeout
         timer.start()
     }
 
@@ -63,22 +65,27 @@ PanelWindow {
         anchors.fill: parent
         hoverEnabled: true
         onClicked: {
-            root.close()
+            if (root.dismissOnOutsideClick) {
+                root.close()
+            }
         }
     }
 
     Shortcut {
         sequence: "Escape"
         enabled: root.visible
-        context: Qt.ApplicationShortcut
+        context: Qt.WindowShortcut
         onActivated: root.close()
     }
 
     Shortcut {
-        sequence: "Enter"
+        sequence: "Return"
         enabled: root.visible
-        context: Qt.ApplicationShortcut
-        onActivated: root.open()
+        context: Qt.WindowShortcut
+        onActivated: {
+            root.confirm()
+            root.close()
+        }
     }
 
     Rectangle {
@@ -91,6 +98,8 @@ PanelWindow {
         
         opacity: root.isOpened ? 1.0 : 0.0
         scale: root.isOpened ? 1.0 : 0.95
+
+        transform: Translate { id: dialogTranslate }
 
         Behavior on opacity {
             NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
@@ -129,7 +138,7 @@ PanelWindow {
                 BarButton {
                     text: "Confirm"
                     onClicked: {
-                        root.onConfirm()
+                        root.confirm()
                         root.close()
                     }
                 }
