@@ -7,12 +7,12 @@ import qs.config
 import qs.components
 PanelWindow {
     id: dock
-    signal launcherRequested()
 
     property bool pinned: false
+    property bool hovering: false
 
     readonly property var monitor: Hyprland.monitors.values.find(m => m.name === screen?.name)
-    readonly property bool hasWindows: (monitor?.activeWorkspace?.toplevels?.values.length ?? 0) > 0
+    readonly property bool hasWindows: (dock.monitor?.activeWorkspace?.toplevels?.values.length ?? 0) > 0
 
     readonly property int dockWidth: 300
     readonly property int expandedHeight: 45
@@ -21,24 +21,24 @@ PanelWindow {
     readonly property int collapsedBottomMargin: 2
     readonly property int hotPad: 24
 
-    property bool hovering: false
-    readonly property bool expanded: !hasWindows || hovering || pinned
+    readonly property bool expanded: !dock.hasWindows || dock.hovering || dock.pinned
+
+    signal launcherRequested()
 
     anchors.bottom: true
+
+    implicitWidth: dock.dockWidth + dock.hotPad * 2
+    implicitHeight: dock.expandedHeight + dock.expandedBottomMargin + dock.hotPad
+
     color: "transparent"
     surfaceFormat.opaque: false
-
-    // Reserve only the thin bar; expansion is always overlay
-    exclusiveZone: collapsedHeight + collapsedBottomMargin
-
-    implicitWidth: dockWidth + hotPad * 2
-    implicitHeight: expandedHeight + expandedBottomMargin + hotPad
+    exclusiveZone: dock.collapsedHeight + dock.collapsedBottomMargin
 
     mask: Region {
-        x: hotPad - 10
-        width: dockWidth + 20
-        height: (expanded ? expandedHeight + expandedBottomMargin
-                         : collapsedHeight + collapsedBottomMargin) + hotPad
+        x: dock.hotPad - 10
+        width: dock.dockWidth + 20
+        height: (dock.expanded ? dock.expandedHeight + dock.expandedBottomMargin
+                         : dock.collapsedHeight + dock.collapsedBottomMargin) + dock.hotPad
         y: dock.height - height
     }
 

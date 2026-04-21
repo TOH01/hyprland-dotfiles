@@ -9,15 +9,13 @@ import qs.components
 PopupBase {
     id: launchMenu
     
-    anchorBottom: true
-    
+    property alias query: searchField.text
+
     implicitWidth: Theme.launchMenuWidth
     implicitHeight: Theme.launchMenuHeight
     
+    anchorBottom: true
     acceptsInput: true
-    
-    property alias query: searchField.text
-    onVisibleChanged: if (!visible) searchField.text = ""
 
     Rectangle {
         anchors.fill: parent
@@ -33,4 +31,6 @@ PopupBase {
             focus: true
         }
     }
+
+    onVisibleChanged: if (!root.visible) root.query = ""
 }

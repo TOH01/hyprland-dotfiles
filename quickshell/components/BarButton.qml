@@ -26,8 +26,8 @@ Item {
 
     signal clicked()
 
-    implicitWidth: contentRow.implicitWidth + (horizontalPadding * 2)
-    implicitHeight: contentRow.implicitHeight + (verticalPadding * 2)
+    implicitWidth: contentRow.implicitWidth + (root.horizontalPadding * 2)
+    implicitHeight: contentRow.implicitHeight + (root.verticalPadding * 2)
 
     Rectangle {
         anchors.fill: parent

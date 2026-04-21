@@ -10,17 +10,13 @@ import qs.components
 PanelWindow {
     id: root
 
-    WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
-    exclusionMode: ExclusionMode.Ignore
-
     property string message: ""
     property int defaultTimeout: 60
-    property int timeout: defaultTimeout
-    signal confirm()
-
+    property int timeout: root.defaultTimeout
     property bool dismissOnOutsideClick: true
     property bool isOpened: false
+
+    signal confirm()
 
     function open() {
         root.visible = true
@@ -33,6 +29,21 @@ PanelWindow {
         root.isOpened = false
         timer.stop()
         closeTimer.start()
+    }
+
+    visible: false
+    color: "transparent"
+    exclusionMode: ExclusionMode.Ignore
+    surfaceFormat.opaque: false
+
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+
+    anchors {
+        top: true
+        bottom: true
+        left: true
+        right: true
     }
 
     Scope {
@@ -53,19 +64,6 @@ PanelWindow {
             }
         }
     }
-
-    visible: false
-    color: "transparent"
-    surfaceFormat.opaque: false
-
-    anchors {
-        top: true
-        bottom: true
-        left: true
-        right: true
-    }
-
-
 
     MouseArea {
         anchors.fill: parent

@@ -7,41 +7,53 @@ import qs.services
 
 PanelWindow {
     id: root
-    visible: false
 
     required property var bar
     property Item anchorItem: null
     property bool anchorBottom: false
     property int edgeMargin: Theme.s2
-
-    anchors.top: !anchorBottom
-    anchors.bottom: anchorBottom
-    anchors.left: true
-
-    implicitWidth: 400
-    implicitHeight: 200
-
-    margins.top: anchorBottom ? 0 : Theme.belowBar
-    margins.bottom: anchorBottom ? Theme.aboveDock : 0
-    margins.left: {
-        const screenW = root.screen?.width ?? 1920
-        if (!anchorItem || !bar)
-            return Math.max(edgeMargin, (screenW - implicitWidth) / 2)
-        const localX = anchorItem.mapToItem(null, 0, 0).x
-        const screenX = localX + bar.margins.left
-        const centered = screenX + anchorItem.width / 2 - implicitWidth / 2
-        return Math.max(edgeMargin,
-                        Math.min(screenW - implicitWidth - edgeMargin, centered))
-    }
-    color: "transparent"
-    surfaceFormat.opaque: false
-    exclusiveZone: 0
-
-    default property alias content: contentItem.data
     property bool acceptsInput: false
     property int openDuration: 280
     property int closeDuration: 140
-    focusable: acceptsInput && visible
+
+    default property alias content: contentItem.data
+
+    function open() {
+        hideTimer.stop()
+        root.visible = true
+        contentItem.state = "visible"
+    }
+    
+    function close() {
+        if (contentItem.state === "hidden") return
+        contentItem.state = "hidden"
+        hideTimer.restart()
+    }
+
+    visible: false
+    implicitWidth: 400
+    implicitHeight: 200
+    color: "transparent"
+    surfaceFormat.opaque: false
+    exclusiveZone: 0
+    focusable: root.acceptsInput && root.visible
+
+    anchors.top: !root.anchorBottom
+    anchors.bottom: root.anchorBottom
+    anchors.left: true
+
+    margins.top: root.anchorBottom ? 0 : Theme.belowBar
+    margins.bottom: root.anchorBottom ? Theme.aboveDock : 0
+    margins.left: {
+        const screenW = root.screen?.width ?? 1920
+        if (!root.anchorItem || !root.bar)
+            return Math.max(root.edgeMargin, (screenW - root.implicitWidth) / 2)
+        const localX = root.anchorItem.mapToItem(null, 0, 0).x
+        const screenX = localX + root.bar.margins.left
+        const centered = screenX + root.anchorItem.width / 2 - root.implicitWidth / 2
+        return Math.max(root.edgeMargin,
+                        Math.min(screenW - root.implicitWidth - root.edgeMargin, centered))
+    }
 
     Item {
         id: contentItem
@@ -83,17 +95,5 @@ PanelWindow {
         enabled: root.visible
         context: Qt.ApplicationShortcut
         onActivated: PopupManager.closeCurrent()
-    }
-
-    function open() {
-        hideTimer.stop()
-        visible = true
-        contentItem.state = "visible"
-    }
-    
-    function close() {
-        if (contentItem.state === "hidden") return
-        contentItem.state = "hidden"
-        hideTimer.restart()
     }
 }

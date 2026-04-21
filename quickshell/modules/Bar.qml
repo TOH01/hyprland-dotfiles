@@ -11,7 +11,15 @@ PanelWindow {
     id: root
 
     required property var modelData
-    screen: modelData
+    function openLauncher() { 
+        launchMenuLoader.active = true
+        PopupManager.open(launchMenuLoader.item, null) 
+    }
+
+    screen: root.modelData
+    implicitHeight: Theme.barHeight
+    color: "transparent"
+    surfaceFormat.opaque: false
 
     anchors.top: true
     anchors.left: true
@@ -19,19 +27,8 @@ PanelWindow {
     margins.top: Theme.s2
     margins.left: Theme.s2
     margins.right: Theme.s2
-    
-    implicitHeight: Theme.barHeight
-    
-    color: "transparent"
-    surfaceFormat.opaque: false
 
-    Component.onCompleted: BarRegistry.bars = [...BarRegistry.bars, root]
-    Component.onDestruction: BarRegistry.bars = BarRegistry.bars.filter(b => b !== root)
 
-    function openLauncher() { 
-        launchMenuLoader.active = true
-        PopupManager.open(launchMenuLoader.item, null) 
-    }
 
     LazyLoader {
         id: workspaceOverviewLoader
@@ -133,4 +130,7 @@ PanelWindow {
             }
         }
     }
+
+    Component.onCompleted: BarRegistry.bars = [...BarRegistry.bars, root]
+    Component.onDestruction: BarRegistry.bars = BarRegistry.bars.filter(b => b !== root)
 }

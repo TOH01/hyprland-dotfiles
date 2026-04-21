@@ -5,6 +5,8 @@ import qs.config
 import qs.modules
 
 ShellRoot {
+    id: root
+
     Variants {
         id: bars
         model: Quickshell.screens

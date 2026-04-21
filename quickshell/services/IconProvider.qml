@@ -75,6 +75,11 @@ Singleton {
     sys.stdout.flush()
 `
 
+    function getIcon(appId) {
+        if (!appId) return ""
+        return root.iconMap[appId] || root.iconMap[appId.toLowerCase()] || ""
+    }
+
     Timer {
         interval: 100
         running: true
@@ -107,10 +112,5 @@ Singleton {
                     console.warn("IconProvider stderr:", errCollector.text)
             }
         }
-    }
-
-    function getIcon(appId) {
-        if (!appId) return ""
-        return iconMap[appId] || iconMap[appId.toLowerCase()] || ""
     }
 }

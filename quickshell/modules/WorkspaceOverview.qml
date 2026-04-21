@@ -11,6 +11,7 @@ PopupBase {
     anchors.top: true
     anchors.left: true
     anchors.right: true
+    
     implicitHeight: 120
 
     margins.left: 8
@@ -23,9 +24,6 @@ PopupBase {
 
         RowLayout {
             id: strip
-            anchors.fill: parent
-            anchors.leftMargin: 10       
-            anchors.topMargin: 10
 
             readonly property int minWorkspaces: 2
             readonly property int maxWorkspaces: 10
@@ -37,38 +35,42 @@ PopupBase {
                 return Math.min(maxWorkspaces, Math.max(minWorkspaces, highest))
             }
 
+            anchors.fill: parent
+            anchors.leftMargin: 10       
+            anchors.topMargin: 10
+
             Repeater {
                 model: strip.wsCount
                 Rectangle {
                     id: workspaceRectangle
 
-                    radius: Theme.widgetRadius
-
                     readonly property var ws: Hyprland.workspaces.values.find(w => w.id === index + 1)
                     readonly property bool isActive: Hyprland.focusedWorkspace?.id === (index + 1)
-                    readonly property color accent: isActive ? Theme.accentHot : (ws ? Theme.accent : Theme.border)
+                    readonly property color accent: isActive ? Theme.accentHot : (workspaceRectangle.ws ? Theme.accent : Theme.border)
 
-                    Layout.alignment: Qt.AlignTop
                     width: 150
                     height: 100
-                    border.color: accent
+                    radius: Theme.widgetRadius
+                    border.color: workspaceRectangle.accent
                     border.width: Theme.borderWidth
+                    color: "transparent"
+
+                    Layout.alignment: Qt.AlignTop
 
                     Text {
                         text: index + 1
                         anchors.centerIn: parent
-                        color: accent
+                        color: workspaceRectangle.accent
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.fontSize
                     }
 
                     MouseArea {
                         anchors.fill: parent
-                        cursorShape: isActive ? Qt.ArrowCursor : Qt.PointingHandCursor
-                        enabled: !isActive
+                        cursorShape: workspaceRectangle.isActive ? Qt.ArrowCursor : Qt.PointingHandCursor
+                        enabled: !workspaceRectangle.isActive
                         onClicked: Hyprland.dispatch("workspace " + (index + 1))
                     }
-                
                 }
             }
 

@@ -9,9 +9,9 @@ import qs.services
 import qs.components
 
 PopupBase {
-
+    id: root
+    
     signal requestConfirm(string action, string message)
-
 
     implicitWidth: 200
     implicitHeight: 125
@@ -76,7 +76,7 @@ PopupBase {
                     
                     onClicked: {
                         PopupManager.closeCurrent()
-                        requestConfirm("restart", "Restart system?")
+                        root.requestConfirm("restart", "Restart system?")
                     }
                 }
 
@@ -87,7 +87,7 @@ PopupBase {
 
                     onClicked: {
                         PopupManager.closeCurrent()
-                        requestConfirm("powerOff", "Power off system?")
+                        root.requestConfirm("powerOff", "Power off system?")
                     }
                 }
             }
