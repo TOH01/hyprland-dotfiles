@@ -53,7 +53,7 @@ PopupBase {
                 Layout.preferredHeight: 2
                 Layout.leftMargin: Theme.s4
                 Layout.rightMargin: Theme.s4
-                color: Theme.fg
+                color: Theme.separator
             }
 
             Item { Layout.preferredHeight: Theme.s1 }
@@ -76,7 +76,7 @@ PopupBase {
                     
                     onClicked: {
                         PopupManager.closeCurrent()
-                        root.requestConfirm("restart", "Restart system?")
+                        root.requestConfirm(() => { SystemActions.restart.running = true }, "Restart system?")
                     }
                 }
 
@@ -87,7 +87,7 @@ PopupBase {
 
                     onClicked: {
                         PopupManager.closeCurrent()
-                        root.requestConfirm("powerOff", "Power off system?")
+                        root.requestConfirm(() => { SystemActions.powerOff.running = true }, "Power off system?")
                     }
                 }
             }

@@ -54,7 +54,7 @@ PanelWindow {
             onRequestConfirm: (action, message) => {
                 confirmPopupLoader.active = true
                 confirmPopupLoader.item.message = message
-                confirmPopupLoader.item.pendingAction = action
+                confirmPopupLoader.item.confirmedAction = action
                 confirmPopupLoader.item.open()
             }
         }
@@ -63,11 +63,11 @@ PanelWindow {
     LazyLoader {
         id: confirmPopupLoader
         component: ConfirmPopup {
-            property string pendingAction: ""
+            // var because QML has no function type; receives closure from PowerMenu.
+            property var confirmedAction: null
             onVisibleChanged: if (!visible) confirmPopupLoader.active = false
             onConfirm: {
-                if (pendingAction === "restart") SystemActions.restart.running = true
-                else if (pendingAction === "powerOff") SystemActions.powerOff.running = true
+                if (confirmedAction) confirmedAction()
             }
         }
     }
@@ -131,6 +131,6 @@ PanelWindow {
         }
     }
 
-    Component.onCompleted: BarRegistry.bars = [...BarRegistry.bars, root]
-    Component.onDestruction: BarRegistry.bars = BarRegistry.bars.filter(b => b !== root)
+    Component.onCompleted: BarRegistry.register(root)
+    Component.onDestruction: BarRegistry.unregister(root)
 }

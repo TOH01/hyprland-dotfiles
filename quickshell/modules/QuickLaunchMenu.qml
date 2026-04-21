@@ -1,4 +1,4 @@
-// Dock.qml
+// QuickLaunchMenu.qml
 import Quickshell
 import Quickshell.Hyprland
 import QtQuick
@@ -6,13 +6,13 @@ import QtQuick.Layouts
 import qs.config
 import qs.components
 PanelWindow {
-    id: dock
+    id: root
 
     property bool pinned: false
     property bool hovering: false
 
     readonly property var monitor: Hyprland.monitors.values.find(m => m.name === screen?.name)
-    readonly property bool hasWindows: (dock.monitor?.activeWorkspace?.toplevels?.values.length ?? 0) > 0
+    readonly property bool hasWindows: (root.monitor?.activeWorkspace?.toplevels?.values.length ?? 0) > 0
 
     readonly property int dockWidth: 300
     readonly property int expandedHeight: 45
@@ -21,31 +21,31 @@ PanelWindow {
     readonly property int collapsedBottomMargin: 2
     readonly property int hotPad: 24
 
-    readonly property bool expanded: !dock.hasWindows || dock.hovering || dock.pinned
+    readonly property bool expanded: !root.hasWindows || root.hovering || root.pinned
 
     signal launcherRequested()
 
     anchors.bottom: true
 
-    implicitWidth: dock.dockWidth + dock.hotPad * 2
-    implicitHeight: dock.expandedHeight + dock.expandedBottomMargin + dock.hotPad
+    implicitWidth: root.dockWidth + root.hotPad * 2
+    implicitHeight: root.expandedHeight + root.expandedBottomMargin + root.hotPad
 
     color: "transparent"
     surfaceFormat.opaque: false
-    exclusiveZone: dock.collapsedHeight + dock.collapsedBottomMargin
+    exclusiveZone: root.collapsedHeight + root.collapsedBottomMargin
 
     mask: Region {
-        x: dock.hotPad - 10
-        width: dock.dockWidth + 20
-        height: (dock.expanded ? dock.expandedHeight + dock.expandedBottomMargin
-                         : dock.collapsedHeight + dock.collapsedBottomMargin) + dock.hotPad
-        y: dock.height - height
+        x: root.hotPad - 10
+        width: root.dockWidth + 20
+        height: (root.expanded ? root.expandedHeight + root.expandedBottomMargin
+                         : root.collapsedHeight + root.collapsedBottomMargin) + root.hotPad
+        y: root.height - height
     }
 
     HoverHandler {
         id: dockHover
         onHoveredChanged: {
-            if (hovered) { collapseTimer.stop(); dock.hovering = true }
+            if (hovered) { collapseTimer.stop(); root.hovering = true }
             else collapseTimer.restart()
         }
     }
@@ -54,7 +54,7 @@ PanelWindow {
         Timer {
             id: collapseTimer
             interval: 180
-            onTriggered: dock.hovering = false
+            onTriggered: root.hovering = false
         }
     }
 
@@ -62,10 +62,10 @@ PanelWindow {
         id: dockBg
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: dock.expanded ? dock.expandedBottomMargin : dock.collapsedBottomMargin
-        width: dock.dockWidth
-        height: dock.expanded ? dock.expandedHeight : dock.collapsedHeight
-        radius: dock.expanded ? 22 : 2
+        anchors.bottomMargin: root.expanded ? root.expandedBottomMargin : root.collapsedBottomMargin
+        width: root.dockWidth
+        height: root.expanded ? root.expandedHeight : root.collapsedHeight
+        radius: root.expanded ? 22 : 2
         color: Theme.bg
 
         Behavior on height               { NumberAnimation { duration: 240; easing.type: Easing.OutCubic } }
@@ -77,7 +77,7 @@ PanelWindow {
             anchors.leftMargin: 10
             anchors.rightMargin: 10
             spacing: 8
-            opacity: dock.expanded ? 1 : 0
+            opacity: root.expanded ? 1 : 0
             visible: opacity > 0.01
             Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
@@ -88,13 +88,13 @@ PanelWindow {
                 Layout.preferredWidth: 2
                 Layout.preferredHeight: 28
                 Layout.alignment: Qt.AlignVCenter
-                color: Qt.rgba(1, 1, 1, 0.25)
+                color: Theme.separator
             }
 
             // launch menu shortcut
             BarButton {
                 icon: "󱗼"
-                onClicked: dock.launcherRequested()
+                onClicked: root.launcherRequested()
                 iconSize: 18
             }
         }

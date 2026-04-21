@@ -8,6 +8,8 @@ import qs.config
 import qs.components
 
 PopupBase {
+    id: root
+
     anchors.top: true
     anchors.left: true
     anchors.right: true

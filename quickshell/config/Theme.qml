@@ -10,6 +10,7 @@ QtObject {
     readonly property color fgMuted:   "#565f89"
     readonly property color accent:    "#7aa2f7"
     readonly property color accentHot: "#0db9d7"
+    readonly property color separator: "#33c0caf5"
 
     readonly property int   s1: 4
     readonly property int   s2: 8

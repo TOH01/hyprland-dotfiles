@@ -7,7 +7,7 @@ import qs.config
 import qs.components
 
 PopupBase {
-    id: launchMenu
+    id: root
     
     property alias query: searchField.text
 
