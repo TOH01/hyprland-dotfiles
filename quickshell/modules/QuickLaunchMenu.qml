@@ -109,11 +109,10 @@ PanelWindow {
                     id: rowHover
                 }
 
-                // --- ADAPTIVE SPREAD MATH ---
                 readonly property real baseIconWidth: 36
                 readonly property real k_target: 2.5
-                // Calculate actual spread based on item count, maxing out at k_target and preventing bloat.
-                readonly property real k_actual: Math.min(k_target, Math.max(1.0, appRepeater.count / 3.0))
+
+                readonly property real k_actual: Math.min(k_target, Math.max(1.0, appRepeater.count / 4.0))
                 readonly property real w_effect: baseIconWidth * k_actual
 
                 Repeater {
@@ -132,7 +131,6 @@ PanelWindow {
                         readonly property real s_min: 1.0
                         readonly property real s_max: 1.4
 
-                        // Apply the cosine decay curve only if within the dynamic w_effect bounds
                         property real targetScale: (rowHover.hovered && iconContainer.dist <= appRow.w_effect)
                             ? iconContainer.s_min + (iconContainer.s_max - iconContainer.s_min) * Math.cos((iconContainer.dist / appRow.w_effect) * (Math.PI / 2))
                             : iconContainer.s_min
@@ -146,11 +144,10 @@ PanelWindow {
                             id: appIconInstance
                             anchors.centerIn: parent
                             
-                            // Scale from the center (or bottom if you prefer adjusting anchors)
                             width: 26 * iconContainer.targetScale 
                             height: appIconInstance.width 
                             
-                            appId: modelData.icon 
+                            appId: modelData.id
                         }
 
                         TapHandler {
