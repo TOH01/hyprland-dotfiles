@@ -39,6 +39,11 @@ QtObject {
     readonly property int barHeight: 35
 
     // launch menu
-    readonly property int launchMenuHeight: 460
-    readonly property int launchMenuWidth: 600
+    readonly property int launchMenuHeight: 480
+    readonly property int launchMenuWidth: 700
+    readonly property int launchMenuContentMargin: 20
+    readonly property int launchMenuIconSize: 48
+    readonly property int searchBarHeight: 32
+    readonly property int cellRadius: 10
+    readonly property int pageAnimDuration: 180
 }

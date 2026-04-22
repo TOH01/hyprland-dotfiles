@@ -80,16 +80,10 @@ Singleton {
         return root.iconMap[appId] || root.iconMap[appId.toLowerCase()] || ""
     }
 
-    Timer {
-        interval: 100
-        running: true
-        onTriggered: iconProcess.running = true
-    }
-
     Process {
         id: iconProcess
         command: ["python3", "-c", root.pythonScript]
-        running: false
+        running: true
 
         stdout: StdioCollector {
             id: collector

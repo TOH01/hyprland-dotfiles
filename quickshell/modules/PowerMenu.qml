@@ -11,7 +11,7 @@ import qs.components
 PopupBase {
     id: root
     
-    signal requestConfirm(string action, string message)
+    signal requestConfirm(var action, string message)
 
     implicitWidth: 200
     implicitHeight: 125
