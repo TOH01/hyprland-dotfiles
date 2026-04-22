@@ -2,3 +2,4 @@ module qs.components
 BarButton 1.0 BarButton.qml
 ConfirmPopup 1.0 ConfirmPopup.qml
 PopupBase 1.0 PopupBase.qml
+AppIcon 1.0 AppIcon.qml

@@ -288,14 +288,10 @@ PopupBase {
                             width: Theme.launchMenuIconSize
                             height: Theme.launchMenuIconSize
 
-                            Image {
+                            AppIcon {
                                 id: appIcon
                                 anchors.fill: parent
-                                source: IconProvider.getIcon(delegateRoot.modelData.icon || delegateRoot.modelData.name)
-                                sourceSize: Qt.size(Theme.launchMenuIconSize, Theme.launchMenuIconSize)
-                                asynchronous: true
-                                fillMode: Image.PreserveAspectFit
-                                visible: appIcon.status === Image.Ready
+                                appId: delegateRoot.modelData.icon || delegateRoot.modelData.name
                             }
 
                             Rectangle {
