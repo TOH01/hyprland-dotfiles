@@ -13,7 +13,12 @@ PanelWindow {
     property bool hovering: false
 
     readonly property var pinnedApps: ["org.mozilla.firefox", "kitty", "discord", "code", "steam", "nemo"]
-    property var appModel: root.pinnedApps.map(name => DesktopEntries.heuristicLookup(name)).filter(entry => entry !== null)
+    property var appModel: {
+        const _apps = DesktopEntries.applications.values;
+        return root.pinnedApps
+            .map(name => DesktopEntries.heuristicLookup(name))
+            .filter(entry => entry !== null);
+    }
 
     readonly property var monitor: Hyprland.monitors.values.find(m => m.name === screen?.name)
     readonly property bool hasWindows: (root.monitor?.activeWorkspace?.toplevels?.values.length ?? 0) > 0
@@ -147,7 +152,7 @@ PanelWindow {
                             width: 26 * iconContainer.targetScale 
                             height: appIconInstance.width 
                             
-                            appId: modelData.id
+                            entry: modelData
                         }
 
                         TapHandler {

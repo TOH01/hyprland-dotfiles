@@ -6,6 +6,8 @@ import Quickshell.Widgets
 IconImage {
     id: root
     
+    property var entry: null
+
     property string appId: ""
     property string fallbackIcon: "application-x-executable"
 
@@ -15,20 +17,21 @@ IconImage {
     implicitHeight: 48
 
     source: {
-        if (!root.appId) return Quickshell.iconPath(root.fallbackIcon, true);
-
-        let directPath = Quickshell.iconPath(root.appId, "");
-        if (directPath !== "") return directPath;
-
-        let entry = DesktopEntries.heuristicLookup(root.appId);
-        let iconName = entry ? entry.icon : root.appId;
-
-        let validPath = Quickshell.iconPath(iconName, true);
-
-        if (validPath !== "") {
-            return validPath;
-        } else {
-            return Quickshell.iconPath(root.fallbackIcon, true);
+        if (root.entry && root.entry.icon) {
+            const p = Quickshell.iconPath(root.entry.icon, true);
+            if (p !== "") return p;
         }
+
+        if (root.appId) {
+            const direct = Quickshell.iconPath(root.appId, true);
+            if (direct !== "") return direct;
+            const e = DesktopEntries.heuristicLookup(root.appId);
+            if (e && e.icon) {
+                const p = Quickshell.iconPath(e.icon, true);
+                if (p !== "") return p;
+            }
+        }
+
+        return Quickshell.iconPath(root.fallbackIcon, true);
     }
 }

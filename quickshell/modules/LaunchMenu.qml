@@ -291,7 +291,7 @@ PopupBase {
                             AppIcon {
                                 id: appIcon
                                 anchors.fill: parent
-                                appId: delegateRoot.modelData.icon || delegateRoot.modelData.name
+                                entry: delegateRoot.modelData
                             }
 
                             Rectangle {
