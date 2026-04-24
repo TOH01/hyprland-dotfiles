@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
 import qs.config
+import qs.services
 import qs.components as Ui
 
 PanelWindow {
@@ -157,7 +158,10 @@ PanelWindow {
 
                         TapHandler {
                             id: iconTapHandler
-                            onTapped: modelData.execute()
+                            onTapped: {
+                                modelData.execute();
+                                PopupManager.closeCurrent();
+                            }
                         }
                     }
                 }
@@ -180,4 +184,7 @@ PanelWindow {
             }
         }
     }
+
+    Component.onCompleted: BarRegistry.register(root)
+    Component.onDestruction: BarRegistry.unregister(root)
 }

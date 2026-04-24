@@ -1,3 +1,4 @@
+// Label.qml
 import QtQuick
 import qs.config
 

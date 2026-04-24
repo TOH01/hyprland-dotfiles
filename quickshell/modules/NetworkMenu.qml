@@ -128,7 +128,7 @@ Ui.PopupBase {
                         text: "Visible Networks"
                     }
                     Ui.Label {
-                        text: root.wifiListOpen ? "▾" : "▸"
+                        text: root.wifiListOpen ? "" : ""
                     }
                 }
             }
