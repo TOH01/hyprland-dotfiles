@@ -6,9 +6,9 @@ import QtQuick
 import QtQuick.Layouts
 import qs.config
 import qs.services
-import qs.components
+import qs.components as Ui
 
-PopupBase {
+Ui.PopupBase {
     id: root
     
     signal requestConfirm(var action, string message)
@@ -32,7 +32,7 @@ PopupBase {
                 spacing: 0
 
                 // lockscreen
-                BarButton {
+                Ui.Button {
                     Layout.fillWidth: true
                     icon: ""
                     text: "Lockscreen"
@@ -40,7 +40,7 @@ PopupBase {
                 }
 
                 // sign out
-                BarButton {
+                Ui.Button {
                     Layout.fillWidth: true
                     icon: ""
                     text: "Sign out"
@@ -48,13 +48,7 @@ PopupBase {
                 }
             }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 2
-                Layout.leftMargin: Theme.s4
-                Layout.rightMargin: Theme.s4
-                color: Theme.separator
-            }
+            Ui.Separator {}
 
             Item { Layout.preferredHeight: Theme.s1 }
 
@@ -63,14 +57,14 @@ PopupBase {
                 Layout.alignment: Qt.AlignHCenter
 
                 // suspend button
-                BarButton {
+                Ui.Button {
                     icon: "󰤄"
                     onClicked: SystemActions.suspend.running = true
                     iconSize: 18
                 }
 
                 // restart button
-                BarButton {
+                Ui.Button {
                     icon: ""
                     iconSize: 18
                     
@@ -81,7 +75,7 @@ PopupBase {
                 }
 
                 // power off button
-                BarButton {
+                Ui.Button {
                     icon: ""
                     iconSize: 18
 

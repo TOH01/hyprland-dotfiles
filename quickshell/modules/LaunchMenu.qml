@@ -7,10 +7,10 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import qs.config
-import qs.components
+import qs.components as Ui
 import qs.services
 
-PopupBase {
+Ui.PopupBase {
     id: root
     
     property alias query: searchField.text
@@ -288,7 +288,7 @@ PopupBase {
                             width: Theme.launchMenuIconSize
                             height: Theme.launchMenuIconSize
 
-                            AppIcon {
+                            Ui.AppIcon {
                                 id: appIcon
                                 anchors.fill: parent
                                 entry: delegateRoot.modelData

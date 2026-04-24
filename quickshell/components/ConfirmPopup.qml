@@ -1,11 +1,11 @@
-// ConfirmPopup.qml
+// Ui.ConfirmPopup.qml
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import qs.config
-import qs.components
+import qs.components as Ui
 
 PanelWindow {
     id: root
@@ -134,12 +134,12 @@ PanelWindow {
             RowLayout {
                 spacing: Theme.s3
 
-                BarButton {
+                Ui.Button {
                     text: "Cancel"
                     onClicked: root.close()
                 }
 
-                BarButton {
+                Ui.Button {
                     text: "Confirm"
                     onClicked: {
                         root.confirm()

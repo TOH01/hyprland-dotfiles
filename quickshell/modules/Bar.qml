@@ -5,7 +5,7 @@ import QtQuick
 import QtQuick.Layouts
 import qs.config
 import qs.services
-import qs.components
+import qs.components as Ui
 import qs.modules
 
 PanelWindow {
@@ -71,8 +71,7 @@ PanelWindow {
 
     LazyLoader {
         id: confirmPopupLoader
-        component: ConfirmPopup {
-            // var because QML has no function type; receives closure from PowerMenu.
+        component: Ui.ConfirmPopup {
             property var confirmedAction: null
             onVisibleChanged: if (!visible) confirmPopupLoader.active = false
             onConfirm: {
@@ -102,7 +101,7 @@ PanelWindow {
             // modules left
             RowLayout {
                 spacing: Theme.s2
-                BarButton {
+                Ui.Button {
                     id: wsButton
                     text: "Workspaces"
                     onClicked: {
@@ -120,14 +119,13 @@ PanelWindow {
                 spacing: Theme.s2 
             }
 
-            
             // spacer
             Item { Layout.fillWidth: true }
             
             // modules right
             RowLayout { 
                 spacing: Theme.s2 
-                BarButton {
+                Ui.Button {
                     id: networkButton
                     icon: "󰈀"
                     onClicked: {
@@ -136,7 +134,7 @@ PanelWindow {
                     }
                     iconSize: 15
                 }
-                BarButton {
+                Ui.Button {
                     id: powerButton
                     icon: ""
                     onClicked: {

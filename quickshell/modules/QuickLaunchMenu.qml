@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
 import qs.config
-import qs.components
+import qs.components as Ui
 
 PanelWindow {
     id: root
@@ -145,7 +145,7 @@ PanelWindow {
                             NumberAnimation { duration: 180; easing.type: Easing.OutQuad }
                         }
 
-                        AppIcon {
+                        Ui.AppIcon {
                             id: appIconInstance
                             anchors.centerIn: parent
                             
@@ -168,18 +168,11 @@ PanelWindow {
                 Layout.fillWidth: true 
             }
 
-            // Separator
-            Rectangle {
-                id: separatorLine
-                Layout.preferredWidth: 2
-                Layout.preferredHeight: 28
-                Layout.alignment: Qt.AlignVCenter
-                color: Theme.separator
-                border.width: 0
+            Ui.Separator {
+                orientation: Qt.Vertical
             }
 
-            // Launch Menu Shortcut
-            BarButton {
+            Ui.Button {
                 id: launchMenuBtn
                 icon: "󱗼"
                 iconSize: 18

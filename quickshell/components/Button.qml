@@ -6,28 +6,26 @@ Item {
 
     property string text: ""
     property string icon: ""
-
     property int iconSize: Theme.iconSize
     property int textSize: Theme.fontSize
     property bool bold: false
-    property int spacing: 6
+
     property int horizontalPadding: 8
     property int verticalPadding: 4
+    property int radius: 8
+    property int alignment: (root.icon !== "" && root.text !== "") ? Qt.AlignLeft : Qt.AlignHCenter
 
     property color bgColor: "transparent"
     property color contentColor: Theme.fg
     property color hoverColor: Theme.fg
-    property int radius: 8
-
-    property int alignment: (root.icon !== "" && root.text !== "") ? Qt.AlignLeft : Qt.AlignHCenter
 
     readonly property bool isHovered: hover.hovered
-    readonly property bool isPressed: tapHandler.pressed
+    readonly property bool isPressed: tap.pressed
 
     signal clicked()
 
-    implicitWidth: contentRow.implicitWidth + (root.horizontalPadding * 2)
-    implicitHeight: contentRow.implicitHeight + (root.verticalPadding * 2)
+    implicitWidth: label.implicitWidth + horizontalPadding * 2
+    implicitHeight: label.implicitHeight + verticalPadding * 2
 
     Rectangle {
         anchors.fill: parent
@@ -41,40 +39,28 @@ Item {
         radius: root.radius
         color: root.hoverColor
         opacity: root.isPressed ? 0.12 : root.isHovered ? 0.06 : 0.0
-        
+
         Behavior on opacity {
             NumberAnimation { duration: 120; easing.type: Easing.OutQuad }
         }
     }
 
-    Row {
-        id: contentRow
+    Label {
+        id: label
+
+        text: root.text
+        icon: root.icon
+        iconSize: root.iconSize
+        textSize: root.textSize
+        bold: root.bold
+        color: root.contentColor
+
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: root.alignment === Qt.AlignLeft ? parent.left : undefined
         anchors.leftMargin: root.alignment === Qt.AlignLeft ? root.horizontalPadding : 0
         anchors.horizontalCenter: root.alignment === Qt.AlignHCenter ? parent.horizontalCenter : undefined
         anchors.right: root.alignment === Qt.AlignRight ? parent.right : undefined
         anchors.rightMargin: root.alignment === Qt.AlignRight ? root.horizontalPadding : 0
-        spacing: root.spacing
-
-        Text {
-            visible: root.icon !== ""
-            text: root.icon
-            color: root.contentColor
-            font.family: Theme.fontFamilyIcons
-            font.pixelSize: root.iconSize
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Text {
-            visible: root.text !== ""
-            text: root.text
-            color: root.contentColor
-            font.family: Theme.fontFamily
-            font.pixelSize: root.textSize
-            font.bold: root.bold
-            anchors.verticalCenter: parent.verticalCenter
-        }
     }
 
     HoverHandler {
@@ -83,7 +69,7 @@ Item {
     }
 
     TapHandler {
-        id: tapHandler
+        id: tap
         onTapped: root.clicked()
     }
 }

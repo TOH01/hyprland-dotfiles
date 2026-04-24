@@ -12,7 +12,7 @@ To minimize side effects during reloads and promote modularity, the project must
 * **`modules/`**: High-level, isolated UI features (e.g., the Bar, Dock, Control Center). 
 * **`config/`**: User-tunable runtime settings (e.g., `shell.json`), typed configuration accessors, and appearance tokens (themes/colors).
 
-> **Crucial Import Rule:** Do **not** use relative paths (e.g., `import "../../foo.qml"`). This is deprecated in Quickshell v0.2+. Use root-relative syntax like `import qs.components`.
+> **Crucial Import Rule:** Do **not** use relative paths (e.g., `import "../../foo.qml"`). This is deprecated in Quickshell v0.2+. Use root-relative syntax like `import qs.components as Ui`.
 
 ## 2. QML Coding Conventions & Idioms
 To ensure bug-free QML that the Language Server (LSP) can parse cleanly, enforce the following rules:

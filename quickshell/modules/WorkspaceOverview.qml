@@ -5,9 +5,9 @@ import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Layouts
 import qs.config
-import qs.components
+import qs.components as Ui
 
-PopupBase {
+Ui.PopupBase {
     id: root
 
     anchors.top: true

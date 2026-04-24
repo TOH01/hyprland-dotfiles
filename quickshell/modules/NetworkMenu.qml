@@ -6,12 +6,11 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import qs.config
 import qs.services
-import qs.components
+import qs.components as Ui
 
-PopupBase {
+Ui.PopupBase {
     id: root
 
-    // SSID whose row is expanded (for password entry / details)
     property string expandedSsid: ""
     property bool wifiListOpen: true
 
@@ -39,7 +38,10 @@ PopupBase {
 
         ColumnLayout {
             id: column
-            anchors { left: parent.left; right: parent.right; top: parent.top; margins: 12 }
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: 12
             spacing: 10
 
             // ───── Wired ─────
@@ -47,70 +49,50 @@ PopupBase {
                 Layout.fillWidth: true
                 spacing: 10
 
-                Text {
-                    text: NetworkService.wiredActive ? "󰈁" : "󰈂"
-                    color: Theme.fg
-                    font.pixelSize: Theme.fontSize + 4
+                Ui.Label {
+                    icon: NetworkService.wiredActive ? "󰈁" : "󰈂"
+                    iconSize: Theme.fontSize + 4
                 }
 
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 1
 
-                    Text {
+                    Ui.Label {
                         text: NetworkService.wiredDevice
-                              ? (NetworkService.wiredConnectionName
-                                 || NetworkService.wiredDevice)
+                              ? (NetworkService.wiredConnectionName || NetworkService.wiredDevice)
                               : "No wired adapter"
-                        color: Theme.fg
-                        font.family: Theme.fontFamily
-                        font.pixelSize: Theme.fontSize
-                        font.weight: Font.Medium
                     }
-                    Text {
+                    Ui.Label {
                         visible: NetworkService.wiredDevice !== ""
                         text: NetworkService.wiredActive
                               ? (NetworkService.wiredIp4 || "Connected")
                               : "Disconnected"
-                        color: Qt.rgba(Theme.fg.r, Theme.fg.g, Theme.fg.b, 0.65)
-                        font.family: Theme.fontFamily
-                        font.pixelSize: Theme.fontSize - 2
+                        textSize: Theme.fontSize - 2
+                        opacity: 0.65
                     }
-                    Text {
+                    Ui.Label {
                         visible: NetworkService.wiredActive
                         text: "↓ " + NetworkService.formatSpeed(NetworkService.wiredRxBps)
                               + "   ↑ " + NetworkService.formatSpeed(NetworkService.wiredTxBps)
-                        color: Qt.rgba(Theme.fg.r, Theme.fg.g, Theme.fg.b, 0.55)
-                        font.family: Theme.fontFamily
-                        font.pixelSize: Theme.fontSize - 3
+                        textSize: Theme.fontSize - 3
+                        opacity: 0.55
                     }
                 }
             }
 
-            // ───── Separator ─────
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: Qt.rgba(1, 1, 1, 0.08)
-            }
+            Ui.Separator {}
 
-            // ───── Airplane mode ─────
-            ToggleRow {
+            Ui.ToggleRow {
                 icon: "󰀝"
                 label: "Airplane Mode"
                 checked: NetworkService.airplaneMode
                 onToggled: NetworkService.toggleAirplaneMode()
             }
 
-            // ───── Separator ─────
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: Qt.rgba(1, 1, 1, 0.08)
-            }
+            Ui.Separator { Layout.fillWidth: true }
 
-            // ───── WiFi toggle ─────
-            ToggleRow {
+            Ui.ToggleRow {
                 icon: "󰖩"
                 label: "Wi-Fi"
                 checked: NetworkService.wifiEnabled
@@ -118,15 +100,12 @@ PopupBase {
                 onToggled: NetworkService.toggleWifi()
             }
 
-            // ───── Separator (before WiFi list) ─────
-            Rectangle {
+            Ui.Separator {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: Qt.rgba(1, 1, 1, 0.08)
                 visible: NetworkService.wifiEnabled
             }
 
-            // ───── WiFi list header (expandable) ─────
+            // ───── WiFi list header ─────
             Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 24
@@ -137,21 +116,17 @@ PopupBase {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: root.wifiListOpen = !root.wifiListOpen
                 }
+
                 RowLayout {
                     anchors.fill: parent
                     spacing: 6
-                    Text {
-                        text: "Visible Networks"
-                        color: Theme.fg
-                        font.family: Theme.fontFamily
-                        font.pixelSize: Theme.fontSize
-                        font.weight: Font.Medium
+
+                    Ui.Label {
                         Layout.fillWidth: true
+                        text: "Visible Networks"
                     }
-                    Text {
+                    Ui.Label {
                         text: root.wifiListOpen ? "▾" : "▸"
-                        color: Theme.fg
-                        font.pixelSize: Theme.fontSize
                     }
                 }
             }
@@ -175,19 +150,18 @@ PopupBase {
                     }
                 }
 
-                Text {
+                Ui.Label {
                     visible: NetworkService.networks.length === 0 && !NetworkService.scanning
                     text: "No networks found"
-                    color: Qt.rgba(Theme.fg.r, Theme.fg.g, Theme.fg.b, 0.5)
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.fontSize - 2
+                    textSize: Theme.fontSize - 2
+                    opacity: 0.5
                     Layout.alignment: Qt.AlignHCenter
                     Layout.topMargin: 4
                     Layout.bottomMargin: 4
                 }
             }
 
-            // Error line
+            // Error line — wrapping text, keep as raw Text
             Text {
                 visible: NetworkService.lastError !== ""
                 text: "Error: " + NetworkService.lastError
@@ -200,57 +174,7 @@ PopupBase {
         }
     }
 
-    // ───── Reusable toggle row ─────
-    component ToggleRow: RowLayout {
-        property string icon: ""
-        property string label: ""
-        property bool checked: false
-        property bool rowEnabled: true
-        signal toggled()
-
-        Layout.fillWidth: true
-        spacing: 10
-        opacity: rowEnabled ? 1.0 : 0.45
-
-        Text {
-            text: icon
-            color: Theme.fg
-            font.pixelSize: Theme.fontSize + 2
-            Layout.preferredWidth: 20
-            horizontalAlignment: Text.AlignHCenter
-        }
-        Text {
-            Layout.fillWidth: true
-            text: label
-            color: Theme.fg
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSize
-        }
-        Rectangle {
-            Layout.preferredWidth: 38
-            Layout.preferredHeight: 20
-            radius: height / 2
-            color: checked ? (Theme.accent !== undefined ? Theme.accent : "#5294e2")
-                           : Qt.rgba(1, 1, 1, 0.15)
-            Behavior on color { ColorAnimation { duration: 150 } }
-
-            Rectangle {
-                width: 16; height: 16; radius: 8
-                color: "white"
-                y: 2
-                x: checked ? parent.width - width - 2 : 2
-                Behavior on x { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
-            }
-            MouseArea {
-                anchors.fill: parent
-                enabled: rowEnabled
-                cursorShape: Qt.PointingHandCursor
-                onClicked: toggled()
-            }
-        }
-    }
-
-    // ───── Network row (per SSID) ─────
+    // ───── Network row (per SSID) — popup-specific, stays inline ─────
     component NetworkRow: ColumnLayout {
         property string ssidText: ""
         property int signalStrength: 0
@@ -271,7 +195,9 @@ PopupBase {
                    : (isActive ? Qt.rgba(1, 1, 1, 0.035) : "transparent")
 
             RowLayout {
-                anchors { fill: parent; leftMargin: 8; rightMargin: 8 }
+                anchors.fill: parent
+                anchors.leftMargin: 8
+                anchors.rightMargin: 8
                 spacing: 8
 
                 Text {
@@ -280,8 +206,9 @@ PopupBase {
                     font.pixelSize: Theme.fontSize
                     Layout.preferredWidth: 12
                 }
-                Text {
-                    text: {
+
+                Ui.Label {
+                    icon: {
                         const s = signalStrength
                         if (secured) {
                             return s >= 75 ? "󰤪" : s >= 50 ? "󰤧" : s >= 25 ? "󰤤" : s > 0 ? "󰤡" : "󰤬"
@@ -289,10 +216,9 @@ PopupBase {
                             return s >= 75 ? "󰤨" : s >= 50 ? "󰤥" : s >= 25 ? "󰤢" : s > 0 ? "󰤟" : "󰤯"
                         }
                     }
-                    color: Qt.rgba(Theme.fg.r, Theme.fg.g, Theme.fg.b, 0.85)
-                    font.family: Theme.fontFamily   // must be a Nerd Font
-                    font.pixelSize: Theme.fontSize
+                    opacity: 0.85
                 }
+
                 Text {
                     Layout.fillWidth: true
                     text: ssidText
@@ -300,13 +226,12 @@ PopupBase {
                     elide: Text.ElideRight
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.fontSize - 1
-                    font.weight: isActive ? Font.Medium : Font.Normal
                 }
-                Text {
+
+                Ui.Label {
                     visible: isConnecting
                     text: "…"
-                    color: Qt.rgba(Theme.fg.r, Theme.fg.g, Theme.fg.b, 0.7)
-                    font.pixelSize: Theme.fontSize
+                    opacity: 0.7
                 }
             }
 
@@ -316,10 +241,7 @@ PopupBase {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                    if (isActive) {
-                        // Collapse / disconnect UI
-                        root.expandedSsid = isExpanded ? "" : ssidText
-                    } else if (secured) {
+                    if (isActive || secured) {
                         root.expandedSsid = isExpanded ? "" : ssidText
                     } else {
                         NetworkService.connectTo(ssidText, "")
@@ -328,27 +250,31 @@ PopupBase {
             }
         }
 
-        // Expansion: password entry OR disconnect button
-        Rectangle {
+        // Expansion
+        Item {
             Layout.fillWidth: true
             visible: isExpanded
-            color: "transparent"
             implicitHeight: expandContent.implicitHeight + 12
 
             ColumnLayout {
                 id: expandContent
-                anchors { left: parent.left; right: parent.right; top: parent.top
-                          leftMargin: 24; rightMargin: 8; topMargin: 4 }
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.leftMargin: 24
+                anchors.rightMargin: 8
+                anchors.topMargin: 4
                 spacing: 6
 
-                // Active network → disconnect
-                Button {
+                Ui.Button {
                     visible: isActive
                     text: "Disconnect"
-                    onClicked: { NetworkService.disconnectWifi(); root.expandedSsid = "" }
+                    onClicked: {
+                        NetworkService.disconnectWifi()
+                        root.expandedSsid = ""
+                    }
                 }
 
-                // Secured and not active → password
                 RowLayout {
                     visible: !isActive && secured
                     spacing: 6
@@ -359,9 +285,10 @@ PopupBase {
                         Layout.fillWidth: true
                         placeholderText: "Password"
                         echoMode: TextInput.Password
-                        onAccepted: connectBtn.clicked()
+                        onAccepted: if (connectBtn.enabled) connectBtn.clicked()
                     }
-                    Button {
+
+                    Ui.Button {
                         id: connectBtn
                         text: "Connect"
                         enabled: pwField.text.length >= 8
