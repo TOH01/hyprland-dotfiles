@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell.Hyprland
 import qs.config
 import qs.services
+import Quickshell.Io
 
 PanelWindow {
     id: root
@@ -18,10 +19,19 @@ PanelWindow {
 
     default property alias content: contentItem.data
 
+    // Workaround: mapping a focusable layer surface leaves the bar's pointer
+    // state stale in Hyprland, so the first click after opening is dropped.
+    // Re-dispatching the current cursor position forces a pointer resync.
+    Process {
+        id: cursorNudge
+        command: ["sh", "-c", "hyprctl dispatch movecursor $(hyprctl cursorpos | tr -d ',')"]
+    }
+
     function open() {
         hideTimer.stop()
         root.visible = true
         contentItem.state = "visible"
+        if (acceptsInput) Qt.callLater(() => cursorNudge.running = true)
     }
     
     function close() {
