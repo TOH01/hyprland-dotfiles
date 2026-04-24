@@ -11,6 +11,8 @@ import qs.components as Ui
 Ui.PopupBase {
     id: root
 
+    acceptsInput: true
+
     property string expandedSsid: ""
     property bool wifiListOpen: true
 
