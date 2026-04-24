@@ -7,6 +7,7 @@ import qs.config
 import qs.services
 import qs.components
 import qs.modules
+
 PanelWindow {
     id: root
 
@@ -57,6 +58,14 @@ PanelWindow {
                 confirmPopupLoader.item.confirmedAction = action
                 confirmPopupLoader.item.open()
             }
+        }
+    }
+
+    LazyLoader {
+        id: networkMenuLoader
+        component: NetworkMenu { 
+            bar: root; screen: root.screen
+            onVisibleChanged: if (!visible) networkMenuLoader.active = false
         }
     }
 
@@ -118,6 +127,15 @@ PanelWindow {
             // modules right
             RowLayout { 
                 spacing: Theme.s2 
+                BarButton {
+                    id: networkButton
+                    icon: "󰈀"
+                    onClicked: {
+                        networkMenuLoader.active = true
+                        PopupManager.open(networkMenuLoader.item, networkButton)
+                    }
+                    iconSize: 15
+                }
                 BarButton {
                     id: powerButton
                     icon: ""

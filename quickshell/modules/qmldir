@@ -4,3 +4,4 @@ LaunchMenu 1.0 LaunchMenu.qml
 PowerMenu 1.0 PowerMenu.qml
 QuickLaunchMenu 1.0 QuickLaunchMenu.qml
 WorkspaceOverview 1.0 WorkspaceOverview.qml
+NetworkMenu 1.0 NetworkMenu.qml
