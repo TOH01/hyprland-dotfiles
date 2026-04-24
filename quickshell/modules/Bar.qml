@@ -25,9 +25,9 @@ PanelWindow {
     anchors.top: true
     anchors.left: true
     anchors.right: true
-    margins.top: Theme.s2
-    margins.left: Theme.s2
-    margins.right: Theme.s2
+    margins.top: Theme.barMargin
+    margins.left: Theme.barMargin
+    margins.right: Theme.barMargin
 
 
 
@@ -94,13 +94,13 @@ PanelWindow {
 
         RowLayout {
             anchors.fill: parent
-            anchors.leftMargin: Theme.s3
-            anchors.rightMargin: Theme.s3
+            anchors.leftMargin: Theme.barContentPadding
+            anchors.rightMargin: Theme.barContentPadding
             spacing: 0
 
             // modules left
             RowLayout {
-                spacing: Theme.s2
+                spacing: Theme.barSpacing
                 Ui.Button {
                     id: wsButton
                     text: "Workspaces"
@@ -116,7 +116,7 @@ PanelWindow {
             
             // modules center
             RowLayout { 
-                spacing: Theme.s2 
+                spacing: Theme.barSpacing 
             }
 
             // spacer
@@ -124,7 +124,7 @@ PanelWindow {
             
             // modules right
             RowLayout { 
-                spacing: Theme.s2 
+                spacing: Theme.barSpacing 
                 Ui.Button {
                     id: networkButton
                     icon: "󰈀"
@@ -132,7 +132,7 @@ PanelWindow {
                         networkMenuLoader.active = true
                         PopupManager.open(networkMenuLoader.item, networkButton)
                     }
-                    iconSize: 15
+                    iconSize: Theme.barButtonIconSize
                 }
                 Ui.Button {
                     id: powerButton
@@ -141,7 +141,7 @@ PanelWindow {
                         powerMenuLoader.active = true
                         PopupManager.open(powerMenuLoader.item, powerButton)
                     }
-                    iconSize: 15
+                    iconSize: Theme.barButtonIconSize
                 }
             }
         }

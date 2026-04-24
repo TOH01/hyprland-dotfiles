@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 
 QtObject {
+    // --- Global Palette ---
     readonly property color bg:        "#1a1b26"
     readonly property color bgElevated:"#24283b"
     readonly property color border:    "#2f334d"
@@ -11,19 +12,16 @@ QtObject {
     readonly property color accent:    "#7aa2f7"
     readonly property color accentHot: "#0db9d7"
     readonly property color separator: "#33c0caf5"
+    readonly property color danger:    "#e06c75"
 
+    // --- Global Spacing & Sizing ---
     readonly property int   s1: 4
     readonly property int   s2: 8
     readonly property int   s3: 12
     readonly property int   s4: 16
     readonly property int   s5: 24
 
-    readonly property int popupGap: s2
-    readonly property int belowBar: popupGap
-    readonly property int aboveDock: 66
-
     readonly property int   widgetRadius: 12
-
     readonly property int   borderWidth: 2
 
     readonly property string fontFamily: "JetBrainsMono Nerd Font"
@@ -32,18 +30,147 @@ QtObject {
     readonly property int    fontSize:   13
     readonly property int    iconSize:   16
 
+    readonly property int popupGap: s2
+    readonly property int belowBar: popupGap
+    readonly property int aboveDock: 66
 
-    // dock
+    // --- Component: AppIcon ---
+    readonly property int appIconDefaultSize: 48
 
-    // bar
+    // --- Component: Button ---
+    readonly property int buttonHorizontalPadding: 8
+    readonly property int buttonVerticalPadding: 4
+    readonly property int buttonRadius: 8
+    readonly property color buttonBgColor: "transparent"
+    readonly property color buttonContentColor: Theme.fg
+    readonly property color buttonHoverColor: Theme.fg
+    readonly property real buttonHoverOpacity: 0.06
+    readonly property real buttonPressedOpacity: 0.12
+    readonly property int buttonAnimDuration: 120
+
+    // --- Component: ConfirmPopup ---
+    readonly property int confirmPopupDefaultTimeout: 60
+    readonly property int confirmPopupCloseDelay: 200
+    readonly property real confirmPopupHiddenScale: 0.95
+    readonly property int confirmPopupAnimDuration: 200
+
+    // --- Component: Label ---
+    readonly property int labelGap: 6
+
+    // --- Component: PopupBase ---
+    readonly property int popupDefaultWidth: 400
+    readonly property int popupDefaultHeight: 200
+    readonly property int popupOpenDuration: 280
+    readonly property int popupCloseDuration: 140
+    readonly property real popupHiddenScale: 0.94
+    readonly property int popupEdgeMargin: Theme.s2
+
+    // --- Component: Separator ---
+    readonly property int separatorThickness: 2
+    readonly property int separatorPadding: 8
+    readonly property color separatorColor: Qt.rgba(1, 1, 1, 0.08)
+
+    // --- Component: ToggleRow ---
+    readonly property int toggleSpacing: 10
+    readonly property real toggleDisabledOpacity: 0.45
+    readonly property int toggleTrackWidth: 38
+    readonly property int toggleTrackHeight: 20
+    readonly property color toggleTrackOnColor: Theme.accent
+    readonly property color toggleTrackOffColor: Qt.rgba(1, 1, 1, 0.15)
+    readonly property int toggleThumbSize: 16
+    readonly property int toggleThumbMargin: 2
+    readonly property color toggleThumbColor: "white"
+    readonly property int toggleAnimDuration: 160
+
+    // --- Module: Bar ---
     readonly property int barHeight: 35
+    readonly property int barMargin: Theme.s2
+    readonly property int barContentPadding: Theme.s3
+    readonly property int barSpacing: Theme.s2
+    readonly property int barButtonIconSize: 15
 
-    // launch menu
+    // --- Module: LaunchMenu ---
     readonly property int launchMenuHeight: 480
     readonly property int launchMenuWidth: 700
     readonly property int launchMenuContentMargin: 20
+    readonly property int launchMenuSpacing: Theme.s3
     readonly property int launchMenuIconSize: 48
-    readonly property int searchBarHeight: 32
-    readonly property int cellRadius: 10
-    readonly property int pageAnimDuration: 180
+    readonly property int launchMenuSearchBarHeight: 32
+    readonly property int launchMenuSearchIconSize: 12
+    readonly property int launchMenuSearchFontSize: Theme.fontSize - 1
+    readonly property int launchMenuSearchBorderWidth: 1
+    readonly property int launchMenuSearchPadding: 10
+    readonly property int launchMenuCellRadius: 10
+    readonly property int launchMenuCellMargin: Theme.s1
+    readonly property int launchMenuAnimDuration: 150
+    readonly property int launchMenuPageAnimDuration: 180
+    readonly property real launchMenuCellHoverOpacity: 0.06
+    readonly property real launchMenuCellSelectedOpacity: 0.10
+    readonly property int launchMenuCellSpacing: 6
+    readonly property int launchMenuIconFallbackFontSize: 18
+    readonly property int launchMenuAppFontSize: 10
+    readonly property int launchMenuGridColumns: 5
+    readonly property int launchMenuGridRows: 3
+    readonly property int launchMenuListBottomMargin: 24
+    readonly property int launchMenuClearIconSize: 10
+    readonly property int launchMenuClearMargin: -6
+    readonly property int launchMenuPageIndicatorHeight: 6
+    readonly property int launchMenuPageIndicatorWidth: 6
+    readonly property int launchMenuPageIndicatorWidthActive: 18
+    readonly property int launchMenuPageIndicatorRadius: 3
+    readonly property int launchMenuPageIndicatorSpacing: 6
+    readonly property int launchMenuPageIndicatorAnimDuration: 200
+
+    // --- Module: NetworkMenu ---
+    readonly property int networkMenuWidth: 340
+    readonly property int networkMenuMargin: 12
+    readonly property int networkMenuSpacing: 10
+    readonly property int networkMenuSectionSpacing: 12
+    readonly property int networkMenuRowHeight: 34
+    readonly property int networkMenuRowRadius: 6
+    readonly property color networkMenuRowHoverBg: Qt.rgba(1, 1, 1, 0.06)
+    readonly property color networkMenuRowActiveBg: Qt.rgba(1, 1, 1, 0.035)
+    readonly property int networkMenuRowPadding: 8
+    readonly property int networkMenuRowGap: 8
+    readonly property int networkMenuCheckmarkWidth: 12
+    readonly property int networkMenuExpandMargin: 24
+    readonly property int networkMenuExpandRightMargin: 8
+    readonly property int networkMenuExpandTopMargin: 4
+    readonly property int networkMenuExpandSpacing: 6
+
+    // --- Module: PowerMenu ---
+    readonly property int powerMenuWidth: 200
+    readonly property int powerMenuHeight: 125
+    readonly property int powerMenuSpacing: 0
+    readonly property int powerMenuIconSize: 18
+    readonly property int powerMenuMargin: Theme.s3
+
+    // --- Module: QuickLaunchMenu ---
+    readonly property int dockWidth: 300
+    readonly property int dockExpandedHeight: 45
+    readonly property int dockCollapsedHeight: 6
+    readonly property int dockExpandedBottomMargin: 8
+    readonly property int dockCollapsedBottomMargin: 2
+    readonly property int dockHotPadX: 40
+    readonly property int dockHotPadY: 10
+    readonly property int dockRadius: 22
+    readonly property int dockCollapsedRadius: 2
+    readonly property int dockAnimDuration: 240
+    readonly property int dockContentPadding: 10
+    readonly property int dockIconBaseSize: 36
+    readonly property int dockIconActiveSize: 26
+    readonly property int dockSpacing: 8
+    readonly property int dockCollapseDelay: 180
+    readonly property real dockScaleMin: 1.0
+    readonly property real dockScaleMax: 1.4
+
+    // --- Module: WorkspaceOverview ---
+    readonly property int workspaceOverviewHeight: 120
+    readonly property int workspaceOverviewMargin: 8
+    readonly property int workspaceOverviewItemWidth: 150
+    readonly property int workspaceOverviewItemHeight: 100
+    readonly property int workspaceOverviewItemSpacing: 10
+    readonly property int workspaceOverviewPadding: 10
+    readonly property int workspaceOverviewMinWorkspaces: 2
+    readonly property int workspaceOverviewMaxWorkspaces: 10
 }

@@ -42,29 +42,29 @@ Ui.PopupBase {
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: Theme.launchMenuContentMargin
-            spacing: Theme.s3
+            spacing: Theme.launchMenuSpacing
 
             Rectangle {
                 Layout.fillWidth: true
-                height: Theme.searchBarHeight
+                height: Theme.launchMenuSearchBarHeight
                 color: Theme.bgElevated
                 radius: Theme.widgetRadius
                 border.color: searchField.activeFocus ? Theme.accent : Theme.border
-                border.width: 1
+                border.width: Theme.launchMenuSearchBorderWidth
 
                 RowLayout {
                     anchors.fill: parent
-                    anchors.leftMargin: 10
-                    anchors.rightMargin: 10
+                    anchors.leftMargin: Theme.launchMenuSearchPadding
+                    anchors.rightMargin: Theme.launchMenuSearchPadding
                     spacing: Theme.s2
 
                     Text {
                         text: "\uf002" // nf-fa-search
                         color: searchField.text.length > 0 ? Theme.accent : Theme.fgMuted
                         font.family: Theme.fontFamilyIcons
-                        font.pointSize: 12
+                        font.pointSize: Theme.launchMenuSearchIconSize
                         Layout.alignment: Qt.AlignVCenter
-                        Behavior on color { ColorAnimation { duration: 150 } }
+                        Behavior on color { ColorAnimation { duration: Theme.launchMenuAnimDuration } }
                     }
 
                     TextField {
@@ -75,7 +75,7 @@ Ui.PopupBase {
                         placeholderTextColor: Theme.fgMuted
                         focus: true
                         font.family: Theme.fontFamily
-                        font.pointSize: Theme.fontSize - 1
+                        font.pointSize: Theme.launchMenuSearchFontSize
                         color: Theme.fg
                         background: Item {}
                         leftPadding: 0
@@ -191,17 +191,17 @@ Ui.PopupBase {
                         text: "\uf00d" // nf-fa-close
                         color: Theme.fgMuted
                         font.family: Theme.fontFamilyIcons
-                        font.pointSize: 10
+                        font.pointSize: Theme.launchMenuClearIconSize
                         Layout.alignment: Qt.AlignVCenter
                         visible: searchField.text.length > 0
                         opacity: clearMouse.containsMouse ? 1.0 : 0.6
 
-                        Behavior on opacity { NumberAnimation { duration: 100 } }
+                        Behavior on opacity { NumberAnimation { duration: Theme.launchMenuAnimDuration } }
 
                         MouseArea {
                             id: clearMouse
                             anchors.fill: parent
-                            anchors.margins: -6
+                            anchors.margins: Theme.launchMenuClearMargin
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: searchField.text = ""
@@ -268,11 +268,11 @@ Ui.PopupBase {
                     Rectangle {
                         id: hoverBg
                         anchors.fill: parent
-                        anchors.margins: Theme.s1
-                        radius: Theme.cellRadius
+                        anchors.margins: Theme.launchMenuCellMargin
+                        radius: Theme.launchMenuCellRadius
                         color: delegateRoot.isSelected ? Theme.accent : Theme.fg
-                        opacity: delegateRoot.isSelected ? 0.10
-                               : mouseArea.containsMouse ? 0.06 : 0.0
+                        opacity: delegateRoot.isSelected ? Theme.launchMenuCellSelectedOpacity
+                               : mouseArea.containsMouse ? Theme.launchMenuCellHoverOpacity : 0.0
                         border.width: delegateRoot.isSelected ? 1 : 0
                         border.color: Theme.accent
                         
@@ -281,7 +281,7 @@ Ui.PopupBase {
 
                     Column {
                         anchors.centerIn: parent
-                        spacing: 6
+                        spacing: Theme.launchMenuCellSpacing
                         
                         Item {
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -296,7 +296,7 @@ Ui.PopupBase {
 
                             Rectangle {
                                 anchors.fill: parent
-                                radius: Theme.cellRadius
+                                radius: Theme.launchMenuCellRadius
                                 color: Theme.bgElevated
                                 visible: appIcon.status !== Image.Ready
 
@@ -305,7 +305,7 @@ Ui.PopupBase {
                                     text: (delegateRoot.modelData.name || "?")[0].toUpperCase()
                                     color: Theme.accent
                                     font.family: Theme.fontFamily
-                                    font.pointSize: 18
+                                    font.pointSize: Theme.launchMenuIconFallbackFontSize
                                 }
                             }
                         }
@@ -314,7 +314,7 @@ Ui.PopupBase {
                             text: delegateRoot.modelData.name
                             color: Theme.fg
                             font.family: Theme.fontFamily
-                            font.pointSize: 10
+                            font.pointSize: Theme.launchMenuAppFontSize
                             width: delegateRoot.width - 12
                             horizontalAlignment: Text.AlignHCenter
                             wrapMode: Text.WordWrap
@@ -346,13 +346,13 @@ Ui.PopupBase {
                     ListView {
                         id: pagedList
                         anchors.fill: parent
-                        anchors.bottomMargin: 24
+                        anchors.bottomMargin: Theme.launchMenuListBottomMargin
                         orientation: ListView.Horizontal
                         snapMode: ListView.SnapOneItem
                         cacheBuffer: width
                         clip: true
                         interactive: false
-                        highlightMoveDuration: Theme.pageAnimDuration
+                        highlightMoveDuration: Theme.launchMenuPageAnimDuration
                         
                         model: Math.ceil(appModel.values.length / 15)
                         
@@ -363,8 +363,8 @@ Ui.PopupBase {
 
                             width: pagedList.width
                             height: pagedList.height
-                            cellWidth: Math.floor(pageGrid.width / 5)
-                            cellHeight: Math.floor(pageGrid.height / 3)
+                            cellWidth: Math.floor(pageGrid.width / Theme.launchMenuGridColumns)
+                            cellHeight: Math.floor(pageGrid.height / Theme.launchMenuGridRows)
                             interactive: false
                             
                             model: appModel.values.slice(pageGrid.index * 15, (pageGrid.index + 1) * 15)
@@ -389,8 +389,8 @@ Ui.PopupBase {
                         id: dotsRow
                         anchors.bottom: parent.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
-                        height: 14
-                        spacing: 6
+                        height: Theme.launchMenuPageIndicatorHeight
+                        spacing: Theme.launchMenuPageIndicatorSpacing
                         visible: pagedList.model > 1
                         
                         Repeater {
@@ -398,16 +398,16 @@ Ui.PopupBase {
                             delegate: Rectangle {
                                 required property int index
                                 
-                                width: index === pagedList.currentIndex ? 18 : 6
-                                height: 6
-                                radius: 3
+                                width: index === pagedList.currentIndex ? Theme.launchMenuPageIndicatorWidthActive : Theme.launchMenuPageIndicatorWidth
+                                height: Theme.launchMenuPageIndicatorHeight
+                                radius: Theme.launchMenuPageIndicatorRadius
                                 color: index === pagedList.currentIndex ? Theme.accent : Theme.fg
                                 opacity: index === pagedList.currentIndex ? 1.0 : 0.25
                                 anchors.verticalCenter: parent.verticalCenter
                                 
-                                Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                                Behavior on color { ColorAnimation { duration: 200 } }
-                                Behavior on opacity { NumberAnimation { duration: 200 } }
+                                Behavior on width { NumberAnimation { duration: Theme.launchMenuPageIndicatorAnimDuration; easing.type: Easing.OutCubic } }
+                                Behavior on color { ColorAnimation { duration: Theme.launchMenuPageIndicatorAnimDuration } }
+                                Behavior on opacity { NumberAnimation { duration: Theme.launchMenuPageIndicatorAnimDuration } }
                             }
                         }
                     }
@@ -417,8 +417,8 @@ Ui.PopupBase {
                 GridView {
                     id: searchView
                     clip: true
-                    cellWidth: Math.floor(width / 5)
-                    cellHeight: Math.floor(height / 3)
+                    cellWidth: Math.floor(width / Theme.launchMenuGridColumns)
+                    cellHeight: Math.floor(height / Theme.launchMenuGridRows)
                     model: appModel.values
                     delegate: appDelegate
                     

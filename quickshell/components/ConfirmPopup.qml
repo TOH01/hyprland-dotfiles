@@ -11,7 +11,7 @@ PanelWindow {
     id: root
 
     property string message: ""
-    property int defaultTimeout: 60
+    property int defaultTimeout: Theme.confirmPopupDefaultTimeout
     property int timeout: root.defaultTimeout
     property bool dismissOnOutsideClick: true
     property bool isOpened: false
@@ -49,7 +49,7 @@ PanelWindow {
     Scope {
         Timer {
             id: closeTimer
-            interval: 200
+            interval: Theme.confirmPopupCloseDelay
             onTriggered: root.visible = false
         }
 
@@ -101,15 +101,15 @@ PanelWindow {
         color: Theme.bg
         
         opacity: root.isOpened ? 1.0 : 0.0
-        scale: root.isOpened ? 1.0 : 0.95
+        scale: root.isOpened ? 1.0 : Theme.confirmPopupHiddenScale
 
         transform: Translate { id: dialogTranslate }
 
         Behavior on opacity {
-            NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+            NumberAnimation { duration: Theme.confirmPopupAnimDuration; easing.type: Easing.OutCubic }
         }
         Behavior on scale {
-            NumberAnimation { duration: 200; easing.type: Easing.OutBack }
+            NumberAnimation { duration: Theme.confirmPopupAnimDuration; easing.type: Easing.OutBack }
         }
 
         // prevent clicks from going through popup

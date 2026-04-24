@@ -16,7 +16,7 @@ Ui.PopupBase {
     property string expandedSsid: ""
     property bool wifiListOpen: true
 
-    implicitWidth: 340
+    implicitWidth: Theme.networkMenuWidth
     implicitHeight: bg.implicitHeight
 
     onVisibleChanged: {
@@ -35,21 +35,21 @@ Ui.PopupBase {
         radius: Theme.widgetRadius
         color: Theme.bg
         border.width: 1
-        border.color: Qt.rgba(1, 1, 1, 0.08)
-        implicitHeight: column.implicitHeight + 24
+        border.color: Theme.separatorColor
+        implicitHeight: column.implicitHeight + (Theme.networkMenuMargin * 2)
 
         ColumnLayout {
             id: column
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            anchors.margins: 12
-            spacing: 10
+            anchors.margins: Theme.networkMenuMargin
+            spacing: Theme.networkMenuSpacing
 
             // ───── Wired ─────
             RowLayout {
                 Layout.fillWidth: true
-                spacing: 10
+                spacing: Theme.networkMenuSpacing
 
                 Ui.Label {
                     icon: NetworkService.wiredActive ? "󰈁" : "󰈂"
@@ -158,8 +158,8 @@ Ui.PopupBase {
                     textSize: Theme.fontSize - 2
                     opacity: 0.5
                     Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: 4
-                    Layout.bottomMargin: 4
+                    Layout.topMargin: Theme.networkMenuExpandTopMargin
+                    Layout.bottomMargin: Theme.networkMenuExpandTopMargin
                 }
             }
 
@@ -168,7 +168,7 @@ Ui.PopupBase {
                 visible: NetworkService.lastError !== ""
                 text: "Error: " + NetworkService.lastError
                 wrapMode: Text.WordWrap
-                color: "#e06c75"
+                color: Theme.danger
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.fontSize - 3
                 Layout.fillWidth: true
@@ -190,23 +190,23 @@ Ui.PopupBase {
 
         Rectangle {
             Layout.fillWidth: true
-            implicitHeight: 34
-            radius: 6
+            implicitHeight: Theme.networkMenuRowHeight
+            radius: Theme.networkMenuRowRadius
             color: rowHover.containsMouse
-                   ? Qt.rgba(1, 1, 1, 0.06)
-                   : (isActive ? Qt.rgba(1, 1, 1, 0.035) : "transparent")
+                   ? Theme.networkMenuRowHoverBg
+                   : (isActive ? Theme.networkMenuRowActiveBg : "transparent")
 
             RowLayout {
                 anchors.fill: parent
-                anchors.leftMargin: 8
-                anchors.rightMargin: 8
-                spacing: 8
+                anchors.leftMargin: Theme.networkMenuRowPadding
+                anchors.rightMargin: Theme.networkMenuRowPadding
+                spacing: Theme.networkMenuRowGap
 
                 Text {
                     text: isActive ? "✓" : " "
-                    color: Theme.accent !== undefined ? Theme.accent : "#5294e2"
+                    color: Theme.accent
                     font.pixelSize: Theme.fontSize
-                    Layout.preferredWidth: 12
+                    Layout.preferredWidth: Theme.networkMenuCheckmarkWidth
                 }
 
                 Ui.Label {
@@ -256,17 +256,17 @@ Ui.PopupBase {
         Item {
             Layout.fillWidth: true
             visible: isExpanded
-            implicitHeight: expandContent.implicitHeight + 12
+            implicitHeight: expandContent.implicitHeight + (Theme.networkMenuExpandTopMargin * 3)
 
             ColumnLayout {
                 id: expandContent
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                anchors.leftMargin: 24
-                anchors.rightMargin: 8
-                anchors.topMargin: 4
-                spacing: 6
+                anchors.leftMargin: Theme.networkMenuExpandMargin
+                anchors.rightMargin: Theme.networkMenuExpandRightMargin
+                anchors.topMargin: Theme.networkMenuExpandTopMargin
+                spacing: Theme.networkMenuExpandSpacing
 
                 Ui.Button {
                     visible: isActive

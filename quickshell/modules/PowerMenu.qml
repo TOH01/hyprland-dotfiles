@@ -13,8 +13,8 @@ Ui.PopupBase {
     
     signal requestConfirm(var action, string message)
 
-    implicitWidth: 200
-    implicitHeight: 125
+    implicitWidth: Theme.powerMenuWidth
+    implicitHeight: Theme.powerMenuHeight
 
     Rectangle {
         radius: Theme.widgetRadius
@@ -23,13 +23,13 @@ Ui.PopupBase {
     
         ColumnLayout {
             anchors.fill: parent
-            spacing: 0
+            spacing: Theme.powerMenuSpacing
 
             ColumnLayout {
                 Layout.fillWidth: true
                 Layout.leftMargin: Theme.s3
                 Layout.rightMargin: Theme.s3
-                spacing: 0
+                spacing: Theme.powerMenuSpacing
 
                 // lockscreen
                 Ui.Button {
@@ -60,13 +60,13 @@ Ui.PopupBase {
                 Ui.Button {
                     icon: "󰤄"
                     onClicked: SystemActions.suspend.running = true
-                    iconSize: 18
+                    iconSize: Theme.powerMenuIconSize
                 }
 
                 // restart button
                 Ui.Button {
                     icon: ""
-                    iconSize: 18
+                    iconSize: Theme.powerMenuIconSize
                     
                     onClicked: {
                         PopupManager.closeCurrent()
@@ -77,7 +77,7 @@ Ui.PopupBase {
                 // power off button
                 Ui.Button {
                     icon: ""
-                    iconSize: 18
+                    iconSize: Theme.powerMenuIconSize
 
                     onClicked: {
                         PopupManager.closeCurrent()

@@ -14,10 +14,10 @@ Ui.PopupBase {
     anchors.left: true
     anchors.right: true
     
-    implicitHeight: 120
+    implicitHeight: Theme.workspaceOverviewHeight
 
-    margins.left: 8
-    margins.right: 8
+    margins.left: Theme.workspaceOverviewMargin
+    margins.right: Theme.workspaceOverviewMargin
 
     Rectangle {
         radius: Theme.widgetRadius
@@ -27,8 +27,8 @@ Ui.PopupBase {
         RowLayout {
             id: strip
 
-            readonly property int minWorkspaces: 2
-            readonly property int maxWorkspaces: 10
+            readonly property int minWorkspaces: Theme.workspaceOverviewMinWorkspaces
+            readonly property int maxWorkspaces: Theme.workspaceOverviewMaxWorkspaces
 
             readonly property int wsCount: {
                 const used = Hyprland.workspaces.values.filter(w => w.toplevels.values.length > 0 && w.id > 0)
@@ -38,8 +38,8 @@ Ui.PopupBase {
             }
 
             anchors.fill: parent
-            anchors.leftMargin: 10       
-            anchors.topMargin: 10
+            anchors.leftMargin: Theme.workspaceOverviewPadding       
+            anchors.topMargin: Theme.workspaceOverviewPadding
 
             Repeater {
                 model: strip.wsCount
@@ -50,8 +50,8 @@ Ui.PopupBase {
                     readonly property bool isActive: Hyprland.focusedWorkspace?.id === (index + 1)
                     readonly property color accent: isActive ? Theme.accentHot : (workspaceRectangle.ws ? Theme.accent : Theme.border)
 
-                    width: 150
-                    height: 100
+                    width: Theme.workspaceOverviewItemWidth
+                    height: Theme.workspaceOverviewItemHeight
                     radius: Theme.widgetRadius
                     border.color: workspaceRectangle.accent
                     border.width: Theme.borderWidth

@@ -13,8 +13,8 @@ RowLayout {
 
     signal toggled()
 
-    spacing: 10
-    opacity: rowEnabled ? 1.0 : 0.45
+    spacing: Theme.toggleSpacing
+    opacity: rowEnabled ? 1.0 : Theme.toggleDisabledOpacity
 
     Ui.Label {
         Layout.fillWidth: true
@@ -24,23 +24,23 @@ RowLayout {
     }
 
     Rectangle {
-        Layout.preferredWidth: 38
-        Layout.preferredHeight: 20
+        Layout.preferredWidth: Theme.toggleTrackWidth
+        Layout.preferredHeight: Theme.toggleTrackHeight
         radius: height / 2
         color: root.checked
-               ? (Theme.accent !== undefined ? Theme.accent : "#5294e2")
-               : Qt.rgba(1, 1, 1, 0.15)
+               ? Theme.toggleTrackOnColor
+               : Theme.toggleTrackOffColor
 
-        Behavior on color { ColorAnimation { duration: 150 } }
+        Behavior on color { ColorAnimation { duration: Theme.toggleAnimDuration } }
 
         Rectangle {
-            width: 16
-            height: 16
-            radius: 8
-            color: "white"
-            y: 2
-            x: root.checked ? parent.width - width - 2 : 2
-            Behavior on x { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+            width: Theme.toggleThumbSize
+            height: Theme.toggleThumbSize
+            radius: width / 2
+            color: Theme.toggleThumbColor
+            y: Theme.toggleThumbMargin
+            x: root.checked ? parent.width - width - Theme.toggleThumbMargin : Theme.toggleThumbMargin
+            Behavior on x { NumberAnimation { duration: Theme.toggleAnimDuration; easing.type: Easing.OutCubic } }
         }
 
         MouseArea {

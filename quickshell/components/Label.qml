@@ -12,7 +12,7 @@ Row {
     property bool bold: false
     property color color: Theme.fg
 
-    spacing: (icon !== "" && text !== "") ? 6 : 0
+    spacing: (icon !== "" && text !== "") ? Theme.labelGap : 0
 
     Text {
         visible: root.icon !== ""

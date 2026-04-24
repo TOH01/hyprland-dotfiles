@@ -2,6 +2,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Widgets
+import qs.config
 
 IconImage {
     id: root
@@ -13,8 +14,8 @@ IconImage {
 
     asynchronous: true
     mipmap: true
-    implicitWidth: 48  
-    implicitHeight: 48
+    implicitWidth: Theme.appIconDefaultSize
+    implicitHeight: Theme.appIconDefaultSize
 
     source: {
         if (root.entry && root.entry.icon) {

@@ -12,10 +12,10 @@ PanelWindow {
     required property var bar
     property Item anchorItem: null
     property bool anchorBottom: false
-    property int edgeMargin: Theme.s2
+    property int edgeMargin: Theme.popupEdgeMargin
     property bool acceptsInput: false
-    property int openDuration: 280
-    property int closeDuration: 140
+    property int openDuration: Theme.popupOpenDuration
+    property int closeDuration: Theme.popupCloseDuration
 
     default property alias content: contentItem.data
 
@@ -41,8 +41,8 @@ PanelWindow {
     }
 
     visible: false
-    implicitWidth: 400
-    implicitHeight: 200
+    implicitWidth: Theme.popupDefaultWidth
+    implicitHeight: Theme.popupDefaultHeight
     color: "transparent"
     surfaceFormat.opaque: false
     exclusiveZone: 0
@@ -74,7 +74,7 @@ PanelWindow {
             State { name: "visible"
                 PropertyChanges { target: contentItem; opacity: 1.0; scale: 1.0 } },
             State { name: "hidden"
-                PropertyChanges { target: contentItem; opacity: 0.0; scale: 0.94 } }
+                PropertyChanges { target: contentItem; opacity: 0.0; scale: Theme.popupHiddenScale } }
         ]
         transitions: [
             Transition { from: "hidden"; to: "visible"

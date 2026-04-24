@@ -10,14 +10,14 @@ Item {
     property int textSize: Theme.fontSize
     property bool bold: false
 
-    property int horizontalPadding: 8
-    property int verticalPadding: 4
-    property int radius: 8
+    property int horizontalPadding: Theme.buttonHorizontalPadding
+    property int verticalPadding: Theme.buttonVerticalPadding
+    property int radius: Theme.buttonRadius
     property int alignment: (root.icon !== "" && root.text !== "") ? Qt.AlignLeft : Qt.AlignHCenter
 
-    property color bgColor: "transparent"
-    property color contentColor: Theme.fg
-    property color hoverColor: Theme.fg
+    property color bgColor: Theme.buttonBgColor
+    property color contentColor: Theme.buttonContentColor
+    property color hoverColor: Theme.buttonHoverColor
 
     readonly property bool isHovered: hover.hovered
     readonly property bool isPressed: tap.pressed
@@ -38,10 +38,10 @@ Item {
         anchors.fill: parent
         radius: root.radius
         color: root.hoverColor
-        opacity: root.isPressed ? 0.12 : root.isHovered ? 0.06 : 0.0
+        opacity: root.isPressed ? Theme.buttonPressedOpacity : root.isHovered ? Theme.buttonHoverOpacity : 0.0
 
         Behavior on opacity {
-            NumberAnimation { duration: 120; easing.type: Easing.OutQuad }
+            NumberAnimation { duration: Theme.buttonAnimDuration; easing.type: Easing.OutQuad }
         }
     }
 

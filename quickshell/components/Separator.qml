@@ -1,15 +1,16 @@
 import QtQuick
 import QtQuick.Layouts
+import qs.config
 
 Rectangle {
     id: root
 
     property int orientation: Qt.Horizontal 
-    property real thickness: 2 
+    property real thickness: Theme.separatorThickness 
     
-    property real padding: 8
+    property real padding: Theme.separatorPadding
 
-    color: Qt.rgba(1, 1, 1, 0.08)
+    color: Theme.separatorColor
 
     implicitWidth: orientation === Qt.Vertical ? thickness : 100
     implicitHeight: orientation === Qt.Horizontal ? thickness : 100
