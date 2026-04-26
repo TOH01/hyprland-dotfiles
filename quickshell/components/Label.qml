@@ -1,8 +1,9 @@
 // Label.qml
 import QtQuick
+import QtQuick.Layouts
 import qs.config
 
-Row {
+RowLayout {
     id: root
     property string text: ""
     property string icon: ""
@@ -12,8 +13,16 @@ Row {
     property color color: Theme.fg
 
     property int elide: Text.ElideNone
+    property int horizontalAlignment: Text.AlignLeft
+    property int wrapMode: Text.NoWrap
+    property int maximumLineCount: 1000
 
     spacing: (root.icon !== "" && root.text !== "") ? Theme.labelGap : 0
+
+    Item {
+        visible: root.horizontalAlignment === Text.AlignHCenter
+        Layout.fillWidth: true
+    }
 
     Text {
         id: iconText
@@ -22,7 +31,7 @@ Row {
         color: root.color
         font.family: Theme.fontFamilyIcons
         font.pixelSize: root.iconSize
-        anchors.verticalCenter: parent.verticalCenter
+        Layout.alignment: Qt.AlignVCenter
     }
     Text {
         id: textElement
@@ -32,10 +41,16 @@ Row {
         font.family: Theme.fontFamily
         font.pixelSize: root.textSize
         font.bold: root.bold
-        anchors.verticalCenter: parent.verticalCenter
+        Layout.alignment: Qt.AlignVCenter
+        Layout.fillWidth: root.elide !== Text.ElideNone || root.horizontalAlignment === Text.AlignHCenter
         elide: root.elide
-        width: root.elide !== Text.ElideNone
-               ? Math.max(0, root.width - (iconText.visible ? iconText.implicitWidth + root.spacing : 0))
-               : implicitWidth
+        horizontalAlignment: root.horizontalAlignment
+        wrapMode: root.wrapMode
+        maximumLineCount: root.maximumLineCount
+    }
+
+    Item {
+        visible: root.horizontalAlignment === Text.AlignHCenter
+        Layout.fillWidth: true
     }
 }

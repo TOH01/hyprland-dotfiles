@@ -186,15 +186,21 @@ Ui.PopupBase {
                     }
 
                     // Clear button
-                    Ui.Label {
-                        icon: Icons.close
-                        color: Theme.fgMuted
-                        iconSize: Theme.launchMenuClearIconSize
+                    Item {
+                        id: clearButton
+                        Layout.preferredWidth: clearLabel.implicitWidth
+                        Layout.preferredHeight: clearLabel.implicitHeight
                         Layout.alignment: Qt.AlignVCenter
                         visible: searchField.text.length > 0
                         opacity: clearMouse.containsMouse ? 1.0 : 0.6
-
                         Behavior on opacity { NumberAnimation { duration: Theme.launchMenuAnimDuration } }
+
+                        Ui.Label {
+                            id: clearLabel
+                            icon: Icons.close
+                            color: Theme.fgMuted
+                            iconSize: Theme.launchMenuClearIconSize
+                        }
 
                         MouseArea {
                             id: clearMouse
@@ -278,7 +284,10 @@ Ui.PopupBase {
                     }
 
                     ColumnLayout {
-                        anchors.centerIn: parent
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: Theme.s2
                         spacing: Theme.launchMenuCellSpacing
                         
                         Item {
@@ -310,13 +319,13 @@ Ui.PopupBase {
                         
                         Ui.Label {
                             Layout.fillWidth: true
-                            Layout.leftMargin: 6
-                            Layout.rightMargin: 6
                             text: delegateRoot.modelData.name
                             color: Theme.fg
                             textSize: Theme.launchMenuAppFontSize
                             elide: Text.ElideRight
-                            // multiline not supported by Ui.Label, but elide is a good compromise for consistency
+                            horizontalAlignment: Text.AlignHCenter
+                            wrapMode: Text.WordWrap
+                            maximumLineCount: 2
                         }
                     }
                     
