@@ -34,16 +34,16 @@ Ui.PopupBase {
                 // lockscreen
                 Ui.Button {
                     Layout.fillWidth: true
-                    icon: ""
-                    text: "Lockscreen"
+                    icon: Icons.lock
+                    text: Language.lockscreen
                     onClicked: SystemActions.lockScreen.running = true
                 }
 
                 // sign out
                 Ui.Button {
                     Layout.fillWidth: true
-                    icon: ""
-                    text: "Sign out"
+                    icon: Icons.logout
+                    text: Language.signOut
                     onClicked: SystemActions.signOut.running = true
                 }
             }
@@ -58,30 +58,30 @@ Ui.PopupBase {
 
                 // suspend button
                 Ui.Button {
-                    icon: "󰤄"
+                    icon: Icons.sleep
                     onClicked: SystemActions.suspend.running = true
                     iconSize: Theme.powerMenuIconSize
                 }
 
                 // restart button
                 Ui.Button {
-                    icon: ""
+                    icon: Icons.reboot
                     iconSize: Theme.powerMenuIconSize
                     
                     onClicked: {
                         PopupManager.closeCurrent()
-                        root.requestConfirm(() => { SystemActions.restart.running = true }, "Restart system?")
+                        root.requestConfirm(() => { SystemActions.restart.running = true }, Language.restartConfirm)
                     }
                 }
 
                 // power off button
                 Ui.Button {
-                    icon: ""
+                    icon: Icons.power
                     iconSize: Theme.powerMenuIconSize
 
                     onClicked: {
                         PopupManager.closeCurrent()
-                        root.requestConfirm(() => { SystemActions.powerOff.running = true }, "Power off system?")
+                        root.requestConfirm(() => { SystemActions.powerOff.running = true }, Language.powerOffConfirm)
                     }
                 }
             }

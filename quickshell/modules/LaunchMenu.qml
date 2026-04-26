@@ -59,7 +59,7 @@ Ui.PopupBase {
                     spacing: Theme.s2
 
                     Text {
-                        text: "\uf002" // nf-fa-search
+                        text: Icons.search
                         color: searchField.text.length > 0 ? Theme.accent : Theme.fgMuted
                         font.family: Theme.fontFamilyIcons
                         font.pointSize: Theme.launchMenuSearchIconSize
@@ -71,7 +71,7 @@ Ui.PopupBase {
                         id: searchField
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignVCenter
-                        placeholderText: "Search applications…"
+                        placeholderText: Language.searchPlaceholder
                         placeholderTextColor: Theme.fgMuted
                         focus: true
                         font.family: Theme.fontFamily
@@ -188,7 +188,7 @@ Ui.PopupBase {
 
                     // Clear button
                     Text {
-                        text: "\uf00d" // nf-fa-close
+                        text: Icons.close
                         color: Theme.fgMuted
                         font.family: Theme.fontFamilyIcons
                         font.pointSize: Theme.launchMenuClearIconSize

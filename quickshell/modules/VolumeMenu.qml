@@ -26,14 +26,14 @@ Ui.PopupBase {
                 spacing: Theme.s3
 
                 Text {
-                    text: "󰕾"
+                    text: Icons.volume
                     font.family: Theme.fontFamilyIcons
                     font.pixelSize: Theme.volumeMenuIconSize
                     color: Theme.accent
                 }
 
                 Text {
-                    text: "Volume"
+                    text: Language.volume
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.fontSize + 2
                     color: Theme.fg

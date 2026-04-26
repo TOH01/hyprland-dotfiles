@@ -127,7 +127,7 @@ PanelWindow {
             }
 
             Text {
-                text: "Auto-cancel in " + root.timeout + "s"
+                text: Language.autoCancelTemplate.arg(root.timeout)
                 color: Theme.fg
             }
 
@@ -135,12 +135,12 @@ PanelWindow {
                 spacing: Theme.s3
 
                 Ui.Button {
-                    text: "Cancel"
+                    text: Language.cancel
                     onClicked: root.close()
                 }
 
                 Ui.Button {
-                    text: "Confirm"
+                    text: Language.confirm
                     onClicked: {
                         root.confirm()
                         root.close()

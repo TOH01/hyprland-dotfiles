@@ -52,7 +52,7 @@ Ui.PopupBase {
                 spacing: Theme.networkMenuSpacing
 
                 Ui.Label {
-                    icon: NetworkService.wiredActive ? "󰈁" : "󰈂"
+                    icon: NetworkService.wiredActive ? Icons.networkWiredConnected : Icons.networkWiredDisconnected
                     iconSize: Theme.fontSize + 4
                 }
 
@@ -63,13 +63,13 @@ Ui.PopupBase {
                     Ui.Label {
                         text: NetworkService.wiredDevice
                               ? (NetworkService.wiredConnectionName || NetworkService.wiredDevice)
-                              : "No wired adapter"
+                              : Language.noWiredAdapter
                     }
                     Ui.Label {
                         visible: NetworkService.wiredDevice !== ""
                         text: NetworkService.wiredActive
-                              ? (NetworkService.wiredIp4 || "Connected")
-                              : "Disconnected"
+                              ? (NetworkService.wiredIp4 || Language.connected)
+                              : Language.disconnected
                         textSize: Theme.fontSize - 2
                         opacity: 0.65
                     }
@@ -86,8 +86,8 @@ Ui.PopupBase {
             Ui.Separator {}
 
             Ui.ToggleRow {
-                icon: "󰀝"
-                label: "Airplane Mode"
+                icon: Icons.airplaneMode
+                label: Language.airplaneMode
                 checked: NetworkService.airplaneMode
                 onToggled: NetworkService.toggleAirplaneMode()
             }
@@ -95,8 +95,8 @@ Ui.PopupBase {
             Ui.Separator { Layout.fillWidth: true }
 
             Ui.ToggleRow {
-                icon: "󰖩"
-                label: "Wi-Fi"
+                icon: Icons.networkWifi
+                label: Language.wifi
                 checked: NetworkService.wifiEnabled
                 rowEnabled: !NetworkService.airplaneMode
                 onToggled: NetworkService.toggleWifi()
@@ -125,10 +125,10 @@ Ui.PopupBase {
 
                     Ui.Label {
                         Layout.fillWidth: true
-                        text: "Visible Networks"
+                        text: Language.visibleNetworks
                     }
                     Ui.Label {
-                        text: root.wifiListOpen ? "" : ""
+                        text: root.wifiListOpen ? Icons.chevronDown : Icons.chevronRight
                     }
                 }
             }
@@ -154,7 +154,7 @@ Ui.PopupBase {
 
                 Ui.Label {
                     visible: NetworkService.networks.length === 0 && !NetworkService.scanning
-                    text: "No networks found"
+                    text: Language.noNetworksFound
                     textSize: Theme.fontSize - 2
                     opacity: 0.5
                     Layout.alignment: Qt.AlignHCenter
@@ -166,7 +166,7 @@ Ui.PopupBase {
             // Error line — wrapping text, keep as raw Text
             Text {
                 visible: NetworkService.lastError !== ""
-                text: "Error: " + NetworkService.lastError
+                text: Language.errorPrefix + NetworkService.lastError
                 wrapMode: Text.WordWrap
                 color: Theme.danger
                 font.family: Theme.fontFamily
@@ -203,7 +203,7 @@ Ui.PopupBase {
                 spacing: Theme.networkMenuRowGap
 
                 Text {
-                    text: isActive ? "✓" : " "
+                    text: isActive ? Icons.checkmark : " "
                     color: Theme.accent
                     font.pixelSize: Theme.fontSize
                     Layout.preferredWidth: Theme.networkMenuCheckmarkWidth
@@ -213,9 +213,9 @@ Ui.PopupBase {
                     icon: {
                         const s = signalStrength
                         if (secured) {
-                            return s >= 75 ? "󰤪" : s >= 50 ? "󰤧" : s >= 25 ? "󰤤" : s > 0 ? "󰤡" : "󰤬"
+                            return s >= 75 ? Icons.wifi_4_locked : s >= 50 ? Icons.wifi_3_locked : s >= 25 ? Icons.wifi_2_locked : s > 0 ? Icons.wifi_1_locked : Icons.wifi_0_locked
                         } else {
-                            return s >= 75 ? "󰤨" : s >= 50 ? "󰤥" : s >= 25 ? "󰤢" : s > 0 ? "󰤟" : "󰤯"
+                            return s >= 75 ? Icons.wifi_4 : s >= 50 ? Icons.wifi_3 : s >= 25 ? Icons.wifi_2 : s > 0 ? Icons.wifi_1 : Icons.wifi_0
                         }
                     }
                     opacity: 0.85
@@ -232,7 +232,7 @@ Ui.PopupBase {
 
                 Ui.Label {
                     visible: isConnecting
-                    text: "…"
+                    text: Icons.loading
                     opacity: 0.7
                 }
             }
@@ -270,7 +270,7 @@ Ui.PopupBase {
 
                 Ui.Button {
                     visible: isActive
-                    text: "Disconnect"
+                    text: Language.disconnect
                     onClicked: {
                         NetworkService.disconnectWifi()
                         root.expandedSsid = ""
@@ -285,14 +285,14 @@ Ui.PopupBase {
                     TextField {
                         id: pwField
                         Layout.fillWidth: true
-                        placeholderText: "Password"
+                        placeholderText: Language.passwordPlaceholder
                         echoMode: TextInput.Password
                         onAccepted: if (connectBtn.enabled) connectBtn.clicked()
                     }
 
                     Ui.Button {
                         id: connectBtn
-                        text: "Connect"
+                        text: Language.connect
                         enabled: pwField.text.length >= 8
                         onClicked: {
                             NetworkService.connectTo(ssidText, pwField.text)

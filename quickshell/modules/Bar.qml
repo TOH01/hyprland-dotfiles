@@ -111,7 +111,7 @@ PanelWindow {
                 spacing: Theme.barSpacing
                 Ui.Button {
                     id: wsButton
-                    text: "Workspaces"
+                    text: Language.workspaces
                     onClicked: {
                         workspaceOverviewLoader.active = true
                         PopupManager.open(workspaceOverviewLoader.item, wsButton)
@@ -135,7 +135,7 @@ PanelWindow {
                 spacing: Theme.barSpacing 
                 Ui.Button {
                     id: networkButton
-                    icon: "󰈀"
+                    icon: Icons.networkWired
                     onClicked: {
                         networkMenuLoader.active = true
                         PopupManager.open(networkMenuLoader.item, networkButton)
@@ -144,7 +144,7 @@ PanelWindow {
                 }
                 Ui.Button {
                     id: volumeButton
-                    icon: "󰕾"
+                    icon: Icons.volume
                     onClicked: {
                         volumeMenuLoader.active = true
                         PopupManager.open(volumeMenuLoader.item, volumeButton)
@@ -153,7 +153,7 @@ PanelWindow {
                 }
                 Ui.Button {
                     id: powerButton
-                    icon: ""
+                    icon: Icons.power
                     onClicked: {
                         powerMenuLoader.active = true
                         PopupManager.open(powerMenuLoader.item, powerButton)

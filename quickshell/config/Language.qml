@@ -1,0 +1,36 @@
+// Language.qml
+pragma Singleton
+import QtQuick
+
+QtObject {
+    // Bar / Modules
+    readonly property string volume: "Volume"
+    readonly property string workspaces: "Workspaces"
+    
+    // Power Menu
+    readonly property string lockscreen: "Lockscreen"
+    readonly property string signOut: "Sign out"
+    readonly property string restartConfirm: "Restart system?"
+    readonly property string powerOffConfirm: "Power off system?"
+    
+    // Network Menu
+    readonly property string airplaneMode: "Airplane Mode"
+    readonly property string wifi: "Wi-Fi"
+    readonly property string visibleNetworks: "Visible Networks"
+    readonly property string noNetworksFound: "No networks found"
+    readonly property string noWiredAdapter: "No wired adapter"
+    readonly property string connected: "Connected"
+    readonly property string disconnected: "Disconnected"
+    readonly property string errorPrefix: "Error: "
+    readonly property string disconnect: "Disconnect"
+    readonly property string connect: "Connect"
+    readonly property string passwordPlaceholder: "Password"
+    
+    // Launch Menu
+    readonly property string searchPlaceholder: "Search applications…"
+    
+    // Popups / Common
+    readonly property string cancel: "Cancel"
+    readonly property string confirm: "Confirm"
+    readonly property string autoCancelTemplate: "Auto-cancel in %1s"
+}
