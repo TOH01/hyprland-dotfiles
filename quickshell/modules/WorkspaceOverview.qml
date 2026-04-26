@@ -2,6 +2,7 @@
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Hyprland
+import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 import qs.config
@@ -17,15 +18,39 @@ Ui.PopupBase {
     margins.left: Theme.workspaceOverviewMargin
     margins.right: Theme.workspaceOverviewMargin
 
-    // Robust drag tracking: per-delegate flag prevents double-count, destructor handles
-    // the case where the source delegate is removed mid-drag (window moved to another workspace).
-    property int activeDragCount: 0
-    readonly property bool draggingApp: activeDragCount > 0
+    property var clientData: []
+    property bool isDragging: false
+
+    Process {
+        id: pClients
+        command: ["hyprctl", "clients", "-j"]
+        running: true
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try { root.clientData = JSON.parse(this.text) } catch(e) {}
+            }
+        }
+    }
+
+    Timer { id: debounce; interval: 80; onTriggered: pClients.running = true }
+
+    Connections {
+        target: Hyprland
+        function onRawEvent(event) {
+            var n = (event.name !== undefined) ? event.name : ""
+            if (["openwindow","closewindow","movewindow","movewindowv2",
+                 "workspace","workspacev2","focusedmon","activewindow",
+                 "activewindowv2"].indexOf(n) !== -1) {
+                debounce.restart()
+            }
+        }
+    }
 
     // Hyprland's address property comes without 0x prefix; dispatcher needs it.
     function hyprAddr(a) {
         if (!a) return ""
-        return a.startsWith("0x") ? a : "0x" + a
+        var s = String(a)
+        return s.startsWith("0x") ? s : "0x" + s
     }
 
     Rectangle {
@@ -45,9 +70,8 @@ Ui.PopupBase {
                 return Math.min(maxWorkspaces, Math.max(minWorkspaces, highest))
             }
 
-            readonly property int wsCount: root.draggingApp
-                ? Math.min(maxWorkspaces, baseCount + 1)
-                : baseCount
+            // Always show at least one extra workspace for dragging into, up to maxWorkspaces
+            readonly property int wsCount: Math.min(maxWorkspaces, baseCount + 1)
 
             anchors.fill: parent
             anchors.leftMargin: Theme.workspaceOverviewPadding
@@ -62,7 +86,7 @@ Ui.PopupBase {
                     readonly property int wsId: index + 1
                     readonly property var ws: Hyprland.workspaces.values.find(w => w.id === workspaceItem.wsId)
                     readonly property bool isActive: Hyprland.focusedWorkspace?.id === workspaceItem.wsId
-                    readonly property bool isPhantom: !workspaceItem.ws && root.draggingApp && workspaceItem.wsId === strip.wsCount
+                    readonly property bool isPhantom: !workspaceItem.ws && workspaceItem.wsId === strip.wsCount
                     readonly property var toplevels: workspaceItem.ws?.toplevels?.values ?? []
                     readonly property color accent:
                         workspaceItem.isActive ? Theme.accentHot
@@ -72,6 +96,9 @@ Ui.PopupBase {
                     width: Theme.workspaceOverviewItemWidth
                     height: Theme.workspaceOverviewItemHeight
                     Layout.alignment: Qt.AlignTop
+
+                    opacity: workspaceItem.isPhantom ? (root.isDragging ? (dropArea.containsDrag ? 1.0 : 0.45) : 0.0) : 1.0
+                    Behavior on opacity { NumberAnimation { duration: 120 } }
 
                     // Background click handler — declared first so icon TapHandlers above win.
                     MouseArea {
@@ -92,11 +119,9 @@ Ui.PopupBase {
                         color: dropArea.containsDrag
                             ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.15)
                             : "transparent"
-                        opacity: workspaceItem.isPhantom && !dropArea.containsDrag ? 0.45 : 1.0
 
                         Behavior on border.color { ColorAnimation { duration: 120 } }
                         Behavior on color        { ColorAnimation { duration: 120 } }
-                        Behavior on opacity      { NumberAnimation { duration: 120 } }
                     }
 
                     Text {
@@ -128,114 +153,116 @@ Ui.PopupBase {
                             delegate: Item {
                                 id: windowSlot
 
-                                readonly property var monitor: modelData?.monitor ?? modelData?.workspace?.monitor ?? null
-                                readonly property var geo: modelData?.lastIpcObject
-                                readonly property bool hasGeo:
-                                    monitor && geo && geo.at && geo.size
-                                    && monitor.width > 0 && monitor.height > 0
+                                readonly property string fullAddr: root.hyprAddr(modelData?.address)
+                                readonly property var c: root.clientData.find(client => root.hyprAddr(client.address) === fullAddr)
 
-                                readonly property real relX: hasGeo
-                                    ? Math.max(0, Math.min(0.95, (geo.at[0] - monitor.x) / monitor.width)) : 0.1
-                                readonly property real relY: hasGeo
-                                    ? Math.max(0, Math.min(0.95, (geo.at[1] - monitor.y) / monitor.height)) : 0.1
-                                readonly property real relW: hasGeo
-                                    ? Math.max(0.05, Math.min(1.0, geo.size[0] / monitor.width)) : 0.5
-                                readonly property real relH: hasGeo
-                                    ? Math.max(0.05, Math.min(1.0, geo.size[1] / monitor.height)) : 0.5
+                                readonly property var m: Hyprland.monitors.values.find(mon => mon.id === (c?.monitor ?? 0))
+                                readonly property real mX: m ? m.x : 0
+                                readonly property real mY: m ? m.y : 0
+                                readonly property real mS: m ? m.scale : 1
+                                readonly property real mUW: m ? (m.width / mS) : 1920
+                                readonly property real mUH: m ? (m.height / mS) : 1080
 
-                                readonly property string rawAddr: modelData?.address ?? ""
-                                readonly property string fullAddr: root.hyprAddr(rawAddr)
-                                readonly property string aid:
-                                    modelData?.wayland?.appId
-                                    ?? modelData?.lastIpcObject?.class
-                                    ?? ""
+                                readonly property bool hasGeo: c ? (c.at !== undefined && c.size !== undefined && mUW > 0 && mUH > 0) : false
+                                readonly property real sx: hasGeo ? previewArea.width / mUW : 1.0
+                                readonly property real sy: hasGeo ? previewArea.height / mUH : 1.0
+
+                                readonly property string aid: c?.["class"] ?? ""
                                 readonly property bool isFocused:
-                                    Hyprland.activeToplevel
-                                    && Hyprland.activeToplevel.address === modelData?.address
+                                    Hyprland.activeToplevel ? (root.hyprAddr(Hyprland.activeToplevel.address) === fullAddr) : false
 
-                                x: previewArea.width * relX
-                                y: previewArea.height * relY
-                                width: Math.max(14, previewArea.width * relW)
-                                height: Math.max(14, previewArea.height * relH)
-                                z: isFocused ? 5 : 1
+                                x: hasGeo ? Math.max(2, Math.min((c.at[0] - mX) * sx, previewArea.width - width - 2)) : 0
+                                y: hasGeo ? Math.max(2, Math.min((c.at[1] - mY) * sy, previewArea.height - height - 2)) : 0
+                                width:  hasGeo ? Math.max(14, Math.min(c.size[0] * sx, previewArea.width)) : 32
+                                height: hasGeo ? Math.max(10, Math.min(c.size[1] * sy, previewArea.height)) : 32
 
-                                Behavior on x      { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
-                                Behavior on y      { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
-                                Behavior on width  { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
-                                Behavior on height { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
-
-                                // Drag bookkeeping ------------------------------------------------
-                                property bool _dragCounted: false
-                                function _setDragged(state) {
-                                    if (state && !_dragCounted) {
-                                        _dragCounted = true
-                                        root.activeDragCount++
-                                    } else if (!state && _dragCounted) {
-                                        _dragCounted = false
-                                        root.activeDragCount = Math.max(0, root.activeDragCount - 1)
-                                    }
-                                    if (!state) {
-                                        visual.x = 0
-                                        visual.y = 0
+                                property bool _placed: false
+                                onHasGeoChanged: {
+                                    if (hasGeo && !_placed) {
+                                        Qt.callLater(() => { _placed = true })
                                     }
                                 }
-                                Component.onDestruction: {
-                                    if (_dragCounted) {
-                                        _dragCounted = false
-                                        root.activeDragCount = Math.max(0, root.activeDragCount - 1)
-                                    }
-                                }
-                                // -----------------------------------------------------------------
 
-                                // Free-floating visual: position is managed by DragHandler, not anchors.
+                                Behavior on x      { enabled: windowSlot._placed; NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                                Behavior on y      { enabled: windowSlot._placed; NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                                Behavior on width  { enabled: windowSlot._placed; NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                                Behavior on height { enabled: windowSlot._placed; NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+
+                                property real homeX: 0
+                                property real homeY: 0
+
+                                // Free-floating visual for drag-and-drop
                                 Item {
                                     id: visual
                                     x: 0
                                     y: 0
-                                    width: windowSlot.width
-                                    height: windowSlot.height
-
-                                    z: dragHandler.active ? 1000 : 0
-                                    opacity: dragHandler.active ? 0.9 : 1.0
-                                    scale: dragHandler.active ? 1.05 : 1.0
+                                    width: parent.width
+                                    height: parent.height
 
                                     // Exposed so DropArea can read it via drop.source.address
                                     property string address: windowSlot.fullAddr
+
+                                    z: winMA.drag.active ? 1000 : (windowSlot.isFocused ? 5 : 0)
+                                    opacity: winMA.drag.active ? 0.9 : 1.0
+                                    scale: winMA.drag.active ? 1.1 : 1.0
 
                                     Behavior on scale { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
 
                                     Rectangle {
                                         anchors.fill: parent
-                                        radius: 3
+                                        radius: 6
                                         color: windowSlot.isFocused
-                                            ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.18)
-                                            : Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.06)
-                                        border.color: windowSlot.isFocused ? Theme.accentHot : workspaceItem.accent
+                                            ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25)
+                                            : Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.08)
+                                        border.color: windowSlot.isFocused ? Theme.accentHot : "transparent"
                                         border.width: 1
                                     }
 
                                     Ui.AppIcon {
                                         anchors.centerIn: parent
-                                        width: Math.max(12, Math.min(28, Math.min(parent.width, parent.height) * 0.55))
+                                        width: Math.max(12, Math.min(32, Math.min(parent.width, parent.height) * 0.75))
                                         height: width
                                         appId: windowSlot.aid
                                     }
 
-                                    Drag.active: dragHandler.active
+                                    Drag.active: winMA.drag.active
+                                    Drag.source: visual
                                     Drag.hotSpot.x: width / 2
                                     Drag.hotSpot.y: height / 2
                                 }
 
-                                DragHandler {
-                                    id: dragHandler
-                                    target: visual
-                                    onActiveChanged: windowSlot._setDragged(active)
-                                }
+                                MouseArea {
+                                    id: winMA
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    drag.target: visual
+                                    drag.threshold: 6
+                                    preventStealing: true
+                                    acceptedButtons: Qt.LeftButton | Qt.MiddleButton
 
-                                TapHandler {
-                                    onTapped: {
-                                        if (windowSlot.fullAddr) {
-                                            Hyprland.dispatch("focuswindow address:" + windowSlot.fullAddr)
+                                    onPressed: mouse => {
+                                        windowSlot.homeX = visual.x
+                                        windowSlot.homeY = visual.y
+                                        root.isDragging = true
+                                    }
+
+                                    onReleased: {
+                                        visual.Drag.drop()
+                                        visual.x = windowSlot.homeX
+                                        visual.y = windowSlot.homeY
+                                        root.isDragging = false
+                                    }
+
+                                    onClicked: mouse => {
+                                        if (mouse.button === Qt.MiddleButton) {
+                                            if (windowSlot.fullAddr) {
+                                                Hyprland.dispatch("closewindow address:" + windowSlot.fullAddr)
+                                            }
+                                        } else {
+                                            if (windowSlot.fullAddr) {
+                                                Hyprland.dispatch("focuswindow address:" + windowSlot.fullAddr)
+                                            }
                                         }
                                     }
                                 }
