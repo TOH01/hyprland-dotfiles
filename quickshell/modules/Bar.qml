@@ -70,6 +70,14 @@ PanelWindow {
     }
 
     LazyLoader {
+        id: volumeMenuLoader
+        component: VolumeMenu { 
+            bar: root; screen: root.screen
+            onVisibleChanged: if (!visible) volumeMenuLoader.active = false
+        }
+    }
+
+    LazyLoader {
         id: confirmPopupLoader
         component: Ui.ConfirmPopup {
             property var confirmedAction: null
@@ -131,6 +139,15 @@ PanelWindow {
                     onClicked: {
                         networkMenuLoader.active = true
                         PopupManager.open(networkMenuLoader.item, networkButton)
+                    }
+                    iconSize: Theme.barButtonIconSize
+                }
+                Ui.Button {
+                    id: volumeButton
+                    icon: "󰕾"
+                    onClicked: {
+                        volumeMenuLoader.active = true
+                        PopupManager.open(volumeMenuLoader.item, volumeButton)
                     }
                     iconSize: Theme.barButtonIconSize
                 }

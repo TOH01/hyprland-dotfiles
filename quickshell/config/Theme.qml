@@ -145,6 +145,12 @@ QtObject {
     readonly property int powerMenuIconSize: 18
     readonly property int powerMenuMargin: Theme.s3
 
+    // --- Module: VolumeMenu ---
+    readonly property int volumeMenuWidth: 300
+    readonly property int volumeMenuHeight: 180
+    readonly property int volumeMenuSpacing: Theme.s3
+    readonly property int volumeMenuIconSize: 24
+
     // --- Module: QuickLaunchMenu ---
     readonly property int dockWidth: 300
     readonly property int dockExpandedHeight: 45
