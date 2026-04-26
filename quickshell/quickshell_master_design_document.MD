@@ -2,54 +2,84 @@
 **Target Environment:** Hyprland (Wayland)
 **Core Objectives:** Maximum performance (minimal CPU, <100MB RAM), memory efficiency, visual consistency, and strict component modularity.
 
-## 1. Standardized Architecture & Directory Hierarchy
-To minimize side effects during reloads and promote modularity, the project must adhere to a strict directory structure. Keep system logic completely isolated from user-facing UI.
+## 1. Project Architecture & Directory Hierarchy
+The codebase follows a strict modular structure to isolate system logic, UI components, and configuration.
 
-* **`shell.qml`**: The main entry point that wires core services and top-level windows/loaders. Keep it thin.
-* **`assets/`**: Centralizes static resources like icons, SVG images, and custom GLSL shaders.
-* **`components/`**: Reusable QML primitives (e.g., `StyledButton.qml`, elevation wrappers, sliders) to ensure uniform visual consistency.
-* **`services/`**: The single source of truth for system data (e.g., Audio, NetworkManager, UPower) using a singleton pattern.
-* **`modules/`**: High-level, isolated UI features (e.g., the Bar, Dock, Control Center). 
-* **`config/`**: User-tunable runtime settings (e.g., `shell.json`), typed configuration accessors, and appearance tokens (themes/colors).
+*   **`shell.qml`**: The entry point. It instantiates the main windows (e.g., `Bar`) using `Variants` and handles global shortcuts. Keep logic minimal.
+*   **`components/`** (`qs.components`): Reusable UI primitives. These ensure a unified look and feel.
+*   **`config/`** (`qs.config`): Global singletons for `Theme`, `Icons`, and `Language`.
+*   **`services/`** (`qs.services`): System-level logic and global state managers (e.g., `PopupManager`, `NetworkService`).
+*   **`modules/`** (`qs.modules`): Large, self-contained UI features (e.g., `Bar`, `LaunchMenu`, `PowerMenu`).
+*   **`assets/`**: Static resources.
 
-> **Crucial Import Rule:** Do **not** use relative paths (e.g., `import "../../foo.qml"`). This is deprecated in Quickshell v0.2+. Use root-relative syntax like `import qs.components as Ui`.
+### Import Conventions
+Always use root-relative imports via the `qmldir` modules. Avoid relative paths like `../../`.
+```qml
+import qs.config
+import qs.services
+import qs.components as Ui
+import qs.modules
+```
 
-## 2. QML Coding Conventions & Idioms
-To ensure bug-free QML that the Language Server (LSP) can parse cleanly, enforce the following rules:
+## 2. Configuration & Theming
+Never hardcode strings, colors, or icons. Use the centralized configuration singletons.
 
-* **Standardized Property Order:** All QML objects must declare attributes in this exact sequence:
-    1.  `id`: (Must be first, always lowercase. Root of file should be `id: root`).
-    2.  `required property`: Data that must be passed from the parent.
-    3.  Custom Properties: Explicitly type them (e.g., `property int spacing`, never `var`).
-    4.  Signal Declarations.
-    5.  JavaScript Functions.
-    6.  Object Properties (Overridden built-ins like `width` or `color`).
-    7.  Anchors & Attached Objects (e.g., `Layout.fillWidth`).
-    8.  Child Objects.
-    9.  Signal Handlers (e.g., `onClicked`, always at the bottom).
-* **Qualified Access Scoping:** Always explicitly use the component ID when accessing properties (e.g., `root.spacing` instead of an unqualified `spacing`). This prevents naming collisions and improves engine performance.
-* **Lists and Scaling:** Use a `Repeater` with a `RowLayout`/`ColumnLayout` for short widget lists (tray icons). Strictly use `ListView` for long or scrollable content to ensure efficient memory recycling.
+*   **`Theme.qml`**: Contains all colors, spacing, margins, and animation durations.
+    *   *Usage:* `color: Theme.bg`, `width: Theme.s4`.
+*   **`Icons.qml`**: Centralizes all Nerd Font icon strings.
+    *   *Usage:* `text: Icons.power`.
+*   **`Language.qml`**: All user-facing strings for easy localization.
+    *   *Usage:* `text: Language.wifi`.
 
-## 3. Performance & Resource Optimization
-Unoptimized shells consume hundreds of megabytes of RAM; a well-engineered Quickshell config should use negligible CPU and under 100MB of RAM.
+## 3. Centralized Widget & Popup Management
+The shell uses a centralized system to manage popups and bar instances to prevent overlapping and ensure smooth interaction.
 
-* **Abolish "Process-per-Widget":** Never spawn individual bash processes per widget. This causes a "thundering herd" effect. Centralize IPC monitoring using a single script (via `inotifywait`) or native singletons. 
-* **Long-Running Commands:** For background scripts listening to IPC commands, use `SplitParser` to read datum streams as they arrive instead of waiting for the process to exit.
-* **Smart Instancing (Variants):** When using `Variants` to duplicate windows across multiple monitors, **do not** place `Process` and `Timer` components directly inside the window component, or they will multiply. Move them out using `Scope` or make them a `Singleton`.
-* **Lazy Loading:** Always use `Loader` (for Item components) or `LazyLoader` (for non-items) for conditional popups like calendars or app launchers. This unloads the widget trees, allowing garbage collection.
-* **Staggered Initialization:** Use sleep delays in your Hyprland autostart config to stagger the launching of Quickshell, wallpaper daemons, and network applets to prevent login lag.
-* **System Clock:** If a clock widget does not display seconds, set `SystemClock.precision` to `Minutes` to eliminate background polling.
+### PopupManager & PopupBase
+All fly-out menus should inherit from `PopupBase.qml` and be opened via the `PopupManager`.
+*   **`PopupBase`**: Handles positioning relative to a bar item, animations, and focus/dismissal logic.
+*   **`PopupManager`**: A singleton that ensures only one popup is open at a time.
+    *   *Opening a popup:* `PopupManager.open(myPopup, anchorItem)`
+    *   *Closing:* `PopupManager.closeCurrent()`
 
-## 4. Wayland Surface & Window Management
-* **Window Types:** Use `PanelWindow` for Docks and Bars. Use `PopupWindow` or `FloatingWindow` for fly-out menus.
-* **The Waybar Pattern:** Anchor the bar to the top, left, and right. Use `implicitHeight` so it adapts to widgets dynamically. Set `exclusiveZone` to match the bar's height so tiled windows do not overlap it.
-* **The Dock Pattern & Centering Paradox:** Wayland loses exclusive zone tracking if a surface is anchored to two parallel edges without an explicit width. Anchor a bottom dock *only* to the bottom edge. Let its width be driven naturally by the `implicitWidth` of its internal layout to center it properly.
-* **Hyprland Singleton:** Always use `Quickshell.Hyprland` for real-time IPC. Use `Hyprland.workspaces.values.find()` and `Hyprland.focusedWorkspace` instead of spanning scripts to poll `hyprctl`.
+### BarRegistry
+Used to track active bar instances across monitors. This is critical for global focus management (e.g., `HyprlandFocusGrab`).
 
-## 5. UI/UX, Theming & Bug Mitigation
-* **Centralized Theming:** Never hardcode colors in components. Route all colors, radii, and fonts through your `config/` module globally.
-* **Window Opacity:** If using a transparent background, explicitly set `QsWindow.surfaceFormat` to `opaque: false` so Quickshell properly requests a transparent Wayland surface.
-* **The "Hole in My Window" Bug (QTBUG-137166):** If you give a `Rectangle` a transparent color but define a border radius, explicitly add `border.width: 0`, or everything beneath that rectangle will turn invisible.
-* **Startup Misplacement:** To prevent `PanelWindow` elements from spawning in the top-left corner on the initial launch, define your anchors *before* any geometry properties (`width`/`height`).
-* **Binding Loops:** Never use `Item.childrenRect` to determine a container's size. The golden rule is: **implicit size flows from children to parent; actual size flows from parent to children.**
-* **Missing Asset Crashes:** Requesting missing assets can render purple/black fallback squares. Always provide a fallback path using `Quickshell.iconPath()` or use Quickshell's built-in `IconImage`.
+### Lazy Loading Pattern
+To keep memory usage low, always use `LazyLoader` for heavy modules like menus.
+```qml
+LazyLoader {
+    id: menuLoader
+    component: MyMenu { 
+        onVisibleChanged: if (!visible) menuLoader.active = false 
+    }
+}
+```
+
+## 4. Reusable UI Components (`qs.components`)
+Leverage the following components to maintain consistency:
+
+*   **`Ui.Label`**: Combines an icon and text.
+*   **`Ui.Button`**: A standardized interactive button with hover/press states.
+*   **`Ui.AppIcon`**: Safely resolves application icons with fallbacks.
+*   **`Ui.ToggleRow`**: A standard layout for settings toggles.
+*   **`Ui.Separator`**: Consistent dividers.
+
+## 5. QML Coding Standards
+To ensure performance and maintainability:
+
+*   **Standardized Property Order:**
+    1.  `id` (Always `root` for the root element).
+    2.  `required property`
+    3.  Custom properties (Always typed).
+    4.  Signals & Functions.
+    5.  Object properties (anchors, size, color).
+    6.  Child objects.
+    7.  Signal handlers (`onXxx`).
+*   **Qualified Access:** Always use `root.property` to avoid scoping ambiguity.
+*   **Transparent Rectangles:** When using `radius` on a transparent `Rectangle`, you **must** set `border.width: 0` to avoid rendering artifacts (QTBUG-137166).
+*   **Implicit Sizes:** Layouts should rely on `implicitWidth`/`implicitHeight` to grow naturally.
+
+## 6. Performance Guidelines
+*   **Minimize CPU:** Use `SystemClock.precision: Minutes` if seconds aren't needed.
+*   **Singletons for Logic:** Move heavy logic (e.g., DBus listeners) into singletons in `services/` rather than duplicating them in every bar instance.
+*   **Process Management:** Use `Quickshell.Io.Process` for system commands and prefer long-running streams with `SplitParser` for efficiency.
