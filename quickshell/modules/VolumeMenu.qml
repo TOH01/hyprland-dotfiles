@@ -10,6 +10,11 @@ import qs.components as Ui
 Ui.PopupBase {
     id: root
 
+    readonly property var hiddenStreams: [
+        "speech-dispatcher",
+        "speechd",
+    ]
+
     implicitWidth: Theme.volumeMenuWidth
     implicitHeight: Theme.volumeMenuHeight
 
@@ -24,11 +29,6 @@ Ui.PopupBase {
         return Icons.volumeHigh
     }
 
-    readonly property var hiddenStreams: [
-        "speech-dispatcher",
-        "speechd",
-    ]
-
     function isMixerStream(n) {
         if (!n.isStream || n.audio === null) return false
         const props = n.properties || {}
@@ -38,7 +38,7 @@ Ui.PopupBase {
 
         const appName  = (props["application.name"] || "").toLowerCase()
         const nodeName = (n.name || "").toLowerCase()
-        return !hiddenStreams.some(h => {
+        return !root.hiddenStreams.some(h => {
             const needle = h.toLowerCase()
             return appName.indexOf(needle) !== -1
                 || nodeName.indexOf(needle) !== -1
@@ -174,8 +174,8 @@ Ui.PopupBase {
             }
             Ui.Label {
                 text: ds.node && ds.node.audio
-                      ? Math.round(ds.node.audio.volume * 100) + "%"
-                      : "—"
+                      ? Math.round(ds.node.audio.volume * 100) + Language.percent
+                      : Language.nullValue
                 color: Theme.fg
                 textSize: 12
             }
@@ -208,7 +208,7 @@ Ui.PopupBase {
             }
         }
 
-        // Device picker — Picker manages its own expanded state.
+        // Device picker
         Ui.Picker {
             Layout.fillWidth: true
             currentLabel: ds.node ? (ds.node.description
@@ -218,7 +218,6 @@ Ui.PopupBase {
             model: ds.deviceList
             activeItem: ds.node
             onSelected: (item) => {
-                // preferredDefault* is writable; defaultAudioSink/Source is read-only
                 if (ds.isOutput) Pipewire.preferredDefaultAudioSink   = item
                 else             Pipewire.preferredDefaultAudioSource = item
             }
@@ -231,20 +230,21 @@ Ui.PopupBase {
 
         radius: Theme.widgetRadius
         color: Theme.bgElevated
+        border.width: 0
         height: contentRow.implicitHeight + 2 * Theme.s2
 
         PwObjectTracker {
             objects: ame.streamNode ? [ame.streamNode] : []
         }
 
-        readonly property var props: streamNode ? streamNode.properties : null
+        readonly property var props: ame.streamNode ? ame.streamNode.properties : null
 
-        readonly property string iconHint: (props && props["application.icon-name"]) || ""
-        readonly property string binName: (props && props["application.process.binary"]) || ""
-        readonly property string appIdProp: (props && props["application.id"]) || ""
-        readonly property string appName:(props && (props["application.name"] || props["node.name"])) || "Unknown"
-        readonly property string mediaTitle: (props && (props["media.name"] || props["media.title"])) || ""
-        readonly property string lookupId: binName || appIdProp || appName.toLowerCase()
+        readonly property string iconHint: (ame.props && ame.props["application.icon-name"]) || ""
+        readonly property string binName: (ame.props && ame.props["application.process.binary"]) || ""
+        readonly property string appIdProp: (ame.props && ame.props["application.id"]) || ""
+        readonly property string appName:(ame.props && (ame.props["application.name"] || ame.props["node.name"])) || "Unknown"
+        readonly property string mediaTitle: (ame.props && (ame.props["media.name"] || ame.props["media.title"])) || ""
+        readonly property string lookupId: ame.binName || ame.appIdProp || ame.appName.toLowerCase()
 
         RowLayout {
             id: contentRow
@@ -275,14 +275,13 @@ Ui.PopupBase {
                     }
                     Ui.Label {
                         text: ame.streamNode && ame.streamNode.audio
-                              ? Math.round(ame.streamNode.audio.volume * 100) + "%"
+                              ? Math.round(ame.streamNode.audio.volume * 100) + Language.percent
                               : ""
                         color: Theme.fgMuted
                         textSize: 11
                     }
                 }
 
-                // Media title — only when present
                 Ui.Label {
                     Layout.fillWidth: true
                     visible: ame.mediaTitle !== ""
@@ -292,7 +291,6 @@ Ui.PopupBase {
                     elide: Text.ElideRight
                 }
 
-                // Per-app slider
                 Ui.Slider {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 16

@@ -15,6 +15,8 @@ QtObject {
     readonly property string close:     ""
     readonly property string chevronDown: ""
     readonly property string chevronRight: ""
+    readonly property string arrowDown: "󰁅"
+    readonly property string arrowUp:   "󰁝"
     readonly property string checkmark: "✓"
     readonly property string loading:   "…"
     

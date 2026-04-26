@@ -13,7 +13,7 @@ Row {
 
     property int elide: Text.ElideNone
 
-    spacing: (icon !== "" && text !== "") ? Theme.labelGap : 0
+    spacing: (root.icon !== "" && root.text !== "") ? Theme.labelGap : 0
 
     Text {
         id: iconText

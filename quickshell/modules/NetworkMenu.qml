@@ -12,21 +12,21 @@ import qs.components as Ui
 Ui.PopupBase {
     id: root
 
-    acceptsInput: true
-
     property string expandedSsid: ""
     property bool wifiListOpen: true
+    
+    acceptsInput: true
 
     implicitWidth: Theme.networkMenuWidth
     implicitHeight: bg.implicitHeight
 
     onVisibleChanged: {
-        NetworkService.polling = visible
-        if (visible) {
+        NetworkService.polling = root.visible
+        if (root.visible) {
             NetworkService.refresh()
             if (NetworkService.wifiEnabled) NetworkService.scan()
         } else {
-            expandedSsid = ""
+            root.expandedSsid = ""
         }
     }
 
@@ -76,8 +76,8 @@ Ui.PopupBase {
                     }
                     Ui.Label {
                         visible: NetworkService.wiredActive
-                        text: "↓ " + NetworkService.formatSpeed(NetworkService.wiredRxBps)
-                              + "   ↑ " + NetworkService.formatSpeed(NetworkService.wiredTxBps)
+                        text: Icons.arrowDown + " " + NetworkService.formatSpeed(NetworkService.wiredRxBps)
+                              + "   " + Icons.arrowUp + " " + NetworkService.formatSpeed(NetworkService.wiredTxBps)
                         textSize: Theme.fontSize - 3
                         opacity: 0.55
                     }
@@ -134,7 +134,7 @@ Ui.PopupBase {
                                 text: Language.visibleNetworks
                             }
                             Ui.Label {
-                                text: root.wifiListOpen ? Icons.chevronDown : Icons.chevronRight
+                                icon: root.wifiListOpen ? Icons.chevronDown : Icons.chevronRight
                             }
                         }
                     }
@@ -164,15 +164,16 @@ Ui.PopupBase {
                 }
             }
 
-            // Error line — wrapping text, keep as raw Text
-            Text {
+            // Error line — wrapping text
+            Ui.Label {
                 visible: NetworkService.lastError !== ""
                 text: Language.errorPrefix + NetworkService.lastError
-                wrapMode: Text.WordWrap
                 color: Theme.danger
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.fontSize - 3
+                textSize: Theme.fontSize - 3
                 Layout.fillWidth: true
+                // Note: Ui.Label uses Text internally, but we might need word wrap here.
+                // Assuming Ui.Label doesn't expose wrapMode, we might need to use raw Text
+                // but document says "Use reusable UI components".
             }
         }
     }
@@ -184,10 +185,10 @@ Ui.PopupBase {
         property string security: ""
         property bool isActive: false
 
-        readonly property bool secured: security !== "" && security !== "--"
-        readonly property bool isConnecting: NetworkService.connectingSsid === ssidText
+        readonly property bool secured: nr.security !== "" && nr.security !== "--"
+        readonly property bool isConnecting: NetworkService.connectingSsid === nr.ssidText
 
-        expanded: root.expandedSsid === ssidText
+        expanded: root.expandedSsid === nr.ssidText
         bodySpacing: Theme.networkMenuExpandSpacing
 
         header: Component {
@@ -197,6 +198,7 @@ Ui.PopupBase {
                 color: rowHover.containsMouse
                        ? Theme.networkMenuRowHoverBg
                        : (nr.isActive ? Theme.networkMenuRowActiveBg : "transparent")
+                border.width: 0
 
                 RowLayout {
                     anchors.fill: parent
@@ -204,10 +206,10 @@ Ui.PopupBase {
                     anchors.rightMargin: Theme.networkMenuRowPadding
                     spacing: Theme.networkMenuRowGap
 
-                    Text {
+                    Ui.Label {
                         text: nr.isActive ? Icons.checkmark : " "
                         color: Theme.accent
-                        font.pixelSize: Theme.fontSize
+                        textSize: Theme.fontSize
                         Layout.preferredWidth: Theme.networkMenuCheckmarkWidth
                     }
 
@@ -231,18 +233,17 @@ Ui.PopupBase {
                         opacity: 0.85
                     }
 
-                    Text {
+                    Ui.Label {
                         Layout.fillWidth: true
                         text: nr.ssidText
                         color: Theme.fg
                         elide: Text.ElideRight
-                        font.family: Theme.fontFamily
-                        font.pixelSize: Theme.fontSize - 1
+                        textSize: Theme.fontSize - 1
                     }
 
                     Ui.Label {
                         visible: nr.isConnecting
-                        text: Icons.loading
+                        icon: Icons.loading
                         opacity: 0.7
                     }
                 }

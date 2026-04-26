@@ -18,19 +18,19 @@ Ui.PopupBase {
     property int itemsOnCurrentPage: Math.min(15, appModel.values.length - pagedList.currentIndex * 15)
     property string debouncedQuery: ""
 
+    anchorBottom: true
+    acceptsInput: true
+
+    implicitWidth: Theme.launchMenuWidth
+    implicitHeight: Theme.launchMenuHeight
+
+    WlrLayershell.layer: WlrLayer.Overlay
+
     function launchApp(entry) {
         if (!entry) return;
         entry.execute();
         root.close();
     }
-
-    implicitWidth: Theme.launchMenuWidth
-    implicitHeight: Theme.launchMenuHeight
-    
-    anchorBottom: true
-    acceptsInput: true
-    
-    WlrLayershell.layer: WlrLayer.Overlay
 
     Rectangle {
         anchors.fill: parent
@@ -58,11 +58,10 @@ Ui.PopupBase {
                     anchors.rightMargin: Theme.launchMenuSearchPadding
                     spacing: Theme.s2
 
-                    Text {
-                        text: Icons.search
+                    Ui.Label {
+                        icon: Icons.search
                         color: searchField.text.length > 0 ? Theme.accent : Theme.fgMuted
-                        font.family: Theme.fontFamilyIcons
-                        font.pointSize: Theme.launchMenuSearchIconSize
+                        iconSize: Theme.launchMenuSearchIconSize
                         Layout.alignment: Qt.AlignVCenter
                         Behavior on color { ColorAnimation { duration: Theme.launchMenuAnimDuration } }
                     }
@@ -187,11 +186,10 @@ Ui.PopupBase {
                     }
 
                     // Clear button
-                    Text {
-                        text: Icons.close
+                    Ui.Label {
+                        icon: Icons.close
                         color: Theme.fgMuted
-                        font.family: Theme.fontFamilyIcons
-                        font.pointSize: Theme.launchMenuClearIconSize
+                        iconSize: Theme.launchMenuClearIconSize
                         Layout.alignment: Qt.AlignVCenter
                         visible: searchField.text.length > 0
                         opacity: clearMouse.containsMouse ? 1.0 : 0.6
@@ -279,12 +277,12 @@ Ui.PopupBase {
                         Behavior on opacity { NumberAnimation { duration: 120; easing.type: Easing.OutQuad } }
                     }
 
-                    Column {
+                    ColumnLayout {
                         anchors.centerIn: parent
                         spacing: Theme.launchMenuCellSpacing
                         
                         Item {
-                            anchors.horizontalCenter: parent.horizontalCenter
+                            Layout.alignment: Qt.AlignHCenter
                             width: Theme.launchMenuIconSize
                             height: Theme.launchMenuIconSize
 
@@ -298,28 +296,27 @@ Ui.PopupBase {
                                 anchors.fill: parent
                                 radius: Theme.launchMenuCellRadius
                                 color: Theme.bgElevated
+                                border.width: 0
                                 visible: appIcon.status !== Image.Ready
 
-                                Text {
+                                Ui.Label {
                                     anchors.centerIn: parent
                                     text: (delegateRoot.modelData.name || "?")[0].toUpperCase()
                                     color: Theme.accent
-                                    font.family: Theme.fontFamily
-                                    font.pointSize: Theme.launchMenuIconFallbackFontSize
+                                    textSize: Theme.launchMenuIconFallbackFontSize
                                 }
                             }
                         }
                         
-                        Text {
+                        Ui.Label {
+                            Layout.fillWidth: true
+                            Layout.leftMargin: 6
+                            Layout.rightMargin: 6
                             text: delegateRoot.modelData.name
                             color: Theme.fg
-                            font.family: Theme.fontFamily
-                            font.pointSize: Theme.launchMenuAppFontSize
-                            width: delegateRoot.width - 12
-                            horizontalAlignment: Text.AlignHCenter
-                            wrapMode: Text.WordWrap
+                            textSize: Theme.launchMenuAppFontSize
                             elide: Text.ElideRight
-                            maximumLineCount: 2
+                            // multiline not supported by Ui.Label, but elide is a good compromise for consistency
                         }
                     }
                     
@@ -349,7 +346,7 @@ Ui.PopupBase {
                         anchors.bottomMargin: Theme.launchMenuListBottomMargin
                         orientation: ListView.Horizontal
                         snapMode: ListView.SnapOneItem
-                        cacheBuffer: width
+                        cacheBuffer: root.width
                         clip: true
                         interactive: false
                         highlightMoveDuration: Theme.launchMenuPageAnimDuration
@@ -396,13 +393,15 @@ Ui.PopupBase {
                         Repeater {
                             model: Math.min(10, pagedList.model)
                             delegate: Rectangle {
+                                id: dotDelegate
                                 required property int index
                                 
-                                width: index === pagedList.currentIndex ? Theme.launchMenuPageIndicatorWidthActive : Theme.launchMenuPageIndicatorWidth
+                                width: dotDelegate.index === pagedList.currentIndex ? Theme.launchMenuPageIndicatorWidthActive : Theme.launchMenuPageIndicatorWidth
                                 height: Theme.launchMenuPageIndicatorHeight
                                 radius: Theme.launchMenuPageIndicatorRadius
-                                color: index === pagedList.currentIndex ? Theme.accent : Theme.fg
-                                opacity: index === pagedList.currentIndex ? 1.0 : 0.25
+                                color: dotDelegate.index === pagedList.currentIndex ? Theme.accent : Theme.fg
+                                border.width: 0
+                                opacity: dotDelegate.index === pagedList.currentIndex ? 1.0 : 0.25
                                 anchors.verticalCenter: parent.verticalCenter
                                 
                                 Behavior on width { NumberAnimation { duration: Theme.launchMenuPageIndicatorAnimDuration; easing.type: Easing.OutCubic } }

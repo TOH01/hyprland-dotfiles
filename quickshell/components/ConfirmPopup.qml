@@ -18,6 +18,21 @@ PanelWindow {
 
     signal confirm()
 
+    anchors {
+        top: true
+        bottom: true
+        left: true
+        right: true
+    }
+
+    visible: false
+    color: "transparent"
+    exclusionMode: ExclusionMode.Ignore
+    surfaceFormat.opaque: false
+
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+
     function open() {
         root.visible = true
         root.isOpened = true
@@ -29,21 +44,6 @@ PanelWindow {
         root.isOpened = false
         timer.stop()
         closeTimer.start()
-    }
-
-    visible: false
-    color: "transparent"
-    exclusionMode: ExclusionMode.Ignore
-    surfaceFormat.opaque: false
-
-    WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
-
-    anchors {
-        top: true
-        bottom: true
-        left: true
-        right: true
     }
 
     Scope {
@@ -99,6 +99,7 @@ PanelWindow {
         height: contentLayout.height + (Theme.s2 * 4)
         radius: Theme.widgetRadius
         color: Theme.bg
+        border.width: 0
         
         opacity: root.isOpened ? 1.0 : 0.0
         scale: root.isOpened ? 1.0 : Theme.confirmPopupHiddenScale
@@ -120,13 +121,13 @@ PanelWindow {
             anchors.centerIn: parent
             spacing: Theme.s2
 
-            Text {
+            Ui.Label {
                 text: root.message
                 color: Theme.fg
                 Layout.bottomMargin: Theme.s2
             }
 
-            Text {
+            Ui.Label {
                 text: Language.autoCancelTemplate.arg(root.timeout)
                 color: Theme.fg
             }

@@ -40,4 +40,8 @@ QtObject {
     readonly property string cancel: "Cancel"
     readonly property string confirm: "Confirm"
     readonly property string autoCancelTemplate: "Auto-cancel in %1s"
+
+    // Common Literals
+    readonly property string percent: "%"
+    readonly property string nullValue: "—"
 }

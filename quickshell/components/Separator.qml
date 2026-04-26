@@ -12,14 +12,14 @@ Rectangle {
 
     color: Theme.separatorColor
 
-    implicitWidth: orientation === Qt.Vertical ? thickness : 100
-    implicitHeight: orientation === Qt.Horizontal ? thickness : 100
+    implicitWidth: root.orientation === Qt.Vertical ? root.thickness : 100
+    implicitHeight: root.orientation === Qt.Horizontal ? root.thickness : 100
 
-    Layout.fillWidth: orientation === Qt.Horizontal
-    Layout.fillHeight: orientation === Qt.Vertical
+    Layout.fillWidth: root.orientation === Qt.Horizontal
+    Layout.fillHeight: root.orientation === Qt.Vertical
 
-    Layout.topMargin: orientation === Qt.Vertical ? padding : 0
-    Layout.bottomMargin: orientation === Qt.Vertical ? padding : 0
-    Layout.leftMargin: orientation === Qt.Horizontal ? padding : 0
-    Layout.rightMargin: orientation === Qt.Horizontal ? padding : 0
+    Layout.topMargin: root.orientation === Qt.Vertical ? root.padding : 0
+    Layout.bottomMargin: root.orientation === Qt.Vertical ? root.padding : 0
+    Layout.leftMargin: root.orientation === Qt.Horizontal ? root.padding : 0
+    Layout.rightMargin: root.orientation === Qt.Horizontal ? root.padding : 0
 }

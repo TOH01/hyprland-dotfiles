@@ -30,6 +30,7 @@ RowLayout {
         color: root.checked
                ? Theme.toggleTrackOnColor
                : Theme.toggleTrackOffColor
+        border.width: 0
 
         Behavior on color { ColorAnimation { duration: Theme.toggleAnimDuration } }
 
@@ -38,6 +39,7 @@ RowLayout {
             height: Theme.toggleThumbSize
             radius: width / 2
             color: Theme.toggleThumbColor
+            border.width: 0
             y: Theme.toggleThumbMargin
             x: root.checked ? parent.width - width - Theme.toggleThumbMargin : Theme.toggleThumbMargin
             Behavior on x { NumberAnimation { duration: Theme.toggleAnimDuration; easing.type: Easing.OutCubic } }

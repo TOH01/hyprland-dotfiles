@@ -20,6 +20,7 @@ Ui.Expandable {
             implicitHeight: 28
             radius: 6
             color: hover.hovered ? Qt.rgba(1, 1, 1, 0.06) : "transparent"
+            border.width: 0
             Behavior on color { ColorAnimation { duration: 120 } }
 
             RowLayout {
@@ -28,19 +29,17 @@ Ui.Expandable {
                 anchors.rightMargin: Theme.s2
                 spacing: Theme.s1
 
-                Text {
+                Ui.Label {
                     Layout.fillWidth: true
                     text: root.currentLabel
                     color: Theme.fgMuted
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 11
+                    textSize: 11
                     elide: Text.ElideRight
                 }
-                Text {
-                    text: Icons.chevronRight
+                Ui.Label {
+                    icon: Icons.chevronRight
                     color: Theme.fgMuted
-                    font.family: Theme.fontFamilyIcons
-                    font.pixelSize: 12
+                    iconSize: 12
                     rotation: root.expanded ? 90 : 0
                     Behavior on rotation { NumberAnimation { duration: 150 } }
                 }
@@ -65,6 +64,7 @@ Ui.Expandable {
             color: active
                    ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.18)
                    : (itemHover.hovered ? Qt.rgba(1, 1, 1, 0.06) : "transparent")
+            border.width: 0
             Behavior on color { ColorAnimation { duration: 100 } }
 
             RowLayout {
@@ -73,16 +73,15 @@ Ui.Expandable {
                 anchors.rightMargin: Theme.s2
                 spacing: Theme.s1
 
-                Text {
+                Ui.Label {
                     Layout.fillWidth: true
                     text: itemRow.modelData.description
                           || itemRow.modelData.nickname
                           || itemRow.modelData.name
                           || "Device"
                     color: itemRow.active ? Theme.accent : Theme.fg
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 11
-                    font.weight: itemRow.active ? Font.Medium : Font.Normal
+                    textSize: 11
+                    bold: itemRow.active
                     elide: Text.ElideRight
                 }
                 Rectangle {

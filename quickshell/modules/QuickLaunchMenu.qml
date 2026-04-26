@@ -32,6 +32,21 @@ PanelWindow {
         return set;
     }
 
+    readonly property var monitor: Hyprland.monitors.values.find(m => m.name === root.screen?.name)
+    readonly property bool hasWindows: (root.monitor?.activeWorkspace?.toplevels?.values.length ?? 0) > 0
+
+    readonly property int dockWidth: Theme.dockWidth
+    readonly property int expandedHeight: Theme.dockExpandedHeight
+    readonly property int collapsedHeight: Theme.dockCollapsedHeight
+    readonly property int expandedBottomMargin: Theme.dockExpandedBottomMargin
+    readonly property int collapsedBottomMargin: Theme.dockCollapsedBottomMargin
+    readonly property int hotPadX: Theme.dockHotPadX
+    readonly property int hotPadY: Theme.dockHotPadY
+
+    readonly property bool expanded: !root.hasWindows || root.hovering || root.pinned
+
+    signal launcherRequested()
+
     function isEntryRunning(entry) {
         if (!entry) return false;
         const ids = root.runningAppIds;
@@ -64,21 +79,6 @@ PanelWindow {
             return a === eid || a === shortId || a.includes(shortId) || shortId.includes(a);
         }) ?? null;
     }
-
-    readonly property var monitor: Hyprland.monitors.values.find(m => m.name === screen?.name)
-    readonly property bool hasWindows: (root.monitor?.activeWorkspace?.toplevels?.values.length ?? 0) > 0
-
-    readonly property int dockWidth: Theme.dockWidth
-    readonly property int expandedHeight: Theme.dockExpandedHeight
-    readonly property int collapsedHeight: Theme.dockCollapsedHeight
-    readonly property int expandedBottomMargin: Theme.dockExpandedBottomMargin
-    readonly property int collapsedBottomMargin: Theme.dockCollapsedBottomMargin
-    readonly property int hotPadX: Theme.dockHotPadX
-    readonly property int hotPadY: Theme.dockHotPadY
-
-    readonly property bool expanded: !root.hasWindows || root.hovering || root.pinned
-
-    signal launcherRequested()
 
     anchors.bottom: true
 
@@ -162,8 +162,8 @@ PanelWindow {
                 readonly property real baseIconWidth: Theme.dockIconBaseSize
                 readonly property real k_target: 2.5
 
-                readonly property real k_actual: Math.min(k_target, Math.max(1.0, appRepeater.count / 4.0))
-                readonly property real w_effect: baseIconWidth * k_actual
+                readonly property real k_actual: Math.min(appRow.k_target, Math.max(1.0, appRepeater.count / 4.0))
+                readonly property real w_effect: appRow.baseIconWidth * appRow.k_actual
 
                 Repeater {
                     id: appRepeater
@@ -209,7 +209,8 @@ PanelWindow {
                             width: 5
                             height: 5
                             radius: width / 2
-                            color: Theme.accent ?? "white"
+                            color: Theme.accent
+                            border.width: 0
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottom: parent.bottom
                             anchors.bottomMargin: 4
@@ -249,7 +250,7 @@ PanelWindow {
 
             Ui.Button {
                 id: launchMenuBtn
-                icon: "󱗼"
+                icon: Icons.quickLaunch
                 iconSize: 18
                 onClicked: root.launcherRequested()
             }
