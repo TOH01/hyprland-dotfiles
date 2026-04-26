@@ -160,7 +160,6 @@ Ui.PopupBase {
         property var node
         property var deviceList
         property bool isOutput: true
-        property bool expanded: false
         spacing: Theme.s2
 
         RowLayout {
@@ -202,14 +201,14 @@ Ui.PopupBase {
                 from: 0
                 to: 1
                 value: ds.node && ds.node.audio ? ds.node.audio.volume : 0
-                // external volume changes (media keys, headset wheel, etc.).
+                // external volume changes (media keys, headset wheel, etc.) flow back via the binding
                 onMoved: if (ds.node && ds.node.audio) ds.node.audio.volume = value
                 progressColor: ds.node && ds.node.audio && ds.node.audio.muted
                                ? Theme.fgMuted : Theme.accent
             }
         }
 
-        // Device picker
+        // Device picker — Picker manages its own expanded state.
         Ui.Picker {
             Layout.fillWidth: true
             currentLabel: ds.node ? (ds.node.description
@@ -218,7 +217,6 @@ Ui.PopupBase {
                                      || "Unknown") : ""
             model: ds.deviceList
             activeItem: ds.node
-            expanded: ds.expanded
             onSelected: (item) => {
                 // preferredDefault* is writable; defaultAudioSink/Source is read-only
                 if (ds.isOutput) Pipewire.preferredDefaultAudioSink   = item
@@ -227,43 +225,26 @@ Ui.PopupBase {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    //   Inline component: per-application mixer entry
-    // ═══════════════════════════════════════════════════════════════════
     component AppMixerEntry: Rectangle {
         id: ame
         property var streamNode
 
         radius: Theme.widgetRadius
         color: Theme.bgElevated
-        // Dynamic height: grows when a media title is present
         height: contentRow.implicitHeight + 2 * Theme.s2
 
-        // ⚠ Required: each delegate must own its tracker so the node's
-        //   audio props stay live. Without this the slider won't sync.
         PwObjectTracker {
             objects: ame.streamNode ? [ame.streamNode] : []
         }
 
-        // ── Property cascade for icon + name lookup ─────────────────
         readonly property var props: streamNode ? streamNode.properties : null
 
-        // The app's own hint — most reliable when set ("firefox", "chromium", "mpv")
-        readonly property string iconHint:
-            (props && props["application.icon-name"]) || ""
-        // Binary name often matches icon theme name better than appId
-        readonly property string binName:
-            (props && props["application.process.binary"]) || ""
-        // Reverse-DNS appId — frequently empty for X11/legacy apps
-        readonly property string appIdProp:
-            (props && props["application.id"]) || ""
-        readonly property string appName:
-            (props && (props["application.name"] || props["node.name"])) || "Unknown"
-        readonly property string mediaTitle:
-            (props && (props["media.name"] || props["media.title"])) || ""
-        // Heuristic fallback fed into Ui.AppIcon when iconHint resolves to nothing
-        readonly property string lookupId:
-            binName || appIdProp || appName.toLowerCase()
+        readonly property string iconHint: (props && props["application.icon-name"]) || ""
+        readonly property string binName: (props && props["application.process.binary"]) || ""
+        readonly property string appIdProp: (props && props["application.id"]) || ""
+        readonly property string appName:(props && (props["application.name"] || props["node.name"])) || "Unknown"
+        readonly property string mediaTitle: (props && (props["media.name"] || props["media.title"])) || ""
+        readonly property string lookupId: binName || appIdProp || appName.toLowerCase()
 
         RowLayout {
             id: contentRow
@@ -274,15 +255,14 @@ Ui.PopupBase {
             Ui.AppIcon {
                 Layout.preferredWidth: Theme.volumeMenuAppIconSize
                 Layout.preferredHeight: Theme.volumeMenuAppIconSize
-                iconName: ame.iconHint   // direct theme lookup (highest priority)
-                appId:    ame.lookupId   // heuristic fallback
+                iconName: ame.iconHint
+                appId:    ame.lookupId
             }
 
             ColumnLayout {
                 Layout.fillWidth: true
                 spacing: Theme.s1
 
-                // App name + percentage
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: Theme.s2

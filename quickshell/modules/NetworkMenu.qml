@@ -1,3 +1,4 @@
+// NetworkMenu.qml
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Hyprland
@@ -107,44 +108,44 @@ Ui.PopupBase {
                 visible: NetworkService.wifiEnabled
             }
 
-            // ───── WiFi list header ─────
-            Item {
+            // ───── WiFi list (header + body via Expandable) ─────
+            Ui.Expandable {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 24
                 visible: NetworkService.wifiEnabled
+                expanded: root.wifiListOpen
+                bodySpacing: 2
 
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.wifiListOpen = !root.wifiListOpen
-                }
+                header: Component {
+                    Item {
+                        implicitHeight: 24
 
-                RowLayout {
-                    anchors.fill: parent
-                    spacing: 6
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: root.wifiListOpen = !root.wifiListOpen
+                        }
 
-                    Ui.Label {
-                        Layout.fillWidth: true
-                        text: Language.visibleNetworks
+                        RowLayout {
+                            anchors.fill: parent
+                            spacing: 6
+
+                            Ui.Label {
+                                Layout.fillWidth: true
+                                text: Language.visibleNetworks
+                            }
+                            Ui.Label {
+                                text: root.wifiListOpen ? Icons.chevronDown : Icons.chevronRight
+                            }
+                        }
                     }
-                    Ui.Label {
-                        text: root.wifiListOpen ? Icons.chevronDown : Icons.chevronRight
-                    }
                 }
-            }
-
-            // ───── WiFi list body ─────
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 2
-                visible: NetworkService.wifiEnabled && root.wifiListOpen
-                clip: true
 
                 Repeater {
                     model: NetworkService.networks
                     delegate: NetworkRow {
                         required property var modelData
                         Layout.fillWidth: true
+
                         ssidText: modelData.ssid
                         signalStrength: modelData.signal
                         security: modelData.security
@@ -176,90 +177,99 @@ Ui.PopupBase {
         }
     }
 
-    // ───── Network row (per SSID) — popup-specific, stays inline ─────
-    component NetworkRow: ColumnLayout {
+    component NetworkRow: Ui.Expandable {
+        id: nr
         property string ssidText: ""
         property int signalStrength: 0
         property string security: ""
         property bool isActive: false
+
         readonly property bool secured: security !== "" && security !== "--"
-        readonly property bool isExpanded: root.expandedSsid === ssidText
         readonly property bool isConnecting: NetworkService.connectingSsid === ssidText
 
-        spacing: 0
+        expanded: root.expandedSsid === ssidText
+        bodySpacing: Theme.networkMenuExpandSpacing
 
-        Rectangle {
-            Layout.fillWidth: true
-            implicitHeight: Theme.networkMenuRowHeight
-            radius: Theme.networkMenuRowRadius
-            color: rowHover.containsMouse
-                   ? Theme.networkMenuRowHoverBg
-                   : (isActive ? Theme.networkMenuRowActiveBg : "transparent")
+        header: Component {
+            Rectangle {
+                implicitHeight: Theme.networkMenuRowHeight
+                radius: Theme.networkMenuRowRadius
+                color: rowHover.containsMouse
+                       ? Theme.networkMenuRowHoverBg
+                       : (nr.isActive ? Theme.networkMenuRowActiveBg : "transparent")
 
-            RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: Theme.networkMenuRowPadding
-                anchors.rightMargin: Theme.networkMenuRowPadding
-                spacing: Theme.networkMenuRowGap
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: Theme.networkMenuRowPadding
+                    anchors.rightMargin: Theme.networkMenuRowPadding
+                    spacing: Theme.networkMenuRowGap
 
-                Text {
-                    text: isActive ? Icons.checkmark : " "
-                    color: Theme.accent
-                    font.pixelSize: Theme.fontSize
-                    Layout.preferredWidth: Theme.networkMenuCheckmarkWidth
-                }
-
-                Ui.Label {
-                    icon: {
-                        const s = signalStrength
-                        if (secured) {
-                            return s >= 75 ? Icons.wifi_4_locked : s >= 50 ? Icons.wifi_3_locked : s >= 25 ? Icons.wifi_2_locked : s > 0 ? Icons.wifi_1_locked : Icons.wifi_0_locked
-                        } else {
-                            return s >= 75 ? Icons.wifi_4 : s >= 50 ? Icons.wifi_3 : s >= 25 ? Icons.wifi_2 : s > 0 ? Icons.wifi_1 : Icons.wifi_0
-                        }
+                    Text {
+                        text: nr.isActive ? Icons.checkmark : " "
+                        color: Theme.accent
+                        font.pixelSize: Theme.fontSize
+                        Layout.preferredWidth: Theme.networkMenuCheckmarkWidth
                     }
-                    opacity: 0.85
+
+                    Ui.Label {
+                        icon: {
+                            const s = nr.signalStrength
+                            if (nr.secured) {
+                                return s >= 75 ? Icons.wifi_4_locked
+                                     : s >= 50 ? Icons.wifi_3_locked
+                                     : s >= 25 ? Icons.wifi_2_locked
+                                     : s >  0  ? Icons.wifi_1_locked
+                                     : Icons.wifi_0_locked
+                            } else {
+                                return s >= 75 ? Icons.wifi_4
+                                     : s >= 50 ? Icons.wifi_3
+                                     : s >= 25 ? Icons.wifi_2
+                                     : s >  0  ? Icons.wifi_1
+                                     : Icons.wifi_0
+                            }
+                        }
+                        opacity: 0.85
+                    }
+
+                    Text {
+                        Layout.fillWidth: true
+                        text: nr.ssidText
+                        color: Theme.fg
+                        elide: Text.ElideRight
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.fontSize - 1
+                    }
+
+                    Ui.Label {
+                        visible: nr.isConnecting
+                        text: Icons.loading
+                        opacity: 0.7
+                    }
                 }
 
-                Text {
-                    Layout.fillWidth: true
-                    text: ssidText
-                    color: Theme.fg
-                    elide: Text.ElideRight
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.fontSize - 1
-                }
-
-                Ui.Label {
-                    visible: isConnecting
-                    text: Icons.loading
-                    opacity: 0.7
-                }
-            }
-
-            MouseArea {
-                id: rowHover
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    if (isActive || secured) {
-                        root.expandedSsid = isExpanded ? "" : ssidText
-                    } else {
-                        NetworkService.connectTo(ssidText, "")
+                MouseArea {
+                    id: rowHover
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        if (nr.isActive || nr.secured) {
+                            root.expandedSsid = nr.expanded ? "" : nr.ssidText
+                        } else {
+                            NetworkService.connectTo(nr.ssidText, "")
+                        }
                     }
                 }
             }
         }
 
-        // Expansion
+        // Body — disconnect button OR password field
         Item {
             Layout.fillWidth: true
-            visible: isExpanded
-            implicitHeight: expandContent.implicitHeight + (Theme.networkMenuExpandTopMargin * 3)
+            implicitHeight: bodyContent.implicitHeight + Theme.networkMenuExpandTopMargin * 2
 
             ColumnLayout {
-                id: expandContent
+                id: bodyContent
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
@@ -269,7 +279,7 @@ Ui.PopupBase {
                 spacing: Theme.networkMenuExpandSpacing
 
                 Ui.Button {
-                    visible: isActive
+                    visible: nr.isActive
                     text: Language.disconnect
                     onClicked: {
                         NetworkService.disconnectWifi()
@@ -278,7 +288,7 @@ Ui.PopupBase {
                 }
 
                 RowLayout {
-                    visible: !isActive && secured
+                    visible: !nr.isActive && nr.secured
                     spacing: 6
                     Layout.fillWidth: true
 
@@ -295,7 +305,7 @@ Ui.PopupBase {
                         text: Language.connect
                         enabled: pwField.text.length >= 8
                         onClicked: {
-                            NetworkService.connectTo(ssidText, pwField.text)
+                            NetworkService.connectTo(nr.ssidText, pwField.text)
                             pwField.text = ""
                             root.expandedSsid = ""
                         }

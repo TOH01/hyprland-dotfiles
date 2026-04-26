@@ -4,18 +4,19 @@ import qs.config
 
 Row {
     id: root
-
     property string text: ""
     property string icon: ""
     property int iconSize: Theme.iconSize
     property int textSize: Theme.fontSize
     property bool bold: false
     property color color: Theme.fg
+
     property int elide: Text.ElideNone
 
     spacing: (icon !== "" && text !== "") ? Theme.labelGap : 0
 
     Text {
+        id: iconText
         visible: root.icon !== ""
         text: root.icon
         color: root.color
@@ -23,8 +24,8 @@ Row {
         font.pixelSize: root.iconSize
         anchors.verticalCenter: parent.verticalCenter
     }
-    
     Text {
+        id: textElement
         visible: root.text !== ""
         text: root.text
         color: root.color

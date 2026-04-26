@@ -8,3 +8,4 @@ ToggleRow 1.0 ToggleRow.qml
 Separator 1.0 Separator.qml
 Slider 1.0 Slider.qml
 Picker 1.0 Picker.qml
+Expandable 1.0 Expandable.qml
