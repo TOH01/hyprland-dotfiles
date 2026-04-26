@@ -11,6 +11,7 @@ Row {
     property int textSize: Theme.fontSize
     property bool bold: false
     property color color: Theme.fg
+    property int elide: Text.ElideNone
 
     spacing: (icon !== "" && text !== "") ? Theme.labelGap : 0
 
@@ -22,7 +23,7 @@ Row {
         font.pixelSize: root.iconSize
         anchors.verticalCenter: parent.verticalCenter
     }
-
+    
     Text {
         visible: root.text !== ""
         text: root.text
@@ -31,5 +32,9 @@ Row {
         font.pixelSize: root.textSize
         font.bold: root.bold
         anchors.verticalCenter: parent.verticalCenter
+        elide: root.elide
+        width: root.elide !== Text.ElideNone
+               ? Math.max(0, root.width - (iconText.visible ? iconText.implicitWidth + root.spacing : 0))
+               : implicitWidth
     }
 }

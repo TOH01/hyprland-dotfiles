@@ -62,14 +62,13 @@ Ui.PopupBase {
     ScriptModel {
         id: outputDevices
         values: Pipewire.nodes.values.filter(n =>
-            !n.isStream && n.isSink && n.audio !== null && n.ready
+            !n.isStream && n.isSink && n.audio !== null
         )
     }
-
     ScriptModel {
         id: inputDevices
         values: Pipewire.nodes.values.filter(n =>
-            !n.isStream && !n.isSink && n.audio !== null && n.ready
+            !n.isStream && !n.isSink && n.audio !== null
         )
     }
 
@@ -83,13 +82,6 @@ Ui.PopupBase {
             anchors.fill: parent
             anchors.margins: Theme.volumeMenuContentPadding
             spacing: Theme.volumeMenuSectionSpacing
-
-            Ui.Label {
-                text: Language.sound
-                textSize: 16
-                bold: true
-                Layout.fillWidth: true
-            }
 
             DeviceSection {
                 Layout.fillWidth: true
@@ -114,21 +106,21 @@ Ui.PopupBase {
 
             RowLayout {
                 Layout.fillWidth: true
+                spacing: Theme.s2
                 Ui.Label {
+                    Layout.fillWidth: true
                     text: Language.applications
                     color: Theme.fgMuted
                     textSize: 12
                     bold: true
-                    Layout.fillWidth: true
                 }
-                Text {
+                Ui.Label {
+                    visible: appStreams.values.length > 0
                     text: appStreams.values.length === 1
                           ? Language.oneApplication
                           : Language.multipleApplications.arg(appStreams.values.length)
                     color: Theme.fgMuted
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 11
-                    visible: appStreams.values.length > 0
+                    textSize: 11
                 }
             }
 
@@ -146,18 +138,17 @@ Ui.PopupBase {
                     streamNode: modelData
                 }
 
-                ScrollBar.vertical: ScrollBar { 
+                ScrollBar.vertical: ScrollBar {
                     policy: ScrollBar.AsNeeded
                     active: true
                 }
 
-                Text {
+                Ui.Label {
                     anchors.centerIn: parent
                     visible: appList.count === 0
                     text: Language.noApplications
                     color: Theme.fgMuted
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 12
+                    textSize: 12
                 }
             }
         }
@@ -174,6 +165,7 @@ Ui.PopupBase {
 
         RowLayout {
             Layout.fillWidth: true
+            spacing: Theme.s2
             Ui.Label {
                 Layout.fillWidth: true
                 text: ds.title
@@ -181,13 +173,12 @@ Ui.PopupBase {
                 textSize: 12
                 bold: true
             }
-            Text {
+            Ui.Label {
                 text: ds.node && ds.node.audio
                       ? Math.round(ds.node.audio.volume * 100) + "%"
                       : "—"
                 color: Theme.fg
-                font.family: Theme.fontFamily
-                font.pixelSize: 12
+                textSize: 12
             }
         }
 
@@ -211,45 +202,71 @@ Ui.PopupBase {
                 from: 0
                 to: 1
                 value: ds.node && ds.node.audio ? ds.node.audio.volume : 0
+                // external volume changes (media keys, headset wheel, etc.).
                 onMoved: if (ds.node && ds.node.audio) ds.node.audio.volume = value
                 progressColor: ds.node && ds.node.audio && ds.node.audio.muted
                                ? Theme.fgMuted : Theme.accent
             }
         }
 
+        // Device picker
         Ui.Picker {
             Layout.fillWidth: true
-            currentLabel: ds.node ? (ds.node.description || ds.node.nickname || ds.node.name || "Unknown") : ""
+            currentLabel: ds.node ? (ds.node.description
+                                     || ds.node.nickname
+                                     || ds.node.name
+                                     || "Unknown") : ""
             model: ds.deviceList
             activeItem: ds.node
             expanded: ds.expanded
             onSelected: (item) => {
-                if (ds.isOutput) Pipewire.preferredDefaultAudioSink = item
-                else Pipewire.preferredDefaultAudioSource = item
+                // preferredDefault* is writable; defaultAudioSink/Source is read-only
+                if (ds.isOutput) Pipewire.preferredDefaultAudioSink   = item
+                else             Pipewire.preferredDefaultAudioSource = item
             }
         }
     }
 
+    // ═══════════════════════════════════════════════════════════════════
+    //   Inline component: per-application mixer entry
+    // ═══════════════════════════════════════════════════════════════════
     component AppMixerEntry: Rectangle {
         id: ame
         property var streamNode
 
-        height: 64
         radius: Theme.widgetRadius
         color: Theme.bgElevated
+        // Dynamic height: grows when a media title is present
+        height: contentRow.implicitHeight + 2 * Theme.s2
 
+        // ⚠ Required: each delegate must own its tracker so the node's
+        //   audio props stay live. Without this the slider won't sync.
         PwObjectTracker {
             objects: ame.streamNode ? [ame.streamNode] : []
         }
 
+        // ── Property cascade for icon + name lookup ─────────────────
         readonly property var props: streamNode ? streamNode.properties : null
+
+        // The app's own hint — most reliable when set ("firefox", "chromium", "mpv")
+        readonly property string iconHint:
+            (props && props["application.icon-name"]) || ""
+        // Binary name often matches icon theme name better than appId
+        readonly property string binName:
+            (props && props["application.process.binary"]) || ""
+        // Reverse-DNS appId — frequently empty for X11/legacy apps
+        readonly property string appIdProp:
+            (props && props["application.id"]) || ""
         readonly property string appName:
             (props && (props["application.name"] || props["node.name"])) || "Unknown"
         readonly property string mediaTitle:
             (props && (props["media.name"] || props["media.title"])) || ""
-        readonly property string appId: (props && props["application.id"]) || ""
+        // Heuristic fallback fed into Ui.AppIcon when iconHint resolves to nothing
+        readonly property string lookupId:
+            binName || appIdProp || appName.toLowerCase()
 
         RowLayout {
+            id: contentRow
             anchors.fill: parent
             anchors.margins: Theme.s2
             spacing: Theme.s2
@@ -257,43 +274,52 @@ Ui.PopupBase {
             Ui.AppIcon {
                 Layout.preferredWidth: Theme.volumeMenuAppIconSize
                 Layout.preferredHeight: Theme.volumeMenuAppIconSize
-                appId: ame.appId
+                iconName: ame.iconHint   // direct theme lookup (highest priority)
+                appId:    ame.lookupId   // heuristic fallback
             }
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 2
+                spacing: Theme.s1
 
+                // App name + percentage
                 RowLayout {
                     Layout.fillWidth: true
-                    spacing: Theme.s1
-                    Text {
+                    spacing: Theme.s2
+                    Ui.Label {
                         Layout.fillWidth: true
-                        text: ame.mediaTitle !== ""
-                              ? ame.appName + " · " + ame.mediaTitle
-                              : ame.appName
-                        color: Theme.fg
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 11
-                        font.weight: Font.Medium
+                        text: ame.appName
+                        textSize: 12
+                        bold: true
                         elide: Text.ElideRight
                     }
-                    Text {
+                    Ui.Label {
                         text: ame.streamNode && ame.streamNode.audio
                               ? Math.round(ame.streamNode.audio.volume * 100) + "%"
                               : ""
                         color: Theme.fgMuted
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 10
+                        textSize: 11
                     }
                 }
 
+                // Media title — only when present
+                Ui.Label {
+                    Layout.fillWidth: true
+                    visible: ame.mediaTitle !== ""
+                    text: ame.mediaTitle
+                    color: Theme.fgMuted
+                    textSize: 10
+                    elide: Text.ElideRight
+                }
+
+                // Per-app slider
                 Ui.Slider {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 16
                     from: 0
                     to: 1
-                    value: ame.streamNode && ame.streamNode.audio ? ame.streamNode.audio.volume : 0
+                    value: ame.streamNode && ame.streamNode.audio
+                           ? ame.streamNode.audio.volume : 0
                     onMoved: if (ame.streamNode && ame.streamNode.audio)
                                  ame.streamNode.audio.volume = value
                     progressColor: ame.streamNode && ame.streamNode.audio && ame.streamNode.audio.muted
@@ -304,6 +330,7 @@ Ui.PopupBase {
             Ui.Button {
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
+                Layout.alignment: Qt.AlignVCenter
                 radius: 14
                 icon: ame.streamNode && ame.streamNode.audio && ame.streamNode.audio.muted
                       ? Icons.volumeMuted : Icons.volumeHigh
