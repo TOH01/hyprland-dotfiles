@@ -193,4 +193,5 @@ QtObject {
     readonly property int workspaceOverviewPadding: 10
     readonly property int workspaceOverviewMinWorkspaces: 2
     readonly property int workspaceOverviewMaxWorkspaces: 10
+    readonly property int workspaceOverviewIconSize: 22
 }
