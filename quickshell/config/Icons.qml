@@ -20,6 +20,12 @@ QtObject {
     
     // Modules
     readonly property string volume:    "󰕾"
+    readonly property string volumeMuted: "󰝟"
+    readonly property string volumeLow: "󰕿"
+    readonly property string volumeMedium: "󰖀"
+    readonly property string volumeHigh: "󰕾"
+    readonly property string mic: "󰍬"
+    readonly property string micMuted: "󰍭"
     readonly property string networkWired: "󰈀"
     readonly property string networkWiredDisconnected: "󰈂"
     readonly property string networkWiredConnected: "󰈁"

@@ -82,6 +82,15 @@ QtObject {
     readonly property color toggleThumbColor: "white"
     readonly property int toggleAnimDuration: 160
 
+    // --- Component: Slider ---
+    readonly property int sliderHeight: 24
+    readonly property int sliderTrackHeight: 6
+    readonly property int sliderRadius: 3
+    readonly property int sliderHandleSize: 14
+    readonly property int sliderHandleRadius: 7
+    readonly property int sliderHandleBorderWidth: 2
+    readonly property color sliderTrackColor: Qt.rgba(1, 1, 1, 0.1)
+
     // --- Module: Bar ---
     readonly property int barHeight: 35
     readonly property int barMargin: Theme.s2
@@ -146,10 +155,15 @@ QtObject {
     readonly property int powerMenuMargin: Theme.s3
 
     // --- Module: VolumeMenu ---
-    readonly property int volumeMenuWidth: 300
-    readonly property int volumeMenuHeight: 180
+    readonly property int volumeMenuWidth: 320
+    readonly property int volumeMenuHeight: 450
     readonly property int volumeMenuSpacing: Theme.s3
+    readonly property int volumeMenuContentPadding: 16
     readonly property int volumeMenuIconSize: 24
+    readonly property int volumeMenuAppIconSize: 32
+    readonly property int volumeMenuRowHeight: 40
+    readonly property int volumeMenuSectionSpacing: 14
+    readonly property int volumeMenuDividerHeight: 1
 
     // --- Module: QuickLaunchMenu ---
     readonly property int dockWidth: 300

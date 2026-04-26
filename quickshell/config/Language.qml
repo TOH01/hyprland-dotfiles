@@ -5,6 +5,13 @@ import QtQuick
 QtObject {
     // Bar / Modules
     readonly property string volume: "Volume"
+    readonly property string sound: "Sound"
+    readonly property string applications: "Applications"
+    readonly property string output: "Output"
+    readonly property string input: "Input"
+    readonly property string noApplications: "No applications playing audio"
+    readonly property string oneApplication: "1 app"
+    readonly property string multipleApplications: "%1 apps"
     readonly property string workspaces: "Workspaces"
     
     // Power Menu
