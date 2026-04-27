@@ -35,30 +35,43 @@ Ui.PopupBase {
             readonly property int minWorkspaces: Theme.workspaceOverviewMinWorkspaces
             readonly property int maxWorkspaces: Theme.workspaceOverviewMaxWorkspaces
 
-            readonly property int baseCount: {
-                const used = Hyprland.workspaces.values.filter(w => w.toplevels.values.length > 0 && w.id > 0)
-                const lastUsed = used[used.length - 1]
-                const highest = Math.max(lastUsed?.id ?? 0, Hyprland.focusedWorkspace?.id ?? 0)
-                return Math.min(strip.maxWorkspaces, Math.max(strip.minWorkspaces, highest))
+            readonly property var workspaceIds: {
+                const allWorkspaces = Hyprland.workspaces.values;
+                const onMon = allWorkspaces
+                    .filter(w => w.monitor?.name === root.screen?.name && w.id > 0)
+                    .sort((a, b) => a.id - b.id);
+                
+                let ids = onMon.map(w => w.id);
+                
+                // Add exactly one extra workspace ID for the phantom slot, up to maxWorkspaces
+                if (ids.length < strip.maxWorkspaces) {
+                    let nextId = Math.max(...ids, 0) + 1;
+                    while (nextId < 100) {
+                        if (!allWorkspaces.some(w => w.id === nextId)) {
+                            ids.push(nextId);
+                            break;
+                        }
+                        nextId++;
+                    }
+                }
+                ids.sort((a, b) => a - b);
+                return ids;
             }
-
-            // Always show at least one extra workspace for dragging into, up to maxWorkspaces
-            readonly property int wsCount: Math.min(strip.maxWorkspaces, strip.baseCount + 1)
 
             anchors.fill: parent
             anchors.leftMargin: Theme.workspaceOverviewPadding
             anchors.topMargin: Theme.workspaceOverviewPadding
 
             Repeater {
-                model: strip.wsCount
+                model: strip.workspaceIds
 
                 delegate: Item {
                     id: workspaceItem
 
-                    readonly property int wsId: index + 1
+                    readonly property int wsId: modelData
                     readonly property var ws: Hyprland.workspaces.values.find(w => w.id === workspaceItem.wsId)
                     readonly property bool isActive: Hyprland.focusedWorkspace?.id === workspaceItem.wsId
-                    readonly property bool isPhantom: !workspaceItem.ws && workspaceItem.wsId === strip.wsCount
+                    readonly property bool isPhantom: !workspaceItem.ws
                     readonly property var toplevels: workspaceItem.ws?.toplevels?.values ?? []
                     readonly property color accent:
                         workspaceItem.isActive ? Theme.accentHot
