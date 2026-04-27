@@ -26,7 +26,7 @@ PanelWindow {
     }
 
     visible: false
-    color: "transparent"
+    color: Theme.transparent
     exclusionMode: ExclusionMode.Ignore
     surfaceFormat.opaque: false
 
@@ -78,14 +78,14 @@ PanelWindow {
     Shortcut {
         sequence: "Escape"
         enabled: root.visible
-        context: Qt.WindowShortcut
+        context: Shortcut.Window
         onActivated: root.close()
     }
 
     Shortcut {
         sequence: "Return"
         enabled: root.visible
-        context: Qt.WindowShortcut
+        context: Shortcut.Window
         onActivated: {
             root.confirm()
             root.close()

@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick
 
 QtObject {
+    readonly property color transparent: "transparent"
     // --- Global Palette ---
     readonly property color bg:        "#1a1b26"
     readonly property color bgElevated:"#24283b"
@@ -41,7 +42,7 @@ QtObject {
     readonly property int buttonHorizontalPadding: 8
     readonly property int buttonVerticalPadding: 4
     readonly property int buttonRadius: 8
-    readonly property color buttonBgColor: "transparent"
+    readonly property color buttonBgColor: Theme.transparent
     readonly property color buttonContentColor: Theme.fg
     readonly property color buttonHoverColor: Theme.fg
     readonly property real buttonHoverOpacity: 0.06

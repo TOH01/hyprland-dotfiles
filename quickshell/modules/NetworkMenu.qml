@@ -1,3 +1,4 @@
+// qmllint disable unqualified
 // NetworkMenu.qml
 import Quickshell
 import Quickshell.Wayland
@@ -120,7 +121,8 @@ Ui.PopupBase {
                         implicitHeight: 24
 
                         MouseArea {
-                            anchors.fill: parent
+                            id: headerMouseArea
+                            anchors.fill: headerMouseArea.parent
                             cursorShape: Qt.PointingHandCursor
                             onClicked: root.wifiListOpen = !root.wifiListOpen
                         }
@@ -197,7 +199,7 @@ Ui.PopupBase {
                 radius: Theme.networkMenuRowRadius
                 color: rowHover.containsMouse
                        ? Theme.networkMenuRowHoverBg
-                       : (nr.isActive ? Theme.networkMenuRowActiveBg : "transparent")
+                       : (nr.isActive ? Theme.networkMenuRowActiveBg : Theme.transparent)
                 border.width: 0
 
                 RowLayout {
@@ -250,7 +252,7 @@ Ui.PopupBase {
 
                 MouseArea {
                     id: rowHover
-                    anchors.fill: parent
+                    anchors.fill: rowHover.parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
