@@ -13,6 +13,8 @@ QtObject {
     readonly property string oneApplication: "1 app"
     readonly property string multipleApplications: "%1 apps"
     readonly property string workspaces: "Workspaces"
+    readonly property string network: "Network"
+    readonly property string power: "Power"
     
     // Power Menu
     readonly property string lockscreen: "Lockscreen"

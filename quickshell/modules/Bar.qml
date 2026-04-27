@@ -136,6 +136,7 @@ PanelWindow {
                 Ui.Button {
                     id: networkButton
                     icon: Icons.networkWired
+                    accessibleName: Language.network
                     onClicked: {
                         networkMenuLoader.active = true
                         PopupManager.open(networkMenuLoader.item, networkButton)
@@ -145,6 +146,7 @@ PanelWindow {
                 Ui.Button {
                     id: volumeButton
                     icon: Icons.volume
+                    accessibleName: Language.volume
                     onClicked: {
                         volumeMenuLoader.active = true
                         PopupManager.open(volumeMenuLoader.item, volumeButton)
@@ -154,6 +156,7 @@ PanelWindow {
                 Ui.Button {
                     id: powerButton
                     icon: Icons.power
+                    accessibleName: Language.power
                     onClicked: {
                         powerMenuLoader.active = true
                         PopupManager.open(powerMenuLoader.item, powerButton)
