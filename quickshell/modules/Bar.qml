@@ -111,7 +111,9 @@ PanelWindow {
                 spacing: Theme.barSpacing
                 Ui.Button {
                     id: wsButton
-                    text: Language.workspaces
+                    content: Ui.WorkspaceIndicator {
+                        screen: root.screen
+                    }
                     onClicked: {
                         workspaceOverviewLoader.active = true
                         PopupManager.open(workspaceOverviewLoader.item, wsButton)

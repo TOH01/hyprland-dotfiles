@@ -183,6 +183,14 @@ PanelWindow {
                         readonly property real s_min: Theme.dockScaleMin
                         readonly property real s_max: Theme.dockScaleMax
 
+                        readonly property bool isFocused: {
+                            if (!isRunning) return false;
+                            const active = Hyprland.activeToplevel;
+                            if (!active) return false;
+                            const tl = root.findToplevelForEntry(modelData);
+                            return tl && HyprlandService.hyprAddr(tl.address) === HyprlandService.hyprAddr(active.address);
+                        }
+
                         property real targetScale: (rowHover.hovered && iconContainer.dist <= appRow.w_effect)
                             ? iconContainer.s_min + (iconContainer.s_max - iconContainer.s_min) * Math.cos((iconContainer.dist / appRow.w_effect) * (Math.PI / 2))
                             : iconContainer.s_min
@@ -202,22 +210,13 @@ PanelWindow {
                             entry: modelData
                         }
 
-                        // Running indicator dot
-                        Rectangle {
-                            id: runningDot
-                            visible: iconContainer.isRunning
-                            width: 5
-                            height: 5
-                            radius: width / 2
-                            color: Theme.accent
-                            border.width: 0
+                        // Status indicator (dot/pill)
+                        Ui.StatusIndicator {
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottom: parent.bottom
                             anchors.bottomMargin: 4
-
-                            Behavior on opacity {
-                                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
-                            }
+                            visible: iconContainer.isRunning
+                            active: iconContainer.isFocused
                         }
 
                         TapHandler {

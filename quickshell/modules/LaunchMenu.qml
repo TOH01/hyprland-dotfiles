@@ -395,27 +395,14 @@ Ui.PopupBase {
                         id: dotsRow
                         anchors.bottom: parent.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
-                        height: Theme.launchMenuPageIndicatorHeight
-                        spacing: Theme.launchMenuPageIndicatorSpacing
+                        height: Theme.indicatorHeight
+                        spacing: Theme.indicatorSpacing
                         visible: pagedList.model > 1
                         
                         Repeater {
                             model: Math.min(10, pagedList.model)
-                            delegate: Rectangle {
-                                id: dotDelegate
-                                required property int index
-                                
-                                width: dotDelegate.index === pagedList.currentIndex ? Theme.launchMenuPageIndicatorWidthActive : Theme.launchMenuPageIndicatorWidth
-                                height: Theme.launchMenuPageIndicatorHeight
-                                radius: Theme.launchMenuPageIndicatorRadius
-                                color: dotDelegate.index === pagedList.currentIndex ? Theme.accent : Theme.fg
-                                border.width: 0
-                                opacity: dotDelegate.index === pagedList.currentIndex ? 1.0 : 0.25
-                                anchors.verticalCenter: parent.verticalCenter
-                                
-                                Behavior on width { NumberAnimation { duration: Theme.launchMenuPageIndicatorAnimDuration; easing.type: Easing.OutCubic } }
-                                Behavior on color { ColorAnimation { duration: Theme.launchMenuPageIndicatorAnimDuration } }
-                                Behavior on opacity { NumberAnimation { duration: Theme.launchMenuPageIndicatorAnimDuration } }
+                            delegate: Ui.StatusIndicator {
+                                active: index === pagedList.currentIndex
                             }
                         }
                     }

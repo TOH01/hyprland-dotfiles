@@ -19,13 +19,22 @@ Item {
     property color contentColor: Theme.buttonContentColor
     property color hoverColor: Theme.buttonHoverColor
 
+    property Item content: null
+
     readonly property bool isHovered: hover.hovered
     readonly property bool isPressed: tap.pressed
 
     signal clicked()
 
-    implicitWidth: label.implicitWidth + root.horizontalPadding * 2
-    implicitHeight: label.implicitHeight + root.verticalPadding * 2
+    implicitWidth: (root.content ? root.content.implicitWidth : label.implicitWidth) + root.horizontalPadding * 2
+    implicitHeight: (root.content ? root.content.implicitHeight : label.implicitHeight) + root.verticalPadding * 2
+
+    onContentChanged: {
+        if (root.content) {
+            root.content.parent = contentContainer;
+            root.content.anchors.centerIn = contentContainer;
+        }
+    }
 
     Rectangle {
         anchors.fill: parent
@@ -45,8 +54,16 @@ Item {
         }
     }
 
+    Item {
+        id: contentContainer
+        anchors.fill: parent
+        visible: !!root.content
+    }
+
     Label {
         id: label
+
+        visible: !root.content
 
         text: root.text
         icon: root.icon

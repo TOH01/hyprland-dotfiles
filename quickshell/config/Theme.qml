@@ -123,12 +123,14 @@ QtObject {
     readonly property int launchMenuListBottomMargin: 24
     readonly property int launchMenuClearIconSize: 10
     readonly property int launchMenuClearMargin: -6
-    readonly property int launchMenuPageIndicatorHeight: 6
-    readonly property int launchMenuPageIndicatorWidth: 6
-    readonly property int launchMenuPageIndicatorWidthActive: 18
-    readonly property int launchMenuPageIndicatorRadius: 3
-    readonly property int launchMenuPageIndicatorSpacing: 6
-    readonly property int launchMenuPageIndicatorAnimDuration: 200
+
+    // --- Component: Indicator ---
+    readonly property int indicatorHeight: 6
+    readonly property int indicatorWidth: 6
+    readonly property int indicatorWidthActive: 18
+    readonly property int indicatorRadius: 3
+    readonly property int indicatorSpacing: 6
+    readonly property int indicatorAnimDuration: 200
 
     // --- Module: NetworkMenu ---
     readonly property int networkMenuWidth: 340
