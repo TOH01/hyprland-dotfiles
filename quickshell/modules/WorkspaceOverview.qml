@@ -90,7 +90,7 @@ Ui.PopupBase {
                         border.width: Theme.borderWidth
                         color: dropArea.containsDrag
                             ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.15)
-                            : "transparent"
+                            : Theme.transparent
 
                         Behavior on border.color { ColorAnimation { duration: 120 } }
                         Behavior on color        { ColorAnimation { duration: 120 } }
@@ -185,7 +185,7 @@ Ui.PopupBase {
                                         color: windowSlot.isFocused
                                             ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25)
                                             : Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.08)
-                                        border.color: windowSlot.isFocused ? Theme.accentHot : "transparent"
+                                        border.color: windowSlot.isFocused ? Theme.accentHot : Theme.transparent
                                         border.width: 1
                                     }
 

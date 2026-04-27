@@ -84,7 +84,7 @@ PanelWindow {
 
     implicitWidth: root.dockWidth + (root.hotPadX * 2)
     implicitHeight: root.expandedHeight + root.expandedBottomMargin + root.hotPadY
-    color: "transparent"
+    color: Theme.transparent
     surfaceFormat.opaque: false
     exclusiveZone: root.collapsedHeight + root.collapsedBottomMargin
 

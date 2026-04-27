@@ -34,7 +34,7 @@ PanelWindow {
     visible: false
     implicitWidth: Theme.popupDefaultWidth
     implicitHeight: Theme.popupDefaultHeight
-    color: "transparent"
+    color: Theme.transparent
     surfaceFormat.opaque: false
     exclusiveZone: 0
     focusable: root.acceptsInput && root.visible
@@ -94,7 +94,7 @@ PanelWindow {
     Shortcut {
         sequence: "Escape"
         enabled: root.visible
-        context: Qt.ApplicationShortcut
+        context: Shortcut.Application
         onActivated: PopupManager.closeCurrent()
     }
 }

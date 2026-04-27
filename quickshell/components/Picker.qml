@@ -19,7 +19,7 @@ Ui.Expandable {
         Rectangle {
             implicitHeight: 28
             radius: 6
-            color: hover.hovered ? Qt.rgba(1, 1, 1, 0.06) : "transparent"
+            color: hover.hovered ? Qt.rgba(1, 1, 1, 0.06) : Theme.transparent
             border.width: 0
             Behavior on color { ColorAnimation { duration: 120 } }
 
@@ -63,7 +63,7 @@ Ui.Expandable {
             readonly property bool active: root.activeItem === modelData
             color: active
                    ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.18)
-                   : (itemHover.hovered ? Qt.rgba(1, 1, 1, 0.06) : "transparent")
+                   : (itemHover.hovered ? Qt.rgba(1, 1, 1, 0.06) : Theme.transparent)
             border.width: 0
             Behavior on color { ColorAnimation { duration: 100 } }
 

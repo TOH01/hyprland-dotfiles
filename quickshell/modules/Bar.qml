@@ -19,7 +19,7 @@ PanelWindow {
 
     screen: root.modelData
     implicitHeight: Theme.barHeight
-    color: "transparent"
+    color: Theme.transparent
     surfaceFormat.opaque: false
 
     anchors.top: true
