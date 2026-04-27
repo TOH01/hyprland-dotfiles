@@ -78,6 +78,14 @@ PanelWindow {
     }
 
     LazyLoader {
+        id: calendarPopupLoader
+        component: CalendarPopup {
+            bar: root; screen: root.screen
+            onVisibleChanged: if (!visible) calendarPopupLoader.active = false
+        }
+    }
+
+    LazyLoader {
         id: confirmPopupLoader
         component: Ui.ConfirmPopup {
             property var confirmedAction: null
@@ -107,60 +115,90 @@ PanelWindow {
             spacing: 0
 
             // modules left
-            RowLayout {
-                spacing: Theme.barSpacing
-                Ui.Button {
-                    id: wsButton
-                    content: Ui.WorkspaceIndicator {
-                        screen: root.screen
-                    }
-                    onClicked: {
-                        workspaceOverviewLoader.active = true
-                        PopupManager.open(workspaceOverviewLoader.item, wsButton)
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                RowLayout {
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: Theme.barSpacing
+                    Ui.Button {
+                        id: wsButton
+                        content: Ui.WorkspaceIndicator {
+                            screen: root.screen
+                        }
+                        onClicked: {
+                            workspaceOverviewLoader.active = true
+                            PopupManager.open(workspaceOverviewLoader.item, wsButton)
+                        }
                     }
                 }
             }
-            
-            // spacer
-            Item { Layout.fillWidth: true }
             
             // modules center
-            RowLayout { 
-                spacing: Theme.barSpacing 
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                RowLayout {
+                    anchors.centerIn: parent
+                    spacing: Theme.barSpacing 
+                    
+                    Ui.Button {
+                        id: clockButton
+                        
+                        property var now: new Date()
+                        text: Qt.formatDateTime(now, "ddd d") + " • " + Qt.formatDateTime(now, "hh:mm")
+                        
+                        Timer {
+                            interval: 1000
+                            running: true
+                            repeat: true
+                            onTriggered: clockButton.now = new Date()
+                        }
+                        
+                        onClicked: {
+                            calendarPopupLoader.active = true
+                            PopupManager.open(calendarPopupLoader.item, clockButton)
+                        }
+                    }
+                }
             }
 
-            // spacer
-            Item { Layout.fillWidth: true }
-            
             // modules right
-            RowLayout { 
-                spacing: Theme.barSpacing 
-                Ui.Button {
-                    id: networkButton
-                    icon: Icons.networkWired
-                    onClicked: {
-                        networkMenuLoader.active = true
-                        PopupManager.open(networkMenuLoader.item, networkButton)
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                RowLayout {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: Theme.barSpacing 
+                    Ui.Button {
+                        id: networkButton
+                        icon: Icons.networkWired
+                        onClicked: {
+                            networkMenuLoader.active = true
+                            PopupManager.open(networkMenuLoader.item, networkButton)
+                        }
+                        iconSize: Theme.barButtonIconSize
                     }
-                    iconSize: Theme.barButtonIconSize
-                }
-                Ui.Button {
-                    id: volumeButton
-                    icon: Icons.volume
-                    onClicked: {
-                        volumeMenuLoader.active = true
-                        PopupManager.open(volumeMenuLoader.item, volumeButton)
+                    Ui.Button {
+                        id: volumeButton
+                        icon: Icons.volume
+                        onClicked: {
+                            volumeMenuLoader.active = true
+                            PopupManager.open(volumeMenuLoader.item, volumeButton)
+                        }
+                        iconSize: Theme.barButtonIconSize
                     }
-                    iconSize: Theme.barButtonIconSize
-                }
-                Ui.Button {
-                    id: powerButton
-                    icon: Icons.power
-                    onClicked: {
-                        powerMenuLoader.active = true
-                        PopupManager.open(powerMenuLoader.item, powerButton)
+                    Ui.Button {
+                        id: powerButton
+                        icon: Icons.power
+                        onClicked: {
+                            powerMenuLoader.active = true
+                            PopupManager.open(powerMenuLoader.item, powerButton)
+                        }
+                        iconSize: Theme.barButtonIconSize
                     }
-                    iconSize: Theme.barButtonIconSize
                 }
             }
         }
