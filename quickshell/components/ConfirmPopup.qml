@@ -99,7 +99,8 @@ PanelWindow {
         height: contentLayout.height + (Theme.s2 * 4)
         radius: Theme.widgetRadius
         color: Theme.bg
-        border.width: 0
+        border.color: Theme.border
+        border.width: Theme.borderWidth
         
         opacity: root.isOpened ? 1.0 : 0.0
         scale: root.isOpened ? 1.0 : Theme.confirmPopupHiddenScale
@@ -124,12 +125,14 @@ PanelWindow {
             Ui.Label {
                 text: root.message
                 color: Theme.fg
+                textSize: Theme.fontSizeLarge
                 Layout.bottomMargin: Theme.s2
             }
 
             Ui.Label {
                 text: Language.autoCancelTemplate.arg(root.timeout)
-                color: Theme.fg
+                color: Theme.fgMuted
+                textSize: Theme.fontSizeSmall
             }
 
             RowLayout {

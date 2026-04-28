@@ -27,8 +27,14 @@ QtObject {
     readonly property string fontFamily: "JetBrainsMono Nerd Font"
     readonly property string fontFamilyIcons: "Symbols Nerd Font Mono"
 
-    readonly property int    fontSize:   13
-    readonly property int    iconSize:   16
+    readonly property int    fontSizeHeading: 18
+    readonly property int    fontSizeLarge:   15
+    readonly property int    fontSizeNormal:  13
+    readonly property int    fontSizeSmall:   11
+    readonly property int    fontSizeTiny:    10
+    
+    readonly property int    fontSize:        fontSizeNormal
+    readonly property int    iconSize:        16
 
     readonly property int popupGap: s2
     readonly property int belowBar: popupGap
@@ -89,12 +95,9 @@ QtObject {
     // --- Module: LaunchMenu ---
     readonly property int launchMenuHeight: 480
     readonly property int launchMenuWidth: 700
-    readonly property int launchMenuContentMargin: 20
-    readonly property int launchMenuSpacing: Theme.s3
     readonly property int launchMenuIconSize: 48
     readonly property int launchMenuSearchBarHeight: 32
     readonly property int launchMenuSearchIconSize: 12
-    readonly property int launchMenuSearchFontSize: Theme.fontSize - 1
     readonly property int launchMenuSearchBorderWidth: 1
     readonly property int launchMenuSearchPadding: 10
     readonly property int launchMenuCellRadius: 10
@@ -105,7 +108,6 @@ QtObject {
     readonly property real launchMenuCellSelectedOpacity: 0.10
     readonly property int launchMenuCellSpacing: 6
     readonly property int launchMenuIconFallbackFontSize: 18
-    readonly property int launchMenuAppFontSize: 10
     readonly property int launchMenuGridColumns: 5
     readonly property int launchMenuGridRows: 3
     readonly property int launchMenuListBottomMargin: 24
@@ -122,9 +124,6 @@ QtObject {
 
     // --- Module: NetworkMenu ---
     readonly property int networkMenuWidth: 340
-    readonly property int networkMenuMargin: 12
-    readonly property int networkMenuSpacing: 10
-    readonly property int networkMenuSectionSpacing: 12
     readonly property int networkMenuRowHeight: 34
     readonly property int networkMenuRowRadius: 6
     readonly property color networkMenuRowHoverBg: Qt.rgba(1, 1, 1, 0.06)
@@ -140,19 +139,14 @@ QtObject {
     // --- Module: PowerMenu ---
     readonly property int powerMenuWidth: 200
     readonly property int powerMenuHeight: 125
-    readonly property int powerMenuSpacing: 0
     readonly property int powerMenuIconSize: 18
-    readonly property int powerMenuMargin: Theme.s3
 
     // --- Module: VolumeMenu ---
     readonly property int volumeMenuWidth: 320
     readonly property int volumeMenuHeight: 450
-    readonly property int volumeMenuSpacing: Theme.s3
-    readonly property int volumeMenuContentPadding: 16
     readonly property int volumeMenuIconSize: 24
     readonly property int volumeMenuAppIconSize: 32
     readonly property int volumeMenuRowHeight: 40
-    readonly property int volumeMenuSectionSpacing: 14
     readonly property int volumeMenuDividerHeight: 1
 
     // --- Module: QuickLaunchMenu ---

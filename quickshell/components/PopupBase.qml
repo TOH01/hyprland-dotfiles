@@ -61,6 +61,16 @@ PanelWindow {
         anchors.fill: parent
         transformOrigin: root.anchorBottom ? Item.Bottom : Item.Top
         state: "hidden"
+
+        Rectangle {
+            id: background
+            anchors.fill: parent
+            color: Theme.bg
+            radius: Theme.widgetRadius
+            border.width: Theme.borderWidth
+            border.color: Theme.border
+        }
+
         states: [
             State { name: "visible"
                 PropertyChanges { target: contentItem; opacity: 1.0; scale: 1.0 } },

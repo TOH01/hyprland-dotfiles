@@ -128,7 +128,8 @@ PanelWindow {
         radius: root.expanded ? Theme.dockRadius : Theme.dockCollapsedRadius
 
         color: Theme.bg
-        border.width: 0
+        border.width: root.expanded ? Theme.borderWidth : 0
+        border.color: Theme.border
 
         Behavior on height               { NumberAnimation { duration: Theme.dockAnimDuration; easing.type: Easing.OutCubic } }
         Behavior on radius               { NumberAnimation { duration: Theme.dockAnimDuration; easing.type: Easing.OutCubic } }

@@ -16,73 +16,68 @@ Ui.PopupBase {
     implicitWidth: Theme.powerMenuWidth
     implicitHeight: Theme.powerMenuHeight
 
-    Rectangle {
-        radius: Theme.widgetRadius
+    ColumnLayout {
         anchors.fill: parent
-        color: Theme.bg
-    
+        anchors.margins: Theme.s2
+        spacing: Theme.s1
+
         ColumnLayout {
-            anchors.fill: parent
-            spacing: Theme.powerMenuSpacing
+            Layout.fillWidth: true
+            Layout.margins: Theme.s1
+            spacing: Theme.s1
 
-            ColumnLayout {
+            // lockscreen
+            Ui.Button {
                 Layout.fillWidth: true
-                Layout.leftMargin: Theme.s3
-                Layout.rightMargin: Theme.s3
-                spacing: Theme.powerMenuSpacing
+                icon: Icons.lock
+                text: Language.lockscreen
+                alignment: Qt.AlignLeft
+                onClicked: SystemActions.lockScreen.running = true
+            }
 
-                // lockscreen
-                Ui.Button {
-                    Layout.fillWidth: true
-                    icon: Icons.lock
-                    text: Language.lockscreen
-                    onClicked: SystemActions.lockScreen.running = true
-                }
+            // sign out
+            Ui.Button {
+                Layout.fillWidth: true
+                icon: Icons.logout
+                text: Language.signOut
+                alignment: Qt.AlignLeft
+                onClicked: SystemActions.signOut.running = true
+            }
+        }
 
-                // sign out
-                Ui.Button {
-                    Layout.fillWidth: true
-                    icon: Icons.logout
-                    text: Language.signOut
-                    onClicked: SystemActions.signOut.running = true
+        Ui.Separator {}
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            Layout.bottomMargin: Theme.s1
+
+            // suspend button
+            Ui.Button {
+                icon: Icons.sleep
+                onClicked: SystemActions.suspend.running = true
+                iconSize: Theme.powerMenuIconSize
+            }
+
+            // restart button
+            Ui.Button {
+                icon: Icons.reboot
+                iconSize: Theme.powerMenuIconSize
+                
+                onClicked: {
+                    PopupManager.closeCurrent()
+                    root.requestConfirm(() => { SystemActions.restart.running = true }, Language.restartConfirm)
                 }
             }
 
-            Ui.Separator {}
+            // power off button
+            Ui.Button {
+                icon: Icons.power
+                iconSize: Theme.powerMenuIconSize
 
-            Item { Layout.preferredHeight: Theme.s1 }
-
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignHCenter
-
-                // suspend button
-                Ui.Button {
-                    icon: Icons.sleep
-                    onClicked: SystemActions.suspend.running = true
-                    iconSize: Theme.powerMenuIconSize
-                }
-
-                // restart button
-                Ui.Button {
-                    icon: Icons.reboot
-                    iconSize: Theme.powerMenuIconSize
-                    
-                    onClicked: {
-                        PopupManager.closeCurrent()
-                        root.requestConfirm(() => { SystemActions.restart.running = true }, Language.restartConfirm)
-                    }
-                }
-
-                // power off button
-                Ui.Button {
-                    icon: Icons.power
-                    iconSize: Theme.powerMenuIconSize
-
-                    onClicked: {
-                        PopupManager.closeCurrent()
-                        root.requestConfirm(() => { SystemActions.powerOff.running = true }, Language.powerOffConfirm)
-                    }
+                onClicked: {
+                    PopupManager.closeCurrent()
+                    root.requestConfirm(() => { SystemActions.powerOff.running = true }, Language.powerOffConfirm)
                 }
             }
         }

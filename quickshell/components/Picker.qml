@@ -33,13 +33,13 @@ Ui.Expandable {
                     Layout.fillWidth: true
                     text: root.currentLabel
                     color: Theme.fgMuted
-                    textSize: 11
+                    textSize: Theme.fontSizeSmall
                     elide: Text.ElideRight
                 }
                 Ui.Label {
                     icon: Icons.chevronRight
                     color: Theme.fgMuted
-                    iconSize: 12
+                    iconSize: Theme.fontSizeSmall
                     rotation: root.expanded ? 90 : 0
                     Behavior on rotation { NumberAnimation { duration: 150 } }
                 }
@@ -80,7 +80,7 @@ Ui.Expandable {
                           || itemRow.modelData.name
                           || "Device"
                     color: itemRow.active ? Theme.accent : Theme.fg
-                    textSize: 11
+                    textSize: Theme.fontSizeSmall
                     bold: itemRow.active
                     elide: Text.ElideRight
                 }

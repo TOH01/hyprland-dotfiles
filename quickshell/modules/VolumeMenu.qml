@@ -72,84 +72,77 @@ Ui.PopupBase {
         )
     }
 
-    Rectangle {
+    ColumnLayout {
         anchors.fill: parent
-        radius: Theme.widgetRadius
-        color: Theme.bg
-        border.width: 0
+        anchors.margins: Theme.s3
+        spacing: Theme.s3
 
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: Theme.volumeMenuContentPadding
-            spacing: Theme.volumeMenuSectionSpacing
+        DeviceSection {
+            Layout.fillWidth: true
+            title: Language.output
+            node: Pipewire.defaultAudioSink
+            deviceList: outputDevices
+            isOutput: true
+        }
 
-            DeviceSection {
+        DeviceSection {
+            Layout.fillWidth: true
+            title: Language.input
+            node: Pipewire.defaultAudioSource
+            deviceList: inputDevices
+            isOutput: false
+        }
+
+        Ui.Separator {
+            Layout.fillWidth: true
+            padding: 0
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: Theme.s2
+            Ui.Label {
                 Layout.fillWidth: true
-                title: Language.output
-                node: Pipewire.defaultAudioSink
-                deviceList: outputDevices
-                isOutput: true
+                text: Language.applications
+                color: Theme.fgMuted
+                textSize: Theme.fontSizeSmall
+                bold: true
+            }
+            Ui.Label {
+                visible: appStreams.values.length > 0
+                text: appStreams.values.length === 1
+                      ? Language.oneApplication
+                      : Language.multipleApplications.arg(appStreams.values.length)
+                color: Theme.fgMuted
+                textSize: Theme.fontSizeSmall
+            }
+        }
+
+        ListView {
+            id: appList
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            spacing: Theme.s2
+            clip: true
+            model: appStreams
+            boundsBehavior: Flickable.StopAtBounds
+
+            delegate: AppMixerEntry {
+                width: appList.width
+                streamNode: modelData
             }
 
-            DeviceSection {
-                Layout.fillWidth: true
-                title: Language.input
-                node: Pipewire.defaultAudioSource
-                deviceList: inputDevices
-                isOutput: false
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AsNeeded
+                active: true
             }
 
-            Ui.Separator {
-                Layout.fillWidth: true
-                padding: 0
-            }
-
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: Theme.s2
-                Ui.Label {
-                    Layout.fillWidth: true
-                    text: Language.applications
-                    color: Theme.fgMuted
-                    textSize: 12
-                    bold: true
-                }
-                Ui.Label {
-                    visible: appStreams.values.length > 0
-                    text: appStreams.values.length === 1
-                          ? Language.oneApplication
-                          : Language.multipleApplications.arg(appStreams.values.length)
-                    color: Theme.fgMuted
-                    textSize: 11
-                }
-            }
-
-            ListView {
-                id: appList
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                spacing: Theme.s2
-                clip: true
-                model: appStreams
-                boundsBehavior: Flickable.StopAtBounds
-
-                delegate: AppMixerEntry {
-                    width: appList.width
-                    streamNode: modelData
-                }
-
-                ScrollBar.vertical: ScrollBar {
-                    policy: ScrollBar.AsNeeded
-                    active: true
-                }
-
-                Ui.Label {
-                    anchors.centerIn: parent
-                    visible: appList.count === 0
-                    text: Language.noApplications
-                    color: Theme.fgMuted
-                    textSize: 12
-                }
+            Ui.Label {
+                anchors.centerIn: parent
+                visible: appList.count === 0
+                text: Language.noApplications
+                color: Theme.fgMuted
+                textSize: Theme.fontSizeNormal
             }
         }
     }
@@ -169,7 +162,7 @@ Ui.PopupBase {
                 Layout.fillWidth: true
                 text: ds.title
                 color: Theme.fgMuted
-                textSize: 12
+                textSize: Theme.fontSizeSmall
                 bold: true
             }
             Ui.Label {
@@ -177,7 +170,7 @@ Ui.PopupBase {
                       ? Math.round(ds.node.audio.volume * 100) + Language.percent
                       : Language.nullValue
                 color: Theme.fg
-                textSize: 12
+                textSize: Theme.fontSizeSmall
             }
         }
 
@@ -201,14 +194,12 @@ Ui.PopupBase {
                 from: 0
                 to: 1
                 value: ds.node && ds.node.audio ? ds.node.audio.volume : 0
-                // external volume changes (media keys, headset wheel, etc.) flow back via the binding
                 onMoved: if (ds.node && ds.node.audio) ds.node.audio.volume = value
                 progressColor: ds.node && ds.node.audio && ds.node.audio.muted
                                ? Theme.fgMuted : Theme.accent
             }
         }
 
-        // Device picker
         Ui.Picker {
             Layout.fillWidth: true
             currentLabel: ds.node ? (ds.node.description
@@ -269,7 +260,7 @@ Ui.PopupBase {
                     Ui.Label {
                         Layout.fillWidth: true
                         text: ame.appName
-                        textSize: 12
+                        textSize: Theme.fontSizeSmall
                         bold: true
                         elide: Text.ElideRight
                     }
@@ -278,7 +269,7 @@ Ui.PopupBase {
                               ? Math.round(ame.streamNode.audio.volume * 100) + Language.percent
                               : ""
                         color: Theme.fgMuted
-                        textSize: 11
+                        textSize: Theme.fontSizeTiny
                     }
                 }
 
@@ -287,7 +278,7 @@ Ui.PopupBase {
                     visible: ame.mediaTitle !== ""
                     text: ame.mediaTitle
                     color: Theme.fgMuted
-                    textSize: 10
+                    textSize: Theme.fontSizeTiny
                     elide: Text.ElideRight
                 }
 

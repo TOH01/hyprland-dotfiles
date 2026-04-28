@@ -107,6 +107,8 @@ PanelWindow {
         anchors.fill: parent
         color: Theme.bg
         radius: Theme.widgetRadius
+        border.color: Theme.border
+        border.width: Theme.borderWidth
 
         RowLayout {
             anchors.fill: parent

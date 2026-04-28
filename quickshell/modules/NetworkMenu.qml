@@ -15,7 +15,7 @@ Ui.PopupBase {
     acceptsInput: true
 
     implicitWidth: Theme.networkMenuWidth
-    implicitHeight: bg.implicitHeight
+    implicitHeight: column.implicitHeight + (Theme.s3 * 2)
 
     onVisibleChanged: {
         NetworkService.polling = root.visible
@@ -24,57 +24,47 @@ Ui.PopupBase {
         }
     }
 
-    Rectangle {
-        id: bg
+    ColumnLayout {
+        id: column
         anchors.fill: parent
-        radius: Theme.widgetRadius
-        color: Theme.bg
-        border.width: 1
-        border.color: Theme.separatorColor
-        implicitHeight: column.implicitHeight + (Theme.networkMenuMargin * 2)
+        anchors.margins: Theme.s3
+        spacing: Theme.s3
 
-        ColumnLayout {
-            id: column
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.margins: Theme.networkMenuMargin
-            spacing: Theme.networkMenuSpacing
+        // ───── Wired ─────
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: Theme.s2
 
-            // ───── Wired ─────
-            RowLayout {
+            Ui.Label {
+                icon: NetworkService.wiredActive ? Icons.networkWiredConnected : Icons.networkWiredDisconnected
+                iconSize: Theme.fontSize + 4
+            }
+
+            ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Theme.networkMenuSpacing
+                spacing: 1
 
                 Ui.Label {
-                    icon: NetworkService.wiredActive ? Icons.networkWiredConnected : Icons.networkWiredDisconnected
-                    iconSize: Theme.fontSize + 4
+                    text: NetworkService.wiredDevice
+                          ? (NetworkService.wiredConnectionName || NetworkService.wiredDevice)
+                          : Language.noWiredAdapter
+                    textSize: Theme.fontSizeNormal
                 }
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 1
-
-                    Ui.Label {
-                        text: NetworkService.wiredDevice
-                              ? (NetworkService.wiredConnectionName || NetworkService.wiredDevice)
-                              : Language.noWiredAdapter
-                    }
-                    Ui.Label {
-                        visible: NetworkService.wiredDevice !== ""
-                        text: NetworkService.wiredActive
-                              ? (NetworkService.wiredIp4 || Language.connected)
-                              : Language.disconnected
-                        textSize: Theme.fontSize - 2
-                        opacity: 0.65
-                    }
-                    Ui.Label {
-                        visible: NetworkService.wiredActive
-                        text: Icons.arrowDown + " " + NetworkService.formatSpeed(NetworkService.wiredRxBps)
-                              + "   " + Icons.arrowUp + " " + NetworkService.formatSpeed(NetworkService.wiredTxBps)
-                        textSize: Theme.fontSize - 3
-                        opacity: 0.55
-                    }
+                Ui.Label {
+                    visible: NetworkService.wiredDevice !== ""
+                    text: NetworkService.wiredActive
+                          ? (NetworkService.wiredIp4 || Language.connected)
+                          : Language.disconnected
+                    textSize: Theme.fontSizeSmall
+                    color: Theme.fgMuted
+                }
+                Ui.Label {
+                    visible: NetworkService.wiredActive
+                    text: Icons.arrowDown + " " + NetworkService.formatSpeed(NetworkService.wiredRxBps)
+                          + "   " + Icons.arrowUp + " " + NetworkService.formatSpeed(NetworkService.wiredTxBps)
+                    textSize: Theme.fontSizeTiny
+                    color: Theme.fgMuted
+                    opacity: 0.8
                 }
             }
         }
