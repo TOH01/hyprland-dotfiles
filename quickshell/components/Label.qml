@@ -20,7 +20,7 @@ RowLayout {
     spacing: (root.icon !== "" && root.text !== "") ? Theme.labelGap : 0
 
     Item {
-        visible: root.horizontalAlignment === Text.AlignHCenter
+        visible: root.horizontalAlignment === Text.AlignHCenter && root.wrapMode === Text.NoWrap
         Layout.fillWidth: true
     }
 
@@ -42,7 +42,9 @@ RowLayout {
         font.pixelSize: root.textSize
         font.bold: root.bold
         Layout.alignment: Qt.AlignVCenter
-        Layout.fillWidth: root.elide !== Text.ElideNone || root.horizontalAlignment === Text.AlignHCenter
+        Layout.fillWidth: root.elide !== Text.ElideNone || 
+                          root.horizontalAlignment === Text.AlignHCenter || 
+                          root.wrapMode !== Text.NoWrap            
         elide: root.elide
         horizontalAlignment: root.horizontalAlignment
         wrapMode: root.wrapMode
@@ -50,7 +52,7 @@ RowLayout {
     }
 
     Item {
-        visible: root.horizontalAlignment === Text.AlignHCenter
+        visible: root.horizontalAlignment === Text.AlignHCenter && root.wrapMode === Text.NoWrap
         Layout.fillWidth: true
     }
 }

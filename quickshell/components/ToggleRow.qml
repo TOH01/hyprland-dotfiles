@@ -17,11 +17,12 @@ RowLayout {
     opacity: rowEnabled ? 1.0 : Theme.toggleDisabledOpacity
 
     Ui.Label {
-        Layout.fillWidth: true
         icon: root.icon
         text: root.label
         iconSize: Theme.fontSize + 2
     }
+
+    Item { Layout.fillWidth: true }
 
     Rectangle {
         Layout.preferredWidth: Theme.toggleTrackWidth
