@@ -31,19 +31,18 @@ monitor=DP-2,1920x1080@144,auto,1
 # Set programs that you use
 $terminal = kitty
 $fileManager = nemo
-$qs = quickshell  # Added quickshell alias
+$qs = QT_QPA_PLATFORMTHEME=gtk3 qs -p ~/.config/quickshell/shell.qml
 
 #################
 ### AUTOSTART ###
 #################
 
-exec-once = waybar
+exec-once = $qs
 exec-once = dunst
 exec-once = hyprpaper
 exec-once = hyprctl setcursor Bibata-Modern-Ice 24
 exec-once = CC_USER={{$CC_USER}} CC_PW={{$CC_PW}} CC_AFK={{$CC_AFK}} CC_WORK={{$CC_WORK}} CC_GAMING={{$CC_GAMING}} ~/.local/bin/waybar/mode_toggle.py --apply
 exec-once = clipse -listen 
-exec-once = qs -c ws-overview
 
 #############################
 ### ENVIRONMENT VARIABLES ###
@@ -333,13 +332,6 @@ misc {
 }
 
 layerrule {
-  name = waybar_blur
-  blur = on
-  ignore_alpha = 0.3
-  match:namespace = waybar
-}
-
-layerrule {
   name = rofi_blur
   blur = on
   ignore_alpha = 0.3
@@ -351,11 +343,4 @@ layerrule {
   blur = on
   ignore_alpha = 0.3
   match:namespace = notifications
-}
-
-layerrule {
-  name = quickshell_overview_blur
-  blur = on
-  ignore_alpha = 0.3
-  match:namespace = quickshell:ws-overview
 }
