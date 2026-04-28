@@ -21,17 +21,9 @@ QtObject {
     readonly property string powerOffConfirm: "Power off system?"
     
     // Network Menu
-    readonly property string airplaneMode: "Airplane Mode"
-    readonly property string wifi: "Wi-Fi"
-    readonly property string visibleNetworks: "Visible Networks"
-    readonly property string noNetworksFound: "No networks found"
     readonly property string noWiredAdapter: "No wired adapter"
     readonly property string connected: "Connected"
     readonly property string disconnected: "Disconnected"
-    readonly property string errorPrefix: "Error: "
-    readonly property string disconnect: "Disconnect"
-    readonly property string connect: "Connect"
-    readonly property string passwordPlaceholder: "Password"
     
     // Launch Menu
     readonly property string searchPlaceholder: "Search applications…"
