@@ -70,18 +70,6 @@ QtObject {
     readonly property int separatorPadding: 8
     readonly property color separatorColor: Qt.rgba(1, 1, 1, 0.08)
 
-    // --- Component: ToggleRow ---
-    readonly property int toggleSpacing: 10
-    readonly property real toggleDisabledOpacity: 0.45
-    readonly property int toggleTrackWidth: 38
-    readonly property int toggleTrackHeight: 20
-    readonly property color toggleTrackOnColor: Theme.accent
-    readonly property color toggleTrackOffColor: Qt.rgba(1, 1, 1, 0.15)
-    readonly property int toggleThumbSize: 16
-    readonly property int toggleThumbMargin: 2
-    readonly property color toggleThumbColor: "white"
-    readonly property int toggleAnimDuration: 160
-
     // --- Component: Slider ---
     readonly property int sliderHeight: 24
     readonly property int sliderTrackHeight: 6

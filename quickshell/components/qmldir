@@ -4,7 +4,6 @@ Label 1.0 Label.qml
 ConfirmPopup 1.0 ConfirmPopup.qml
 PopupBase 1.0 PopupBase.qml
 AppIcon 1.0 AppIcon.qml
-ToggleRow 1.0 ToggleRow.qml
 Separator 1.0 Separator.qml
 Slider 1.0 Slider.qml
 Picker 1.0 Picker.qml

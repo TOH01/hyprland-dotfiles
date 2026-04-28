@@ -42,14 +42,12 @@ Singleton {
         return out
     }
 
-    function _fmtSpeed(bps) {
+    function formatSpeed(bps) {
         if (bps < 1024) return bps.toFixed(0) + " B/s"
         if (bps < 1024*1024) return (bps/1024).toFixed(1) + " KB/s"
         if (bps < 1024*1024*1024) return (bps/1024/1024).toFixed(2) + " MB/s"
         return (bps/1024/1024/1024).toFixed(2) + " GB/s"
     }
-    
-    function formatSpeed(bps) { return _fmtSpeed(bps) }
 
     // ===== Processes =====
     Process {
