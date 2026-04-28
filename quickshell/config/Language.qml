@@ -24,10 +24,7 @@ QtObject {
     readonly property string noWiredAdapter: "No wired adapter"
     readonly property string connected: "Connected"
     readonly property string disconnected: "Disconnected"
-    
-    // Launch Menu
-    readonly property string searchPlaceholder: "Search applications…"
-    
+
     // Popups / Common
     readonly property string cancel: "Cancel"
     readonly property string confirm: "Confirm"

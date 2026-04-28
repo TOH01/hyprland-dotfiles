@@ -140,21 +140,13 @@ PanelWindow {
             anchors.fill: parent
             anchors.leftMargin: Theme.dockContentPadding
             anchors.rightMargin: Theme.dockContentPadding
-            spacing: Theme.dockSpacing
 
             opacity: root.expanded ? 1 : 0
             visible: dockLayout.opacity > 0.01
             Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
-            Item {
-                Layout.fillWidth: true
-            }
-
-            // Quick Launch Component
             Row {
                 id: appRow
-                Layout.alignment: Qt.AlignVCenter
-                spacing: 0
 
                 HoverHandler {
                     id: rowHover
@@ -239,13 +231,10 @@ PanelWindow {
                 }
             }
 
-            Item {
-                id: flexSpacer
-                Layout.fillWidth: true
-            }
-
             Ui.Separator {
                 orientation: Qt.Vertical
+                Layout.rightMargin: 2
+                padding: 9
             }
 
             Ui.Button {
@@ -254,6 +243,7 @@ PanelWindow {
                 iconSize: 18
                 onClicked: root.launcherRequested()
             }
+
         }
     }
 

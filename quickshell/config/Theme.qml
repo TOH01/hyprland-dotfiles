@@ -74,7 +74,7 @@ QtObject {
     // --- Component: Separator ---
     readonly property int separatorThickness: 2
     readonly property int separatorPadding: 8
-    readonly property color separatorColor: Qt.rgba(1, 1, 1, 0.08)
+    readonly property color separatorColor: "#2f334d"
 
     // --- Component: Slider ---
     readonly property int sliderHeight: 24
@@ -93,10 +93,10 @@ QtObject {
     readonly property int barButtonIconSize: 15
 
     // --- Module: LaunchMenu ---
-    readonly property int launchMenuHeight: 480
+    readonly property int launchMenuHeight: 425
     readonly property int launchMenuWidth: 700
     readonly property int launchMenuIconSize: 48
-    readonly property int launchMenuSearchBarHeight: 32
+    readonly property int launchMenuSearchBarHeight: 27
     readonly property int launchMenuSearchIconSize: 12
     readonly property int launchMenuSearchBorderWidth: 1
     readonly property int launchMenuSearchPadding: 10
@@ -160,7 +160,7 @@ QtObject {
     readonly property int dockRadius: 22
     readonly property int dockCollapsedRadius: 2
     readonly property int dockAnimDuration: 240
-    readonly property int dockContentPadding: 10
+    readonly property int dockContentPadding: 14
     readonly property int dockIconBaseSize: 36
     readonly property int dockIconActiveSize: 26
     readonly property int dockSpacing: 8

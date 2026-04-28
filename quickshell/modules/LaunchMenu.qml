@@ -35,10 +35,11 @@ Ui.PopupBase {
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: Theme.s4
-        spacing: Theme.s3
+        spacing: Theme.s2
 
         Rectangle {
-            Layout.fillWidth: true
+            Layout.preferredWidth: 400
+            Layout.alignment: Qt.AlignHCenter
             height: Theme.launchMenuSearchBarHeight
             color: Theme.bgElevated
             radius: Theme.widgetRadius
@@ -49,7 +50,7 @@ Ui.PopupBase {
                 anchors.fill: parent
                 anchors.leftMargin: Theme.launchMenuSearchPadding
                 anchors.rightMargin: Theme.launchMenuSearchPadding
-                spacing: Theme.s2
+                spacing: Theme.s1
 
                 Ui.Label {
                     icon: Icons.search
@@ -63,17 +64,11 @@ Ui.PopupBase {
                     id: searchField
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignVCenter
-                    placeholderText: Language.searchPlaceholder
-                    placeholderTextColor: Theme.fgMuted
                     focus: true
                     font.family: Theme.fontFamily
-                    font.pointSize: Theme.fontSizeNormal
+                    font.pointSize: Theme.fontSizeSmall
                     color: Theme.fg
                     background: Item {}
-                    leftPadding: 0
-                    rightPadding: 0
-                    topPadding: 0
-                    bottomPadding: 0
 
                     Keys.onDownPressed: {
                         const inSearch = searchField.text.length > 0;
@@ -102,15 +97,7 @@ Ui.PopupBase {
                             event.accepted = false; // let TextField handle cursor
                             return;
                         }
-                        if (searchField.text.length > 0) {
-                            // Search mode: flat grid, no pagination
-                            let next = root.selectedCell + 1;
-                            if (next < appModel.values.length) {
-                                root.selectedCell = next;
-                                searchView.positionViewAtIndex(root.selectedCell, GridView.Contain);
-                            }
-                        } else {
-                            // Paginated mode
+                        else {
                             let col = root.selectedCell % 5;
                             if (col === 4 || root.selectedCell === root.itemsOnCurrentPage - 1) {
                                 if (pagedList.currentIndex < pagedList.count - 1) {
@@ -131,14 +118,7 @@ Ui.PopupBase {
                             event.accepted = false; // let TextField handle cursor
                             return;
                         }
-                        if (searchField.text.length > 0) {
-                            // Search mode: flat grid
-                            let next = root.selectedCell - 1;
-                            root.selectedCell = next < 0 ? -1 : next;
-                            if (root.selectedCell >= 0)
-                                searchView.positionViewAtIndex(root.selectedCell, GridView.Contain);
-                        } else {
-                            // Paginated mode
+                        else {
                             let col = root.selectedCell % 5;
                             if (col === 0) {
                                 if (pagedList.currentIndex > 0) {
@@ -168,13 +148,8 @@ Ui.PopupBase {
 
                     onTextChanged: {
                         root.selectedCell = -1;
+                        pagedList.currentIndex = 0;
                         searchDebounce.restart();
-                        if (searchField.text.length > 0) {
-                            searchView.currentIndex = 0;
-                        } else {
-                            root.debouncedQuery = "";
-                            pagedList.currentIndex = 0;
-                        }
                     }
                 }
 
@@ -243,7 +218,7 @@ Ui.PopupBase {
 
         Timer {
             id: searchDebounce
-            interval: 100
+            interval: 50
             onTriggered: root.debouncedQuery = searchField.text.trim().toLowerCase()
         }
 
@@ -314,7 +289,7 @@ Ui.PopupBase {
                         Layout.fillWidth: true
                         text: delegateRoot.modelData.name
                         color: Theme.fg
-                        textSize: Theme.fontSizeTiny
+                        textSize: Theme.fontSizeSmall
                         elide: Text.ElideRight
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WordWrap
@@ -333,85 +308,70 @@ Ui.PopupBase {
         }
 
         // ── Content area ──
-        StackLayout {
+
+        Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            currentIndex: searchField.text.length > 0 ? 1 : 0
-
-            // Paginated grid
-            Item {
-                id: paginatedContainer
+            
+            ListView {
+                id: pagedList
+                anchors.fill: parent
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: dotsRow.top
+                anchors.bottomMargin: 6
+                orientation: ListView.Horizontal
+                snapMode: ListView.SnapOneItem
+                cacheBuffer: root.width
+                clip: true
+                interactive: false
+                highlightMoveDuration: Theme.launchMenuPageAnimDuration
                 
-                ListView {
-                    id: pagedList
-                    anchors.fill: parent
-                    anchors.bottomMargin: Theme.launchMenuListBottomMargin
-                    orientation: ListView.Horizontal
-                    snapMode: ListView.SnapOneItem
-                    cacheBuffer: root.width
-                    clip: true
+                model: Math.ceil(appModel.values.length / 15)
+                
+                delegate: GridView {
+                    id: pageGrid
+
+                    required property int index
+
+                    width: pagedList.width
+                    height: pagedList.height
+                    cellWidth: Math.floor(pageGrid.width / Theme.launchMenuGridColumns)
+                    cellHeight: 115
                     interactive: false
-                    highlightMoveDuration: Theme.launchMenuPageAnimDuration
                     
-                    model: Math.ceil(appModel.values.length / 15)
-                    
-                    delegate: GridView {
-                        id: pageGrid
-
-                        required property int index
-
-                        width: pagedList.width
-                        height: pagedList.height
-                        cellWidth: Math.floor(pageGrid.width / Theme.launchMenuGridColumns)
-                        cellHeight: Math.floor(pageGrid.height / Theme.launchMenuGridRows)
-                        interactive: false
-                        
-                        model: appModel.values.slice(pageGrid.index * 15, (pageGrid.index + 1) * 15)
-                        delegate: appDelegate
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        acceptedButtons: Qt.NoButton
-                        onWheel: (wheel) => {
-                            if (wheel.angleDelta.y < 0 || wheel.angleDelta.x < 0) {
-                                pagedList.incrementCurrentIndex();
-                            } else if (wheel.angleDelta.y > 0 || wheel.angleDelta.x > 0) {
-                                pagedList.decrementCurrentIndex();
-                            }
-                        }
-                    }
+                    model: appModel.values.slice(pageGrid.index * 15, (pageGrid.index + 1) * 15)
+                    delegate: appDelegate
                 }
-                
-                // Page indicator
-                Row {
-                    id: dotsRow
-                    anchors.bottom: parent.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    height: Theme.indicatorHeight
-                    spacing: Theme.indicatorSpacing
-                    visible: pagedList.model > 1
-                    
-                    Repeater {
-                        model: Math.min(10, pagedList.model)
-                        delegate: Ui.StatusIndicator {
-                            active: index === pagedList.currentIndex
+
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.NoButton
+                    onWheel: (wheel) => {
+                        if (wheel.angleDelta.y < 0 || wheel.angleDelta.x < 0) {
+                            pagedList.incrementCurrentIndex();
+                        } else if (wheel.angleDelta.y > 0 || wheel.angleDelta.x > 0) {
+                            pagedList.decrementCurrentIndex();
                         }
                     }
                 }
             }
-
-            // Search results grid
-            GridView {
-                id: searchView
-                clip: true
-                cellWidth: Math.floor(width / Theme.launchMenuGridColumns)
-                cellHeight: Math.floor(height / Theme.launchMenuGridRows)
-                model: appModel.values
-                delegate: appDelegate
+            
+            // Page indicator
+            Row {
+                id: dotsRow
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                height: Theme.indicatorHeight
+                spacing: Theme.indicatorSpacing
+                visible: pagedList.model > 1
                 
-                ScrollBar.vertical: ScrollBar {
-                    active: searchView.contentHeight > searchView.height
+                Repeater {
+                    model: Math.min(10, pagedList.model)
+                    delegate: Ui.StatusIndicator {
+                        active: index === pagedList.currentIndex
+                    }
                 }
             }
         }
