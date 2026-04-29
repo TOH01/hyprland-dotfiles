@@ -154,6 +154,8 @@ PanelWindow {
                     Ui.Button {
                         id: clockButton
                         
+                        weight: Theme.fontWeightDemiBold
+                        
                         property var now: new Date()
                         text: Qt.formatDateTime(now, "ddd d") + "  •  " + Qt.formatDateTime(now, "hh:mm")
                         

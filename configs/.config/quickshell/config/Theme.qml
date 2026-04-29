@@ -35,7 +35,7 @@ QtObject {
     readonly property int    fontWeightBold:     Font.Bold
     readonly property int    fontWeightBlack:    Font.Black
 
-    readonly property int    fontWeight:         fontWeightMedium
+    readonly property int    fontWeight:         fontWeightNormal
 
     readonly property int    fontSizeHeading: 18
     readonly property int    fontSizeLarge:   15
