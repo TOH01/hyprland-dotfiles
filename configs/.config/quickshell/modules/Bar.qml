@@ -12,6 +12,7 @@ PanelWindow {
     id: root
 
     required property var modelData
+    
     function openLauncher() { 
         launchMenuLoader.active = true
         PopupManager.open(launchMenuLoader.item, null) 

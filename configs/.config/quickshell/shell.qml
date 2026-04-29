@@ -33,28 +33,4 @@ ShellRoot {
             if (bar) bar.openOverview()
         }
     }
-
-    GlobalShortcut {
-        name: "launcher"
-        description: "Open the application launcher"
-        onPressed: {
-            const monitor = Hyprland.activeMonitor ?? Hyprland.focusedWorkspace?.monitor
-            const name = monitor?.name
-            const bar = bars.instances.find(b => b.screen?.name === name)
-                     ?? bars.instances[0]
-            if (bar) bar.openLauncher()
-        }
-    }
-
-    GlobalShortcut {
-        name: "overview"
-        description: "Open the workspace overview"
-        onPressed: {
-            const monitor = Hyprland.activeMonitor ?? Hyprland.focusedWorkspace?.monitor
-            const name = monitor?.name
-            const bar = bars.instances.find(b => b.screen?.name === name)
-                     ?? bars.instances[0]
-            if (bar) bar.openOverview()
-        }
-    }
 }
