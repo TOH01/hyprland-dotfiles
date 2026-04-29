@@ -244,9 +244,10 @@ bind = $mainMod, Q, exec, $terminal
 bind = $mainMod, C, killactive,
 bind = $mainMod, E, exec, $fileManager
 bind = $mainMod, V, togglefloating,
-bind = $mainMod, R, exec, rofi -show drun
+bind = $mainMod, R, exec, qs ipc call shell launcher
 bind = $mainMod, J, togglesplit, # dwindle
 bind = $mainMod, B, exec, firefox
+bind = $mainMod, TAB, exec, qs ipc call shell overview
 
 # Move focus with mainMod + arrow keys
 bind = $mainMod, left, movefocus, l
@@ -281,7 +282,6 @@ bind = $mainMod SHIFT, 0, movetoworkspace, 10
 bind = $mainMod SHIFT, V, exec, kitty --class clipse -e clipse
 bind = $mainMod, S, exec, bash -c 'grim -g "$(slurp)" - | swappy -f -'
 bind = $mainMod SHIFT, S, exec, bash -c 'notify-send -t 1500 "Screenshot" "Area capture starts in 3 seconds"; sleep 3; grim -g "$(slurp)" - | swappy -f -'
-bind = Super, TAB, exec, qs ipc -c ws-overview call overview toggle
 
 # Move/resize windows with mainMod + LMB/RMB and dragging
 bindm = $mainMod, mouse:272, movewindow

@@ -9,6 +9,7 @@ RowLayout {
     property string icon: ""
     property int iconSize: Theme.iconSize
     property int textSize: Theme.fontSize
+    property int weight: Theme.fontWeight
     property bool bold: false
     property color color: Theme.fg
 
@@ -40,7 +41,7 @@ RowLayout {
         color: root.color
         font.family: Theme.fontFamily
         font.pixelSize: root.textSize
-        font.bold: root.bold
+        font.weight: root.bold ? Theme.fontWeightBold : root.weight
         Layout.alignment: Qt.AlignVCenter
         Layout.fillWidth: root.elide !== Text.ElideNone || 
                           root.horizontalAlignment === Text.AlignHCenter || 

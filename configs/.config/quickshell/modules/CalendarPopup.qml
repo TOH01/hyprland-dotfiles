@@ -28,6 +28,7 @@ Ui.PopupBase {
             Layout.fillWidth: true
             font.family: Theme.fontFamily
             font.pointSize: Theme.fontSizeSmall
+            font.weight: Theme.fontWeight
             delegate: Ui.Label {
                 text: model.shortName
                 horizontalAlignment: Text.AlignHCenter

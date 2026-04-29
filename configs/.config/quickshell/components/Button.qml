@@ -8,6 +8,7 @@ Item {
     property string icon: ""
     property int iconSize: Theme.iconSize
     property int textSize: Theme.fontSize
+    property int weight: Theme.fontWeight
     property bool bold: false
 
     property int horizontalPadding: Theme.buttonHorizontalPadding
@@ -69,6 +70,7 @@ Item {
         icon: root.icon
         iconSize: root.iconSize
         textSize: root.textSize
+        weight: root.weight
         bold: root.bold
         color: root.contentColor
 

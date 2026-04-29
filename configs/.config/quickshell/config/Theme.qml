@@ -24,8 +24,18 @@ QtObject {
     readonly property int   widgetRadius: 12
     readonly property int   borderWidth: 2
 
-    readonly property string fontFamily: "JetBrainsMono Nerd Font"
+    readonly property string fontFamily: "Inter"
     readonly property string fontFamilyIcons: "Symbols Nerd Font Mono"
+
+    readonly property int    fontWeightThin:     Font.Thin
+    readonly property int    fontWeightLight:    Font.Light
+    readonly property int    fontWeightNormal:   Font.Normal
+    readonly property int    fontWeightMedium:   Font.Medium
+    readonly property int    fontWeightDemiBold: Font.DemiBold
+    readonly property int    fontWeightBold:     Font.Bold
+    readonly property int    fontWeightBlack:    Font.Black
+
+    readonly property int    fontWeight:         fontWeightMedium
 
     readonly property int    fontSizeHeading: 18
     readonly property int    fontSizeLarge:   15

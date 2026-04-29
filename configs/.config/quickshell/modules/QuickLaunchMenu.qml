@@ -43,7 +43,7 @@ PanelWindow {
     readonly property int hotPadX: Theme.dockHotPadX
     readonly property int hotPadY: Theme.dockHotPadY
 
-    readonly property bool expanded: !root.hasWindows || root.hovering || root.pinned
+    readonly property bool expanded: (root.monitor && !root.hasWindows) || root.hovering || root.pinned
 
     signal launcherRequested()
 

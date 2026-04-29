@@ -17,6 +17,11 @@ PanelWindow {
         PopupManager.open(launchMenuLoader.item, null) 
     }
 
+    function openOverview() {
+        workspaceOverviewLoader.active = true
+        PopupManager.open(workspaceOverviewLoader.item, null)
+    }
+
     screen: root.modelData
     implicitHeight: Theme.barHeight
     color: "transparent"
@@ -149,7 +154,7 @@ PanelWindow {
                         id: clockButton
                         
                         property var now: new Date()
-                        text: Qt.formatDateTime(now, "ddd d") + " • " + Qt.formatDateTime(now, "hh:mm")
+                        text: Qt.formatDateTime(now, "ddd d") + "  •  " + Qt.formatDateTime(now, "hh:mm")
                         
                         Timer {
                             interval: 1000
