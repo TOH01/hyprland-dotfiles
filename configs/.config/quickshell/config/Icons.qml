@@ -8,7 +8,7 @@ QtObject {
     readonly property string logout:    ""
     readonly property string sleep:     "󰤄"
     readonly property string reboot:    ""
-    readonly property string power:     ""
+    readonly property string power:     "󰤆"
     
     // UI Elements
     readonly property string search:    ""
@@ -28,8 +28,13 @@ QtObject {
     readonly property string volumeHigh: "󰕾"
     readonly property string mic: "󰍬"
     readonly property string micMuted: "󰍭"
-    readonly property string networkWired: "󰈀"
-    readonly property string networkWiredDisconnected: "󰈂"
-    readonly property string networkWiredConnected: "󰈁"
+    readonly property string networkWired: "󰌗"
+    readonly property string networkWiredDisconnected: "󰌙"
+    readonly property string networkWiredConnected: "󰌘"
     readonly property string quickLaunch: "󱗼"
+
+    readonly property string cpu:        "󰍛"
+    readonly property string bluetooth:  "󰂯"
+    readonly property string clipboard:  "󰅍"
+    readonly property string brightness: "󰃠"
 }

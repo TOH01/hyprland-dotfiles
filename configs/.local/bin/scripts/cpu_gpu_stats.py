@@ -4,11 +4,12 @@ import subprocess
 import re
 import math
 import time
+import json
 
 INTERVAL = 10
 
 
-def print_cpu_usage() -> None:
+def get_cpu_usage() -> dict:
     sensors = subprocess.run(["sensors"], text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     temp_match = re.search(r'\d+\.?\d*(?=°)', sensors.stdout)
     cpu_temp = temp_match.group() if temp_match else "N/A"
@@ -21,23 +22,28 @@ def print_cpu_usage() -> None:
     else:
         ram_total = ram_usage = 0
 
-    top = subprocess.run(["top", "-bn 2", "-d 0.01"],
+    top = subprocess.run(["top", "-bn 2", "-d 0.1"],
                          text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-    usage_groups = re.search(r"([\d,]+)\s+us.*?([\d,]+)\s+sy.*?([\d,]+)\s+ni",
+    usage_matches = re.findall(r"([\d,]+)\s+us.*?([\d,]+)\s+sy.*?([\d,]+)\s+ni",
                              top.stdout)
-    if usage_groups:
-        us, sy, ni = usage_groups.groups()
+    if usage_matches:
+        us, sy, ni = usage_matches[-1]
         total_usage = 0
         for usage in (us, sy, ni):
             total_usage += float(usage.replace(",", "."))
     else:
         total_usage = 0
 
-    print(f"󰍛  {int(total_usage)}%  {cpu_temp}°C  "
-          f"{ram_usage:.1f}/{math.ceil(ram_total):.0f}GB")
+    return {
+        "icon": "󰍛",
+        "usage": f"{int(total_usage)}%",
+        "temp": f"{cpu_temp}°C",
+        "mem": f"{ram_usage:.1f}/{math.ceil(ram_total):.0f}GB",
+        "labels": ["Usage", "Temp", "RAM"]
+    }
 
 
-def print_gpu_usage() -> None:
+def get_gpu_usage() -> dict:
     showuse = subprocess.run(["rocm-smi", "--showuse"],
                              text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     usage_match = re.search(r"GPU use \(%\):\s*([\d.]+)", showuse.stdout)
@@ -59,14 +65,18 @@ def print_gpu_usage() -> None:
     vram_usage = int(vram_usage_match.group(1)) / 1024**3 if vram_usage_match else 0
     vram_total = int(vram_total_match.group(1)) / 1024**3 if vram_total_match else 0
 
-    print(f"󰢮  {usage}%  {temp}°C  "
-          f"{vram_usage:.1f}/{math.ceil(vram_total):.0f}GB")
+    return {
+        "icon": "󰢮",
+        "usage": f"{int(float(usage)) if usage != 'N/A' else 'N/A'}%",
+        "temp": f"{temp}°C",
+        "mem": f"{vram_usage:.1f}/{math.ceil(vram_total):.0f}GB",
+        "labels": ["Usage", "Temp", "VRAM"]
+    }
 
 
 if __name__ == "__main__":
     now = time.time()
-
     if (int(now) // INTERVAL % 2) == 0:
-        print_cpu_usage()
+        print(json.dumps(get_cpu_usage()))
     else:
-        print_gpu_usage()
+        print(json.dumps(get_gpu_usage()))

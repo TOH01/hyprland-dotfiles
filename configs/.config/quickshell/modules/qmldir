@@ -7,3 +7,4 @@ WorkspaceOverview 1.0 WorkspaceOverview.qml
 CalendarPopup 1.0 CalendarPopup.qml
 NetworkMenu 1.0 NetworkMenu.qml
 VolumeMenu 1.0 VolumeMenu.qml
+SysStats 1.0 SysStats.qml

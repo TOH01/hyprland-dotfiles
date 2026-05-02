@@ -10,3 +10,4 @@ Picker 1.0 Picker.qml
 Expandable 1.0 Expandable.qml
 WorkspaceIndicator 1.0 WorkspaceIndicator.qml
 StatusIndicator 1.0 StatusIndicator.qml
+StackedLabel 1.0 StackedLabel.qml

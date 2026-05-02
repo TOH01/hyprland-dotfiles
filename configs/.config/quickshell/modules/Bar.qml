@@ -130,16 +130,8 @@ PanelWindow {
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: Theme.barSpacing
-                    Ui.Button {
-                        id: wsButton
-                        content: Ui.WorkspaceIndicator {
-                            screen: root.screen
-                        }
-                        onClicked: {
-                            workspaceOverviewLoader.active = true
-                            PopupManager.open(workspaceOverviewLoader.item, wsButton)
-                        }
-                    }
+                    
+                    SysStats {}
                 }
             }
             
@@ -152,23 +144,13 @@ PanelWindow {
                     spacing: Theme.barSpacing 
                     
                     Ui.Button {
-                        id: clockButton
-                        
-                        weight: Theme.fontWeightDemiBold
-                        
-                        property var now: new Date()
-                        text: Qt.formatDateTime(now, "ddd d") + "  •  " + Qt.formatDateTime(now, "hh:mm")
-                        
-                        Timer {
-                            interval: 1000
-                            running: true
-                            repeat: true
-                            onTriggered: clockButton.now = new Date()
+                        id: wsButton
+                        content: Ui.WorkspaceIndicator {
+                            screen: root.screen
                         }
-                        
                         onClicked: {
-                            calendarPopupLoader.active = true
-                            PopupManager.open(calendarPopupLoader.item, clockButton)
+                            workspaceOverviewLoader.active = true
+                            PopupManager.open(workspaceOverviewLoader.item, wsButton)
                         }
                     }
                 }
@@ -181,10 +163,16 @@ PanelWindow {
                 RowLayout {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    spacing: Theme.barSpacing 
+                    spacing: 2
+                    
+                    Ui.Button { icon: Icons.bluetooth; iconSize: Theme.barButtonIconSize; horizontalPadding: 6 }
+                    Ui.Button { icon: Icons.clipboard; iconSize: Theme.barButtonIconSize; horizontalPadding: 6 }
+                    Ui.Button { icon: Icons.brightness; iconSize: Theme.barButtonIconSize; horizontalPadding: 6 }
+
                     Ui.Button {
                         id: networkButton
                         icon: Icons.networkWired
+                        horizontalPadding: 6
                         onClicked: {
                             networkMenuLoader.active = true
                             PopupManager.open(networkMenuLoader.item, networkButton)
@@ -194,15 +182,38 @@ PanelWindow {
                     Ui.Button {
                         id: volumeButton
                         icon: Icons.volume
+                        horizontalPadding: 6
                         onClicked: {
                             volumeMenuLoader.active = true
                             PopupManager.open(volumeMenuLoader.item, volumeButton)
                         }
                         iconSize: Theme.barButtonIconSize
                     }
+                    
+                    Ui.Button {
+                        id: clockButton
+                        horizontalPadding: 8
+                        onClicked: {
+                            calendarPopupLoader.active = true
+                            PopupManager.open(calendarPopupLoader.item, clockButton)
+                        }
+                        
+                        property var now: new Date()
+                        Timer {
+                            interval: 1000; running: true; repeat: true
+                            onTriggered: clockButton.now = new Date()
+                        }
+
+                        content: Ui.StackedLabel {
+                            topText: Qt.formatDateTime(clockButton.now, "hh:mm")
+                            bottomText: Qt.formatDateTime(clockButton.now, "ddd d")
+                        }
+                    }
+
                     Ui.Button {
                         id: powerButton
                         icon: Icons.power
+                        horizontalPadding: 6
                         onClicked: {
                             powerMenuLoader.active = true
                             PopupManager.open(powerMenuLoader.item, powerButton)
