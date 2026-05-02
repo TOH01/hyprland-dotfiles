@@ -184,7 +184,6 @@ animations {
 
 # See https://wiki.hypr.land/Configuring/Dwindle-Layout/ for more
 dwindle {
-    pseudotile = true # Master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
     preserve_split = true # You probably want this
 }
 
@@ -245,7 +244,7 @@ bind = $mainMod, C, killactive,
 bind = $mainMod, E, exec, $fileManager
 bind = $mainMod, V, togglefloating,
 bind = $mainMod, R, exec, qs ipc call shell launcher
-bind = $mainMod, J, togglesplit, # dwindle
+bind = $mainMod, J, layoutmsg, togglesplit
 bind = $mainMod, B, exec, firefox
 bind = $mainMod, TAB, exec, qs ipc call shell overview
 
