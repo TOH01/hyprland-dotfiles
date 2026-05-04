@@ -1,6 +1,0 @@
-module qs.services
-singleton PopupManager 1.0 PopupManager.qml
-singleton BarRegistry 1.0 BarRegistry.qml
-singleton SystemActions 1.0 SystemActions.qml
-singleton NetworkService 1.0 NetworkService.qml
-singleton HyprlandService 1.0 HyprlandService.qml

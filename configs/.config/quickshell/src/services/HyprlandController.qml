@@ -1,23 +1,21 @@
-// HyprlandService.qml
 pragma Singleton
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Io
 import QtQuick
+import qs.services
 
 QtObject {
     id: root
 
-    property var clientData: []
-    
     readonly property Process pClients: Process {
         id: pClients
         command: ["hyprctl", "clients", "-j"]
         running: false
         stdout: StdioCollector {
             onStreamFinished: {
-                try { root.clientData = JSON.parse(this.text) } catch(e) {
-                    console.error("HyprlandService: Failed to parse clients JSON", e)
+                try { HyprlandState.clientData = JSON.parse(this.text) } catch(e) {
+                    console.error("HyprlandController: Failed to parse clients JSON", e)
                 }
             }
         }
@@ -33,7 +31,6 @@ QtObject {
         debounce.restart()
     }
 
-    // Hyprland's address property comes without 0x prefix; dispatcher needs it.
     function hyprAddr(a) {
         if (!a) return ""
         var s = String(a)

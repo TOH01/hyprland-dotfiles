@@ -62,8 +62,8 @@ PanelWindow {
         transformOrigin: root.anchorBottom ? Item.Bottom : Item.Top
         state: "hidden"
 
+        // Background
         Rectangle {
-            id: background
             anchors.fill: parent
             color: Theme.bg
             radius: Theme.widgetRadius

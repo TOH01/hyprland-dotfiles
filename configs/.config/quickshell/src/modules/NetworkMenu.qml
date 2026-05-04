@@ -15,13 +15,13 @@ Ui.PopupBase {
     implicitHeight: mainColumn.implicitHeight + Theme.s3 * 2
 
     onVisibleChanged: {
-        NetworkService.polling = root.visible;
+        NetworkState.polling = root.visible;
         if (root.visible) {
-            NetworkService.refresh();
+            NetworkController.refresh();
             rescanTimer.restart();
         } else {
-            NetworkService.passwordAp   = null;
-            NetworkService.connectTarget = null;
+            NetworkState.passwordAp   = null;
+            NetworkState.connectTarget = null;
         }
     }
 
@@ -30,9 +30,9 @@ Ui.PopupBase {
         id: rescanTimer
         interval: 5000
         repeat: true
-        running: root.visible && NetworkService.wifiEnabled
+        running: root.visible && NetworkState.wifiEnabled
         triggeredOnStart: true
-        onTriggered: NetworkService.rescanWifi()
+        onTriggered: NetworkController.rescanWifi()
     }
 
     function wifiSignalIcon(strength: int, secured: bool): string {
@@ -44,19 +44,19 @@ Ui.PopupBase {
     }
 
     function wifiHeaderIcon(): string {
-        if (!NetworkService.wifiEnabled)                return Icons.wifiOff;
-        if (NetworkService.wifiStatus === "connecting") return Icons.wifiConnecting;
-        if (NetworkService.wifiStatus === "connected") {
-            const ap = NetworkService.activeNetwork;
+        if (!NetworkState.wifiEnabled)                return Icons.wifiOff;
+        if (NetworkState.wifiStatus === "connecting") return Icons.wifiConnecting;
+        if (NetworkState.wifiStatus === "connected") {
+            const ap = NetworkState.activeNetwork;
             return root.wifiSignalIcon(ap ? ap.strength : 0, ap ? ap.secured : false);
         }
         return Icons.wifiFind;
     }
 
     function wifiStatusText(): string {
-        if (!NetworkService.wifiEnabled) return Language.wifiOff;
-        switch (NetworkService.wifiStatus) {
-            case "connected":  return NetworkService.activeNetwork?.ssid ?? Language.connected;
+        if (!NetworkState.wifiEnabled) return Language.wifiOff;
+        switch (NetworkState.wifiStatus) {
+            case "connected":  return NetworkState.activeNetwork?.ssid ?? Language.connected;
             case "connecting": return Language.connecting;
             case "limited":    return Language.limited;
             case "disabled":   return Language.wifiOff;
@@ -83,7 +83,7 @@ Ui.PopupBase {
             // Signal / status icon
             Text {
                 text: root.wifiHeaderIcon()
-                color: NetworkService.wifiEnabled && NetworkService.wifiStatus === "connected"
+                color: NetworkState.wifiEnabled && NetworkState.wifiStatus === "connected"
                        ? Theme.accent : Theme.fg
                 font.family: Theme.fontFamilyIcons
                 font.pixelSize: Theme.fontSize + 6
@@ -104,21 +104,21 @@ Ui.PopupBase {
 
             // Wi-Fi toggle pill — always right-anchored
             Ui.Toggle {
-                on: NetworkService.wifiEnabled
+                on: NetworkState.wifiEnabled
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                 Layout.preferredWidth:  44
                 Layout.preferredHeight: 22
-                onToggled: NetworkService.toggleWifi()
+                onToggled: NetworkController.toggleWifi()
             }
         }
 
         // ── WiFi IP address row ───────────────────────────────────────────
         Ui.Label {
-            visible: NetworkService.wifiEnabled
-                     && NetworkService.wifiStatus === "connected"
-                     && NetworkService.wifiIp4 !== ""
+            visible: NetworkState.wifiEnabled
+                     && NetworkState.wifiStatus === "connected"
+                     && NetworkState.wifiIp4 !== ""
             Layout.fillWidth: true
-            text: NetworkService.wifiIp4
+            text: NetworkState.wifiIp4
             textSize: Theme.fontSizeTiny
             color: Theme.fgMuted
         }
@@ -126,12 +126,12 @@ Ui.PopupBase {
         // ── Access point list ─────────────────────────────────────────────
         ListView {
             id: apList
-            visible: NetworkService.wifiEnabled
+            visible: NetworkState.wifiEnabled
             Layout.fillWidth: true
             Layout.preferredHeight: Math.min(contentHeight, Theme.networkMenuMaxListHeight)
             clip: true
             spacing: Theme.s1
-            model: NetworkService.sortedWifiNetworks
+            model: NetworkState.sortedWifiNetworks
             boundsBehavior: Flickable.StopAtBounds
 
             delegate: WifiNetworkRow {
@@ -154,7 +154,7 @@ Ui.PopupBase {
         spacing: Theme.s2
 
         Ui.Label {
-            icon: NetworkService.wiredActive
+            icon: NetworkState.wiredActive
                   ? Icons.networkWiredConnected : Icons.networkWiredDisconnected
             iconSize: Theme.fontSize + 4
         }
@@ -164,20 +164,20 @@ Ui.PopupBase {
             spacing: 1
 
             Ui.StackedLabel {
-                topText: NetworkService.wiredDevice
-                      ? (NetworkService.wiredConnectionName || NetworkService.wiredDevice)
+                topText: NetworkState.wiredDevice
+                      ? (NetworkState.wiredConnectionName || NetworkState.wiredDevice)
                       : Language.noWiredAdapter
-                bottomText: NetworkService.wiredDevice !== ""
-                      ? (NetworkService.wiredActive
-                          ? (NetworkService.wiredIp4 || Language.connected)
+                bottomText: NetworkState.wiredDevice !== ""
+                      ? (NetworkState.wiredActive
+                          ? (NetworkState.wiredIp4 || Language.connected)
                           : Language.disconnected)
                       : ""
                 horizontalAlignment: Text.AlignLeft
             }
             Ui.Label {
-                visible: NetworkService.wiredActive
-                text: Icons.arrowDown + " " + NetworkService.formatSpeed(NetworkService.wiredRxBps)
-                    + "   " + Icons.arrowUp + " " + NetworkService.formatSpeed(NetworkService.wiredTxBps)
+                visible: NetworkState.wiredActive
+                text: Icons.arrowDown + " " + NetworkController.formatSpeed(NetworkState.wiredRxBps)
+                    + "   " + Icons.arrowUp + " " + NetworkController.formatSpeed(NetworkState.wiredTxBps)
                 textSize: Theme.fontSizeTiny
                 color: Theme.fgMuted
                 opacity: 0.8
@@ -192,10 +192,10 @@ Ui.PopupBase {
         required property var ap
 
         // This row is currently connecting when connectTarget points to our AP.
-        readonly property bool isConnecting: NetworkService.wifiConnecting
-                                             && NetworkService.connectTarget === apRow.ap
+        readonly property bool isConnecting: NetworkState.wifiConnecting
+                                             && NetworkState.connectTarget === apRow.ap
         // This row shows the password dialog.
-        readonly property bool showPassword: NetworkService.passwordAp === apRow.ap
+        readonly property bool showPassword: NetworkState.passwordAp === apRow.ap
 
         color:  apRow.ap.active ? Theme.networkMenuRowActiveBg : "transparent"
         radius: Theme.networkMenuRowRadius
@@ -259,7 +259,7 @@ Ui.PopupBase {
                         visible: apRow.ap.active || apRow.isConnecting || apRow.showPassword
                         text: apRow.isConnecting ? Language.connecting
                               : apRow.showPassword ? Language.passwordPrompt
-                              : (NetworkService.wifiIp4 || Language.connected)
+                              : (NetworkState.wifiIp4 || Language.connected)
                         textSize: Theme.fontSizeTiny
                         color: apRow.isConnecting ? Theme.accentHot : Theme.fgMuted
                     }
@@ -284,9 +284,9 @@ Ui.PopupBase {
                     horizontalPadding: Theme.s1
                     verticalPadding:   Theme.s1
                     onClicked: {
-                        NetworkService.passwordAp    = null;
-                        NetworkService.connectTarget = null;
-                        NetworkService.forgetNetwork(apRow.ap);
+                        NetworkState.passwordAp    = null;
+                        NetworkState.connectTarget = null;
+                        NetworkController.forgetNetwork(apRow.ap);
                     }
                 }
             }
@@ -295,8 +295,8 @@ Ui.PopupBase {
             PasswordRow {
                 visible: apRow.showPassword
                 Layout.fillWidth: true
-                onSubmit: pwd => NetworkService.connectWithPassword(apRow.ap, pwd)
-                onCancel: NetworkService.passwordAp = null
+                onSubmit: pwd => NetworkController.connectWithPassword(apRow.ap, pwd)
+                onCancel: NetworkState.passwordAp = null
             }
         }
 
@@ -307,9 +307,9 @@ Ui.PopupBase {
                 // Ignore taps on the forget button area or when entering a password.
                 if (apRow.showPassword) return;
                 if (apRow.ap.active) {
-                    NetworkService.disconnectWifiNetwork();
+                    NetworkController.disconnectWifiNetwork();
                 } else {
-                    NetworkService.connectToWifiNetwork(apRow.ap);
+                    NetworkController.connectToWifiNetwork(apRow.ap);
                 }
             }
         }

@@ -1,139 +1,76 @@
-// NetworkService.qml
+// NetworkController.qml
 pragma Singleton
-
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.services
 
-Singleton {
+QtObject {
     id: root
-
-    // ===== Wired =====
-    property string wiredDevice: ""
-    property string wiredConnectionName: ""
-    property bool   wiredActive: false
-    property string wiredIp4: ""
-    property real   wiredRxBps: 0
-    property real   wiredTxBps: 0
-
-    // ===== WiFi State =====
-    property bool   wifiEnabled: false
-    property bool   wifiScanning: false
-    readonly property bool wifiConnecting: connectProc.running
-    // "connected" | "disconnected" | "connecting" | "limited" | "disabled"
-    property string wifiStatus: "disconnected"
-    property string wifiDevice: ""
-    property string wifiIp4: ""
-
-    // ===== Inline WifiAccessPoint Component =====
-    component WifiAccessPoint: QtObject {
-        property string ssid:     ""
-        property string bssid:    ""
-        property int    strength: 0
-        property int    frequency: 0
-        property string security: ""
-        property bool   active:   false
-        readonly property bool secured: security !== ""
-        property bool saved: false
-    }
-
-    // ===== WiFi Networks =====
-    readonly property list<QtObject> wifiNetworks: []
-
-    readonly property QtObject activeNetwork: {
-        for (let i = 0; i < root.wifiNetworks.length; i++) {
-            if (root.wifiNetworks[i].active) return root.wifiNetworks[i];
-        }
-        return null;
-    }
-
-    readonly property list<QtObject> sortedWifiNetworks: {
-        return [...root.wifiNetworks].sort((a, b) => {
-            if (a.active && !b.active) return -1;
-            if (!a.active && b.active) return 1;
-            return b.strength - a.strength;
-        });
-    }
-
-    // Set of SSID strings for which a saved connection profile exists.
-    property var savedNetworkNames: ({})
-
-    // ===== Polling hint (set true while popup is visible) =====
-    property bool polling: false
 
     // ===== Internal speed tracking =====
     property real _lastRxBytes: 0
     property real _lastTxBytes: 0
     property real _lastStatsTime: 0
 
-    // ===== Connection state (publicly readable) =====
-    // The AP currently being connected to (drives row spinner).
-    property QtObject connectTarget: null
-    // The AP whose password dialog is currently shown (null = no dialog).
-    property QtObject passwordAp: null
-
     // ===== Public API =====
 
-    function refresh(): void {
+    function refresh() {
         _internalUpdate();
     }
 
-    function enableWifi(enabled: bool): void {
+    function enableWifi(enabled) {
         enableWifiProc.command = ["nmcli", "radio", "wifi", enabled ? "on" : "off"];
         enableWifiProc.running = true;
     }
 
-    function toggleWifi(): void {
-        root.enableWifi(!root.wifiEnabled);
+    function toggleWifi() {
+        root.enableWifi(!NetworkState.wifiEnabled);
     }
 
-    function rescanWifi(): void {
-        root.wifiScanning = true;
+    function rescanWifi() {
+        NetworkState.wifiScanning = true;
         rescanProcess.running = true;
     }
 
-    // Quick refresh of the AP list without a full radio rescan.
-    function quickRefreshWifi(): void {
+    function quickRefreshWifi() {
         getNetworks.running = true;
     }
 
-    function connectToWifiNetwork(ap: QtObject): void {
-        // Dismiss any open password dialog first.
-        root.passwordAp   = null;
-        root.connectTarget = ap;
+    function connectToWifiNetwork(ap) {
+        NetworkState.passwordAp = null;
+        NetworkState.connectTarget = ap;
         if (ap.secured && !ap.saved) {
-            // Unknown secured network — show password dialog immediately.
-            root.passwordAp = ap;
+            NetworkState.passwordAp = ap;
         } else {
             _doConnect(ap, "");
         }
     }
 
-    // Called by the password row when the user submits credentials.
-    function connectWithPassword(ap: QtObject, password: string): void {
-        root.passwordAp   = null;
-        root.connectTarget = ap;
+    function connectWithPassword(ap, password) {
+        NetworkState.passwordAp = null;
+        NetworkState.connectTarget = ap;
         _doConnect(ap, password);
     }
 
-    function disconnectWifiNetwork(): void {
-        root.connectTarget = null;
-        if (root.activeNetwork)
-            disconnectProc.exec(["nmcli", "connection", "down", root.activeNetwork.ssid]);
+    function disconnectWifiNetwork() {
+        NetworkState.connectTarget = null;
+        if (NetworkState.activeNetwork)
+            disconnectProc.exec(["nmcli", "connection", "down", NetworkState.activeNetwork.ssid]);
     }
 
-    function forgetNetwork(ap: QtObject): void {
+    function forgetNetwork(ap) {
         forgetProc.exec(["nmcli", "connection", "delete", ap.ssid]);
     }
 
-    function _doConnect(ap: QtObject, password: string): void {
+    function _doConnect(ap, password) {
         if (password.length > 0)
             connectProc.exec(["nmcli", "dev", "wifi", "connect", ap.ssid, "password", password]);
         else
             connectProc.exec(["nmcli", "dev", "wifi", "connect", ap.ssid]);
     }
 
-    function formatSpeed(bps: real): string {
+    function formatSpeed(bps) {
         if (bps < 1024)            return bps.toFixed(0) + " B/s";
         if (bps < 1048576)         return (bps / 1024).toFixed(1) + " KB/s";
         if (bps < 1073741824)      return (bps / 1048576).toFixed(2) + " MB/s";
@@ -142,15 +79,14 @@ Singleton {
 
     // ===== Internal helpers =====
 
-    function _internalUpdate(): void {
-        devicesProc.running    = true;
+    function _internalUpdate() {
+        devicesProc.running = true;
         wifiStatusProcess.running = true;
-        getNetworks.running    = true;
+        getNetworks.running = true;
         getKnownNetworks.running = true;
     }
 
-    // Parses nmcli terse output (backslash-escaped colons).
-    function _parseTerse(line: string): list<string> {
+    function _parseTerse(line) {
         const out = []; let cur = ""; let esc = false;
         for (let i = 0; i < line.length; i++) {
             const c = line[i];
@@ -163,7 +99,7 @@ Singleton {
         return out;
     }
 
-    // ===== Subscriber — reacts to any nmcli network event =====
+    // ===== Subscriber =====
     Process {
         id: subscriber
         running: true
@@ -173,11 +109,7 @@ Singleton {
         }
     }
 
-    // ===== WiFi Control Processes =====
-
-    Process {
-        id: enableWifiProc
-    }
+    Process { id: enableWifiProc }
 
     Process {
         id: connectProc
@@ -187,21 +119,20 @@ Singleton {
         }
         stderr: SplitParser {
             onRead: line => {
-                // nmcli cannot supply credentials without an agent — show password dialog.
-                if (root.connectTarget && root.connectTarget.secured
+                if (NetworkState.connectTarget && NetworkState.connectTarget.secured
                         && (line.includes("Secrets were required")
                             || line.includes("No network with SSID")
                             || line.includes("Error"))) {
-                    root.passwordAp = root.connectTarget;
+                    NetworkState.passwordAp = NetworkState.connectTarget;
                 }
             }
         }
-        onExited: (code, _status) => {
-            if (code !== 0 && root.connectTarget && root.connectTarget.secured) {
-                root.passwordAp = root.connectTarget;
+        onExited: (code) => {
+            if (code !== 0 && NetworkState.connectTarget && NetworkState.connectTarget.secured) {
+                NetworkState.passwordAp = NetworkState.connectTarget;
             } else if (code === 0) {
-                root.passwordAp    = null;
-                root.connectTarget = null;
+                NetworkState.passwordAp = null;
+                NetworkState.connectTarget = null;
                 root._internalUpdate();
             }
         }
@@ -209,16 +140,12 @@ Singleton {
 
     Process {
         id: disconnectProc
-        stdout: SplitParser {
-            onRead: getNetworks.running = true
-        }
+        stdout: SplitParser { onRead: getNetworks.running = true }
     }
 
     Process {
         id: forgetProc
-        stdout: SplitParser {
-            onRead: root._internalUpdate()
-        }
+        stdout: SplitParser { onRead: root._internalUpdate() }
     }
 
     Process {
@@ -226,25 +153,21 @@ Singleton {
         command: ["nmcli", "dev", "wifi", "list", "--rescan", "yes"]
         stdout: SplitParser {
             onRead: {
-                root.wifiScanning = false;
+                NetworkState.wifiScanning = false;
                 getNetworks.running = true;
             }
         }
     }
 
-    // ===== Status Processes =====
-
-    // Checks whether the Wi-Fi radio is on or off.
     Process {
         id: wifiStatusProcess
         command: ["nmcli", "radio", "wifi"]
         environment: ({ LANG: "C", LC_ALL: "C" })
         stdout: StdioCollector {
-            onStreamFinished: root.wifiEnabled = text.trim() === "enabled"
+            onStreamFinished: NetworkState.wifiEnabled = text.trim() === "enabled"
         }
     }
 
-    // Parses all devices to populate wired and wifi state.
     Process {
         id: devicesProc
         command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE,CONNECTION", "device"]
@@ -265,28 +188,28 @@ Singleton {
                     }
                 }
 
-                root.wiredDevice         = eth;
-                root.wiredActive         = (ethState === "connected");
-                root.wiredConnectionName = ethConn;
-                root.wifiDevice          = wifiDev;
+                NetworkState.wiredDevice = eth;
+                NetworkState.wiredActive = (ethState === "connected");
+                NetworkState.wiredConnectionName = ethConn;
+                NetworkState.wifiDevice = wifiDev;
 
-                if      (wifiState === "connected")    root.wifiStatus = "connected";
-                else if (wifiState === "connecting")   root.wifiStatus = "connecting";
-                else if (wifiState === "disconnected") root.wifiStatus = "disconnected";
-                else if (wifiState === "unavailable")  root.wifiStatus = "disabled";
+                if      (wifiState === "connected")    NetworkState.wifiStatus = "connected";
+                else if (wifiState === "connecting")   NetworkState.wifiStatus = "connecting";
+                else if (wifiState === "disconnected") NetworkState.wifiStatus = "disconnected";
+                else if (wifiState === "unavailable")  NetworkState.wifiStatus = "disabled";
 
                 if (eth) {
                     wiredIpProc.command = ["nmcli", "-t", "-f", "IP4.ADDRESS", "device", "show", eth];
                     wiredIpProc.running = true;
                 } else {
-                    root.wiredIp4 = "";
+                    NetworkState.wiredIp4 = "";
                 }
 
                 if (wifiDev && wifiState === "connected") {
                     wifiIpProc.command = ["nmcli", "-t", "-f", "IP4.ADDRESS", "device", "show", wifiDev];
                     wifiIpProc.running = true;
                 } else {
-                    root.wifiIp4 = "";
+                    NetworkState.wifiIp4 = "";
                 }
             }
         }
@@ -301,7 +224,7 @@ Singleton {
                     const f = root._parseTerse(line);
                     if (f.length >= 2 && f[0].startsWith("IP4.ADDRESS")) { ip = f[1]; break; }
                 }
-                root.wiredIp4 = ip;
+                NetworkState.wiredIp4 = ip;
             }
         }
     }
@@ -315,12 +238,11 @@ Singleton {
                     const f = root._parseTerse(line);
                     if (f.length >= 2 && f[0].startsWith("IP4.ADDRESS")) { ip = f[1]; break; }
                 }
-                root.wifiIp4 = ip;
+                NetworkState.wifiIp4 = ip;
             }
         }
     }
 
-    // Fetches saved wifi connection profiles to populate WifiAccessPoint.saved.
     Process {
         id: getKnownNetworks
         running: true
@@ -334,15 +256,13 @@ Singleton {
                     if (f.length >= 2 && f[1] === "802-11-wireless")
                         known[f[0]] = true;
                 }
-                root.savedNetworkNames = known;
-                // Propagate saved flag to existing AP objects.
-                for (const ap of root.wifiNetworks)
-                    ap.saved = !!root.savedNetworkNames[ap.ssid];
+                NetworkState.savedNetworkNames = known;
+                for (const ap of NetworkState.wifiNetworks)
+                    ap.saved = !!NetworkState.savedNetworkNames[ap.ssid];
             }
         }
     }
 
-    // Scans for access points and maintains the wifiNetworks list.
     Process {
         id: getNetworks
         running: true
@@ -368,7 +288,6 @@ Singleton {
                     };
                 }).filter(n => n.ssid.length > 0);
 
-                // Deduplicate by SSID: prefer active, then higher signal.
                 const networkMap = new Map();
                 for (const net of allNetworks) {
                     const ex = networkMap.get(net.ssid);
@@ -379,14 +298,12 @@ Singleton {
                 }
 
                 const fresh = Array.from(networkMap.values());
-                const live  = root.wifiNetworks;
+                const live  = NetworkState.wifiNetworks;
 
-                // Remove APs that disappeared.
                 const gone = live.filter(ap => !fresh.find(n => n.ssid === ap.ssid && n.bssid === ap.bssid));
                 for (const ap of gone)
                     live.splice(live.indexOf(ap), 1).forEach(o => o.destroy());
 
-                // Update existing or create new AP objects.
                 for (const net of fresh) {
                     const match = live.find(ap => ap.ssid === net.ssid && ap.bssid === net.bssid);
                     if (match) {
@@ -394,7 +311,7 @@ Singleton {
                         match.strength  = net.strength;
                         match.frequency = net.frequency;
                         match.security  = net.security;
-                        match.saved     = !!root.savedNetworkNames[net.ssid];
+                        match.saved     = !!NetworkState.savedNetworkNames[net.ssid];
                     } else {
                         live.push(apComp.createObject(root, {
                             ssid:      net.ssid,
@@ -403,7 +320,7 @@ Singleton {
                             frequency: net.frequency,
                             security:  net.security,
                             active:    net.active,
-                            saved:     !!root.savedNetworkNames[net.ssid]
+                            saved:     !!NetworkState.savedNetworkNames[net.ssid]
                         }));
                     }
                 }
@@ -411,18 +328,16 @@ Singleton {
         }
     }
 
-    // ===== Wired Speed Stats =====
-
     Process {
         id: statsProc
         command: ["cat", "/proc/net/dev"]
         stdout: StdioCollector {
             onStreamFinished: {
-                if (!root.wiredDevice) {
-                    root.wiredRxBps = 0; root.wiredTxBps = 0; return;
+                if (!NetworkState.wiredDevice) {
+                    NetworkState.wiredRxBps = 0; NetworkState.wiredTxBps = 0; return;
                 }
                 const re = new RegExp(
-                    "^\\s*" + root.wiredDevice + ":\\s+(\\d+)(?:\\s+\\d+){7}\\s+(\\d+)"
+                    "^\\s*" + NetworkState.wiredDevice + ":\\s+(\\d+)(?:\\s+\\d+){7}\\s+(\\d+)"
                 );
                 for (const line of text.split("\n")) {
                     const m = line.match(re);
@@ -432,8 +347,8 @@ Singleton {
                     if (root._lastStatsTime > 0) {
                         const dt = (now - root._lastStatsTime) / 1000;
                         if (dt > 0) {
-                            root.wiredRxBps = Math.max(0, (rx - root._lastRxBytes) / dt);
-                            root.wiredTxBps = Math.max(0, (tx - root._lastTxBytes) / dt);
+                            NetworkState.wiredRxBps = Math.max(0, (rx - root._lastRxBytes) / dt);
+                            NetworkState.wiredTxBps = Math.max(0, (tx - root._lastTxBytes) / dt);
                         }
                     }
                     root._lastRxBytes    = rx;
@@ -446,17 +361,14 @@ Singleton {
     }
 
     Timer {
-        interval: 1000
-        repeat: true
-        running: root.polling && root.wiredActive
+        interval: 1000; repeat: true; running: NetworkState.polling && NetworkState.wiredActive
         triggeredOnStart: true
         onTriggered: statsProc.running = true
     }
 
-    // Factory component for WifiAccessPoint objects.
     Component {
         id: apComp
-        WifiAccessPoint {}
+        NetworkState.WifiAccessPoint {}
     }
 
     Component.onCompleted: refresh()

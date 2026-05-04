@@ -22,7 +22,7 @@ Ui.PopupBase {
     margins.left: Theme.workspaceOverviewMargin
     margins.right: Theme.workspaceOverviewMargin
 
-    onVisibleChanged: if (root.visible) HyprlandService.refresh()
+    onVisibleChanged: if (root.visible) HyprlandController.refresh()
 
     RowLayout {
         id: strip
@@ -89,8 +89,8 @@ Ui.PopupBase {
                     onClicked: Hyprland.dispatch("workspace " + workspaceItem.wsId)
                 }
 
+                // Workspace Preview Background
                 Rectangle {
-                    id: wsRect
                     anchors.fill: parent
                     radius: Theme.widgetRadius
                     border.color: dropArea.containsDrag ? Theme.accentHot : workspaceItem.accent
@@ -131,8 +131,8 @@ Ui.PopupBase {
                         delegate: Item {
                             id: windowSlot
 
-                            readonly property string fullAddr: HyprlandService.hyprAddr(modelData?.address)
-                            readonly property var c: HyprlandService.clientData.find(client => HyprlandService.hyprAddr(client.address) === windowSlot.fullAddr)
+                            readonly property string fullAddr: HyprlandController.hyprAddr(modelData?.address)
+                            readonly property var c: HyprlandState.clientData.find(client => HyprlandController.hyprAddr(client.address) === windowSlot.fullAddr)
 
                             readonly property var m: Hyprland.monitors.values.find(mon => mon.id === (windowSlot.c?.monitor ?? 0))
                             readonly property real mX: windowSlot.m ? windowSlot.m.x : 0
@@ -147,7 +147,7 @@ Ui.PopupBase {
 
                             readonly property string aid: windowSlot.c?.["class"] ?? ""
                             readonly property bool isFocused:
-                                Hyprland.activeToplevel ? (HyprlandService.hyprAddr(Hyprland.activeToplevel.address) === windowSlot.fullAddr) : false
+                                Hyprland.activeToplevel ? (HyprlandController.hyprAddr(Hyprland.activeToplevel.address) === windowSlot.fullAddr) : false
 
                             x: windowSlot.hasGeo ? Math.max(2, Math.min((windowSlot.c.at[0] - windowSlot.mX) * windowSlot.sx, previewArea.width - width - 2)) : 0
                             y: windowSlot.hasGeo ? Math.max(2, Math.min((windowSlot.c.at[1] - windowSlot.mY) * windowSlot.sy, previewArea.height - height - 2)) : 0

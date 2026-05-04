@@ -26,7 +26,6 @@ RowLayout {
     }
 
     Text {
-        id: iconText
         visible: root.icon !== ""
         text: root.icon
         color: root.color
@@ -35,7 +34,6 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
     }
     Text {
-        id: textElement
         visible: root.text !== ""
         text: root.text
         color: root.color

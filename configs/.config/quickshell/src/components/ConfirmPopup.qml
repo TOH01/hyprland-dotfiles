@@ -92,8 +92,8 @@ PanelWindow {
         }
     }
 
+    // Dialog Box
     Rectangle {
-        id: dialogBox
         anchors.centerIn: parent
         width: contentLayout.width + (Theme.s2 * 4)
         height: contentLayout.height + (Theme.s2 * 4)
@@ -105,7 +105,7 @@ PanelWindow {
         opacity: root.isOpened ? 1.0 : 0.0
         scale: root.isOpened ? 1.0 : Theme.confirmPopupHiddenScale
 
-        transform: Translate { id: dialogTranslate }
+        transform: Translate {}
 
         Behavior on opacity {
             NumberAnimation { duration: Theme.confirmPopupAnimDuration; easing.type: Easing.OutCubic }

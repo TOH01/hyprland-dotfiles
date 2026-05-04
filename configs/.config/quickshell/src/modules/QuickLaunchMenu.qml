@@ -117,8 +117,8 @@ PanelWindow {
         }
     }
 
+    // Dock Background
     Rectangle {
-        id: dockBg
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: root.expanded ? root.expandedBottomMargin : root.collapsedBottomMargin
@@ -181,7 +181,7 @@ PanelWindow {
                             const active = Hyprland.activeToplevel;
                             if (!active) return false;
                             const tl = root.findToplevelForEntry(modelData);
-                            return tl && HyprlandService.hyprAddr(tl.address) === HyprlandService.hyprAddr(active.address);
+                            return tl && HyprlandController.hyprAddr(tl.address) === HyprlandController.hyprAddr(active.address);
                         }
 
                         property real targetScale: (rowHover.hovered && iconContainer.dist <= appRow.w_effect)
@@ -238,7 +238,6 @@ PanelWindow {
             }
 
             Ui.Button {
-                id: launchMenuBtn
                 icon: Icons.quickLaunch
                 iconSize: 18
                 onClicked: root.launcherRequested()

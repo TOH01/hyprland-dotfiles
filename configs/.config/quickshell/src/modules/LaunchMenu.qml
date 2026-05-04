@@ -152,7 +152,6 @@ Ui.PopupBase {
 
                 // Clear button
                 Item {
-                    id: clearButton
                     Layout.preferredWidth: clearLabel.implicitWidth
                     Layout.preferredHeight: clearLabel.implicitHeight
                     Layout.alignment: Qt.AlignVCenter
@@ -234,8 +233,8 @@ Ui.PopupBase {
                 width: delegateRoot.GridView.view ? delegateRoot.GridView.view.cellWidth : 0
                 height: delegateRoot.GridView.view ? delegateRoot.GridView.view.cellHeight : 0
                 
+                // App grid cell hover background
                 Rectangle {
-                    id: hoverBg
                     anchors.fill: parent
                     anchors.margins: Theme.launchMenuCellMargin
                     radius: Theme.launchMenuCellRadius

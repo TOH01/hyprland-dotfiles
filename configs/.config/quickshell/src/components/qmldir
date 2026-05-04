@@ -13,3 +13,4 @@ StatusIndicator 1.0 StatusIndicator.qml
 StackedLabel 1.0 StackedLabel.qml
 TextField 1.0 TextField.qml
 Toggle 1.0 Toggle.qml
+LazyLoader 1.0 LazyLoader.qml

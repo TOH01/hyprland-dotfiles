@@ -32,7 +32,7 @@ Ui.PopupBase {
                 icon: Icons.lock
                 text: Language.lockscreen
                 alignment: Qt.AlignLeft
-                onClicked: SystemActions.lockScreen.running = true
+                onClicked: SystemController.lockScreen.running = true
             }
 
             // sign out
@@ -41,7 +41,7 @@ Ui.PopupBase {
                 icon: Icons.logout
                 text: Language.signOut
                 alignment: Qt.AlignLeft
-                onClicked: SystemActions.signOut.running = true
+                onClicked: SystemController.signOut.running = true
             }
         }
 
@@ -55,7 +55,7 @@ Ui.PopupBase {
             // suspend button
             Ui.Button {
                 icon: Icons.sleep
-                onClicked: SystemActions.suspend.running = true
+                onClicked: SystemController.suspend.running = true
                 iconSize: Theme.powerMenuIconSize
             }
 
@@ -66,7 +66,7 @@ Ui.PopupBase {
                 
                 onClicked: {
                     PopupManager.closeCurrent()
-                    root.requestConfirm(() => { SystemActions.restart.running = true }, Language.restartConfirm)
+                    root.requestConfirm(() => { SystemController.restart.running = true }, Language.restartConfirm)
                 }
             }
 
@@ -77,7 +77,7 @@ Ui.PopupBase {
 
                 onClicked: {
                     PopupManager.closeCurrent()
-                    root.requestConfirm(() => { SystemActions.powerOff.running = true }, Language.powerOffConfirm)
+                    root.requestConfirm(() => { SystemController.powerOff.running = true }, Language.powerOffConfirm)
                 }
             }
         }

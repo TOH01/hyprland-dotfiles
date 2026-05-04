@@ -8,6 +8,11 @@ import qs.modules
 ShellRoot {
     id: root
 
+    // Ensure controllers are active
+    readonly property var _netController: NetworkController
+    readonly property var _hyprController: HyprlandController
+    readonly property var _statsController: SysStatsController
+
     Variants {
         id: bars
         model: Quickshell.screens
