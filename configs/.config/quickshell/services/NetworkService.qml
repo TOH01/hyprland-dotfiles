@@ -25,17 +25,29 @@ Singleton {
     property string wifiDevice: ""
     property string wifiIp4: ""
 
-    // ===== WiFi Networks =====
-    readonly property list<WifiAccessPoint> wifiNetworks: []
+    // ===== Inline WifiAccessPoint Component =====
+    component WifiAccessPoint: QtObject {
+        property string ssid:     ""
+        property string bssid:    ""
+        property int    strength: 0
+        property int    frequency: 0
+        property string security: ""
+        property bool   active:   false
+        readonly property bool secured: security !== ""
+        property bool saved: false
+    }
 
-    readonly property WifiAccessPoint activeNetwork: {
+    // ===== WiFi Networks =====
+    readonly property list<QtObject> wifiNetworks: []
+
+    readonly property QtObject activeNetwork: {
         for (let i = 0; i < root.wifiNetworks.length; i++) {
             if (root.wifiNetworks[i].active) return root.wifiNetworks[i];
         }
         return null;
     }
 
-    readonly property list<WifiAccessPoint> sortedWifiNetworks: {
+    readonly property list<QtObject> sortedWifiNetworks: {
         return [...root.wifiNetworks].sort((a, b) => {
             if (a.active && !b.active) return -1;
             if (!a.active && b.active) return 1;
@@ -56,9 +68,9 @@ Singleton {
 
     // ===== Connection state (publicly readable) =====
     // The AP currently being connected to (drives row spinner).
-    property WifiAccessPoint connectTarget: null
+    property QtObject connectTarget: null
     // The AP whose password dialog is currently shown (null = no dialog).
-    property WifiAccessPoint passwordAp: null
+    property QtObject passwordAp: null
 
     // ===== Public API =====
 
@@ -85,7 +97,7 @@ Singleton {
         getNetworks.running = true;
     }
 
-    function connectToWifiNetwork(ap: WifiAccessPoint): void {
+    function connectToWifiNetwork(ap: QtObject): void {
         // Dismiss any open password dialog first.
         root.passwordAp   = null;
         root.connectTarget = ap;
@@ -98,7 +110,7 @@ Singleton {
     }
 
     // Called by the password row when the user submits credentials.
-    function connectWithPassword(ap: WifiAccessPoint, password: string): void {
+    function connectWithPassword(ap: QtObject, password: string): void {
         root.passwordAp   = null;
         root.connectTarget = ap;
         _doConnect(ap, password);
@@ -110,11 +122,11 @@ Singleton {
             disconnectProc.exec(["nmcli", "connection", "down", root.activeNetwork.ssid]);
     }
 
-    function forgetNetwork(ap: WifiAccessPoint): void {
+    function forgetNetwork(ap: QtObject): void {
         forgetProc.exec(["nmcli", "connection", "delete", ap.ssid]);
     }
 
-    function _doConnect(ap: WifiAccessPoint, password: string): void {
+    function _doConnect(ap: QtObject, password: string): void {
         if (password.length > 0)
             connectProc.exec(["nmcli", "dev", "wifi", "connect", ap.ssid, "password", password]);
         else

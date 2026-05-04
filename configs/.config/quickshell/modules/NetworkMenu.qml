@@ -91,19 +91,11 @@ Ui.PopupBase {
             }
 
             // Title + status subtitle
-            ColumnLayout {
-                spacing: 1
-
-                Ui.Label {
-                    text: Language.wifi
-                    textSize: Theme.fontSizeNormal
-                    bold: true
-                }
-                Ui.Label {
-                    text: root.wifiStatusText()
-                    textSize: Theme.fontSizeSmall
-                    color: Theme.fgMuted
-                }
+            Ui.StackedLabel {
+                Layout.alignment: Qt.AlignVCenter
+                topText: Language.wifi
+                bottomText: root.wifiStatusText()
+                horizontalAlignment: Text.AlignLeft
             }
 
             Item {
@@ -111,10 +103,12 @@ Ui.PopupBase {
             }
 
             // Wi-Fi toggle pill — always right-anchored
-            WifiToggle {
+            Ui.Toggle {
+                on: NetworkService.wifiEnabled
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                 Layout.preferredWidth:  44
                 Layout.preferredHeight: 22
+                onToggled: NetworkService.toggleWifi()
             }
         }
 
@@ -141,7 +135,7 @@ Ui.PopupBase {
             boundsBehavior: Flickable.StopAtBounds
 
             delegate: WifiNetworkRow {
-                required property WifiAccessPoint modelData
+                required property var modelData
                 width: apList.width
                 ap: modelData
             }
@@ -169,19 +163,16 @@ Ui.PopupBase {
             Layout.fillWidth: true
             spacing: 1
 
-            Ui.Label {
-                text: NetworkService.wiredDevice
+            Ui.StackedLabel {
+                topText: NetworkService.wiredDevice
                       ? (NetworkService.wiredConnectionName || NetworkService.wiredDevice)
                       : Language.noWiredAdapter
-                textSize: Theme.fontSizeNormal
-            }
-            Ui.Label {
-                visible: NetworkService.wiredDevice !== ""
-                text: NetworkService.wiredActive
-                      ? (NetworkService.wiredIp4 || Language.connected)
-                      : Language.disconnected
-                textSize: Theme.fontSizeSmall
-                color: Theme.fgMuted
+                bottomText: NetworkService.wiredDevice !== ""
+                      ? (NetworkService.wiredActive
+                          ? (NetworkService.wiredIp4 || Language.connected)
+                          : Language.disconnected)
+                      : ""
+                horizontalAlignment: Text.AlignLeft
             }
             Ui.Label {
                 visible: NetworkService.wiredActive
@@ -194,46 +185,11 @@ Ui.PopupBase {
         }
     }
 
-    // Animated toggle pill.
-    component WifiToggle: Rectangle {
-        id: tog
-
-        readonly property bool on: NetworkService.wifiEnabled
-
-        radius: height / 2
-        color:  tog.on ? Theme.accent : Theme.bgElevated
-
-        Behavior on color { ColorAnimation { duration: Theme.buttonAnimDuration } }
-
-        Rectangle {
-            id: knob
-            width:  height; height: parent.height - 6
-            radius: height / 2
-            color:  tog.on ? Theme.bg : Theme.fgMuted
-            anchors.verticalCenter: parent.verticalCenter
-            x: tog.on ? parent.width - width - 3 : 3
-
-            Behavior on x     { NumberAnimation { duration: Theme.buttonAnimDuration; easing.type: Easing.OutQuad } }
-            Behavior on color { ColorAnimation   { duration: Theme.buttonAnimDuration } }
-        }
-
-        // Hover overlay
-        Rectangle {
-            anchors.fill: parent; radius: parent.radius; border.width: 0
-            color: Theme.fg
-            opacity: hoverH.hovered ? Theme.buttonHoverOpacity : 0.0
-            Behavior on opacity { NumberAnimation { duration: Theme.buttonAnimDuration } }
-        }
-
-        HoverHandler { id: hoverH; cursorShape: Qt.PointingHandCursor }
-        TapHandler   { onTapped: NetworkService.toggleWifi() }
-    }
-
     // Single access-point row with optional inline password field.
     component WifiNetworkRow: Rectangle {
         id: apRow
 
-        required property WifiAccessPoint ap
+        required property var ap
 
         // This row is currently connecting when connectTarget points to our AP.
         readonly property bool isConnecting: NetworkService.wifiConnecting
@@ -368,31 +324,28 @@ Ui.PopupBase {
 
         spacing: Theme.s1
 
-        TextField {
+        Ui.TextField {
             id: pwField
             Layout.fillWidth: true
             Layout.preferredHeight: Theme.networkMenuPasswordFieldHeight
             placeholderText: Language.passwordPrompt
             echoMode:        TextInput.Password
-            color:                Theme.fg
-            placeholderTextColor: Theme.fgMuted
-            selectionColor:       Theme.accent
-            font.family:    Theme.fontFamily
-            font.pixelSize: Theme.fontSizeSmall
-            leftPadding:  Theme.s2
-            rightPadding: Theme.s2
-
-            background: Rectangle {
-                radius: Theme.buttonRadius
-                color:  Theme.bgElevated
-                border.color: pwField.activeFocus ? Theme.accent : Theme.border
-                border.width: Theme.borderWidth
-            }
 
             Keys.onReturnPressed: pwRow.submit(pwField.text)
             Keys.onEscapePressed: pwRow.cancel()
 
-            onVisibleChanged: if (visible) { pwField.text = ""; pwField.forceActiveFocus(); }
+            onVisibleChanged: {
+                if (visible) {
+                    pwField.text = "";
+                    focusTimer.start();
+                }
+            }
+
+            Timer {
+                id: focusTimer
+                interval: 150
+                onTriggered: pwField.forceActiveFocus()
+            }
         }
 
         Ui.Button {
@@ -402,6 +355,11 @@ Ui.PopupBase {
             contentColor: Theme.bg
             horizontalPadding: Theme.s2
             verticalPadding:   Theme.s1
+            onClicked: pwRow.submit(pwField.text)
+        }
+    }
+}
+ding:   Theme.s1
             onClicked: pwRow.submit(pwField.text)
         }
     }

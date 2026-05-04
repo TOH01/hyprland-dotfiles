@@ -1,0 +1,269 @@
+QUICKSHELL MASTER ARCHITECTURE (v2)
+===================================
+Environment: Wayland / Hyprland
+Framework: Quickshell (QML)
+RAM Footprint: Under 100MB
+
+Welcome to the Quickshell Master Architecture repository. This document outlines the core principles, structure, and standards for developing highly performant, modular, and scalable desktop shells using Qt/QML.
+
+Core Objectives: Minimal resource footprint (<100MB RAM, near-zero idle CPU), strict unidirectional data flow, modular scalability, and flawless visual consistency.
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+1. Architectural Philosophy
+2. Directory Structure & Module Resolution
+3. The Service Layer (State & Side Effects)
+4. UI & Theming
+5. View Management: Windows, Popups, and Multi-Monitor
+6. Performance & Resource Management
+7. QML Coding Standards
+8. Debugging & Logging
+
+--------------------------------------------------------------------------------
+
+1. ARCHITECTURAL PHILOSOPHY
+---------------------------
+To scale effectively, this project enforces strict Separation of Concerns using a tailored Unidirectional Data Flow model for QML. 
+
+- UI Components are purely declarative. They display data and trigger user intents.
+- State is a reactive, pure data layer.
+- Controllers own side effects (DBus, OS processes, I/O) and state mutation.
+
+Data Flow Rule:
+System/I-O  ->  Controller  ->  State  ->  UI Component
+(UI Components must never interact with the system directly).
+
+
+2. DIRECTORY STRUCTURE & MODULE RESOLUTION
+------------------------------------------
+The codebase is strictly modularized. To prevent brittle code, relative imports bridging domains are forbidden. We rely on a root QML module namespace (qs.*).
+
+src/
+  shell.qml               Application entry point & layout root
+  config/                 Global constants (Theme, Icons, I18n)
+  components/             Dumb, reusable UI primitives (Buttons, Labels)
+  modules/                Feature-level composites (Bar, AppLauncher)
+  services/               State & Controller logic (Network, Audio, Power)
+  assets/                 Static resources (Fonts, Images)
+
+Import Standard:
+// Standardized absolute imports
+import qs.config
+import qs.services
+import qs.components as Ui
+import qs.modules
+
+// FORBIDDEN: import "../../components"
+
+
+3. THE SERVICE LAYER (State & Side Effects)
+-------------------------------------------
+Isolating QML UI from system interactions is critical. Every service is divided into two distinct singletons:
+
+3.1. The State Object (Reactive Data)
+Holds typed properties and emits signals. Performs zero system interactions.
+
+    // qs/services/network/NetworkState.qml
+    pragma Singleton
+    import QtQuick
+
+    QtObject {
+        id: root
+        
+        // Single Source of Truth
+        property bool connected: false
+        property string ssid: ""
+        property bool isConnecting: false
+        
+        signal connectionFailed(string reason)
+    }
+
+3.2. The Controller Object (Side Effects)
+Listens to UI intents, interacts with the OS (via DBus or Process), and mutates the State object.
+
+    // qs/services/network/NetworkController.qml
+    pragma Singleton
+    import QtQuick
+    import qs.services
+
+    QtObject {
+        id: root
+        
+        function connectToNetwork(ssid) {
+            NetworkState.isConnecting = true;
+            
+            Process.exec("nmcli",["dev", "wifi", "connect", ssid], function(result) {
+                NetworkState.isConnecting = false;
+                if (result.exitCode === 0) {
+                    NetworkState.ssid = ssid;
+                    NetworkState.connected = true;
+                } else {
+                    NetworkState.connectionFailed(result.stderr);
+                }
+            });
+        }
+    }
+
+
+4. UI & THEMING
+---------------
+No hardcoded values are allowed in UI modules. All visual rules are dictated by the qs.config singletons (Theme.qml, Icons.qml, Language.qml).
+
+Semantic Theming
+Bind UI properties to semantic tokens rather than raw hex codes.
+
+    // Correct usage of the Design System
+    Ui.Label {
+        text: Language.network_error
+        color: Theme.colors.errorText
+        font.pixelSize: Theme.typography.labelMedium
+        anchors.topMargin: Theme.spacing.s4 
+    }
+
+Reusable Components (qs.components)
+- Must be predictable, stateless, and theme-driven. 
+- If a component has logic that calls system processes, it belongs in modules/, not components/.
+- Prefer implicitWidth and implicitHeight over hardcoded dimensions.
+
+
+5. VIEW MANAGEMENT: WINDOWS, POPUPS, AND MULTI-MONITOR
+------------------------------------------------------
+Multi-Monitor Coordination (BarRegistry)
+Wayland requires explicit surface management per monitor. The BarRegistry singleton tracks all active shells globally, automatically spawning/destroying views when monitors are hot-plugged.
+
+Popup System
+We utilize a managed PopupManager that categorizes and arbitrates overlaps based on three tiers:
+1. Modals: Blocking overlays (e.g., Power Menu). Only one active globally. Takes focus.
+2. Dropdowns: Contextual panels (e.g., Volume Mixer). Opening a new dropdown closes the previous one.
+3. Tooltips: Non-interactive hints. Multiple allowed.
+
+
+6. PERFORMANCE & RESOURCE MANAGEMENT
+------------------------------------
+Shells run 100% of the time. Minor inefficiencies compound into massive battery drain and CPU spikes.
+
+Lazy Loading
+Never keep heavy, hidden UI elements in RAM. Use Loader aggressively for mutually exclusive views or rarely-used menus.
+
+    Loader {
+        id: powerMenuLoader
+        active: false
+        sourceComponent: PowerMenu {}
+    }
+
+Rendering Optimizations
+- Minimize Overdraw: Avoid nesting Item > Item > Rectangle when one Rectangle is enough.
+- Opacity vs. Colors: Prefer calculating a solid color with an alpha channel (color: Qt.rgba(0,0,0, 0.5)) over applying opacity: 0.5 to a component tree, which forces Wayland to composite off-screen buffers.
+- Binding Safety: Avoid evaluating complex JS functions inside property bindings. Bind directly to state instead.
+
+
+7. QML CODING STANDARDS
+-----------------------
+To maintain readability, all QML files must adhere to the following internal structure:
+
+    Item {
+        // 1. ID & Root Declarations
+        id: root
+        
+        // 2. Required Properties (Dependencies)
+        required property string title
+        
+        // 3. Custom Properties & Aliases
+        property bool isActive: false
+        
+        // 4. Signals
+        signal actionTriggered()
+        
+        // 5. Visual / Layout Properties
+        implicitWidth: 200
+        implicitHeight: 50
+        
+        // 6. JavaScript Functions
+        function reset() { ... }
+        
+        // 7. Child Objects
+        Rectangle { ... }
+        
+        // 8. Event Handlers / Connections
+        Component.onCompleted: { ... }
+    }
+
+7.1. IDs vs. Comments (Self-Documenting Code)
+---------------------------------------------
+Strict Rule: Reserve `id` properties ONLY for objects that must be referenced by other elements. Do NOT use `id`s simply to label or describe a component. Use comments instead.
+
+Why? Every `id` forces the QML engine to register a new property in the execution context. Applying unused descriptive IDs across the entire shell wastes memory, slows down component instantiation, and pollutes the local scope namespace.
+
+❌ BAD (Wastes memory/scope with unused IDs):
+    Rectangle {
+        id: backgroundContainer
+        color: Theme.surface
+
+        RowLayout {
+            id: iconAndTextLayout
+            
+            Ui.Icon { id: userIcon; icon: Icons.user }
+            Ui.Label { id: userNameLabel; text: "Guest" }
+        }
+    }
+
+✅ GOOD (Zero runtime cost, uses comments for context):
+    // Background Container
+    Rectangle {
+        color: Theme.surface
+
+        // User Identity Row
+        RowLayout {
+            Ui.Icon { icon: Icons.user }
+            Ui.Label { text: "Guest" }
+        }
+    }
+
+Note: The only exception is the root element of a file, which should always be named `id: root` to safely reference top-level properties from deep within nested children.
+
+7.2. Commenting Guidelines & Style
+----------------------------------
+Strict Rule: QML is a declarative language and should largely be self-documenting. Comments must explain the "why", not the "what". 
+
+Comment Style:
+- Always use the double-slash format with a single trailing space: `// Comment text`
+- Capitalize the first letter.
+- Avoid multi-line `/* */` comments unless writing a large file-header or explaining a highly complex JavaScript algorithm (which should ideally be in a Controller, not UI).
+
+What is NECESSARY to comment:
+1. Logical UI groupings: Labeling a deeply nested block of code so the reader understands its context at a glance (e.g., `// User profile section`).
+2. Workarounds & Hacks: If you are doing something non-standard to fix a specific bug (e.g., Wayland rendering glitches, QML engine quirks), you MUST comment why.
+3. Complex State Logic: Explaining the business rule behind a complex ternary operator or binding.
+
+What is FORBIDDEN (Unnecessary noise):
+- Translating QML into English. Do not comment that a Rectangle is a background if its color is Theme.surface and it sits at the root of the file.
+- Commenting obvious property assignments.
+
+❌ BAD (Noisy, explains the "what", redundant):
+    // This is the background rectangle
+    Rectangle {
+        // Set the color to primary
+        color: Theme.primary
+        // Change width to 100
+        width: 100
+    }
+
+✅ GOOD (Explains the "why" or defines a logical block):
+    // Pulse animation requires a transparent base layer to prevent Hyprland visual tearing
+    Rectangle {
+        color: "transparent"
+        width: 100
+        
+        // ... nested animation logic
+    }
+
+8. DEBUGGING & LOGGING
+----------------------
+console.log() is insufficient for production shells. Use the central Logger singleton to categorize output:
+
+    Logger.info("Network", "Connected successfully")
+    Logger.warn("Audio", "Volume exceeded 100%")
+    Logger.error("Process", "nmcli failed to execute")
+
+Debug Mode: When run with the --debug flag, the shell will overlay a transparent diagnostics widget showing active processes, RAM usage, and global layout bounds.

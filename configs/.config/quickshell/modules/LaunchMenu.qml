@@ -60,15 +60,11 @@ Ui.PopupBase {
                     Behavior on color { ColorAnimation { duration: Theme.launchMenuAnimDuration } }
                 }
 
-                TextField {
+                Ui.TextField {
                     id: searchField
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignVCenter
                     focus: true
-                    font.family: Theme.fontFamily
-                    font.pointSize: Theme.fontSizeSmall
-                    font.weight: Theme.fontWeight
-                    color: Theme.fg
                     background: Item {}
 
                     Keys.onDownPressed: {
