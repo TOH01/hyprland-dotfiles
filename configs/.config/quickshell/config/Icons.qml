@@ -31,6 +31,28 @@ QtObject {
     readonly property string networkWired: "󰌗"
     readonly property string networkWiredDisconnected: "󰌙"
     readonly property string networkWiredConnected: "󰌘"
+
+    // Wi-Fi — signal strength (open networks)
+    readonly property string wifi0: "󰤯"   // no signal
+    readonly property string wifi1: "󰤟"   // weak
+    readonly property string wifi2: "󰤢"   // fair
+    readonly property string wifi3: "󰤥"   // good
+    readonly property string wifi4: "󰤨"   // excellent
+
+    // Wi-Fi — signal strength (locked / secured networks)
+    readonly property string wifiLock0: "󰤫"
+    readonly property string wifiLock1: "󰤡"
+    readonly property string wifiLock2: "󰤤"
+    readonly property string wifiLock3: "󰤧"
+    readonly property string wifiLock4: "󰤪"
+
+    // Wi-Fi — status / control
+    readonly property string wifiOff:        "󰤮"   // radio disabled
+    readonly property string wifiFind:       "󱛅"   // searching
+    readonly property string wifiConnecting: "󱛇"   // connecting
+    readonly property string wifiRescan:     "󰑐"   // refresh/rescan
+    readonly property string wifiForget:     "󰆴"   // trash / forget
+    readonly property string ethernet:       "󰌘"   // alias for networkWiredConnected
     readonly property string quickLaunch: "󱗼"
 
     readonly property string cpu:        "󰍛"

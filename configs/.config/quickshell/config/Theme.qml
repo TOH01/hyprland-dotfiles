@@ -145,6 +145,8 @@ QtObject {
     readonly property int networkMenuExpandRightMargin: 8
     readonly property int networkMenuExpandTopMargin: 4
     readonly property int networkMenuExpandSpacing: 6
+    readonly property int networkMenuMaxListHeight: 280
+    readonly property int networkMenuPasswordFieldHeight: 32
 
     // --- Module: PowerMenu ---
     readonly property int powerMenuWidth: 200

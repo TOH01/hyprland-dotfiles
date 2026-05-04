@@ -22,8 +22,18 @@ QtObject {
     
     // Network Menu
     readonly property string noWiredAdapter: "No wired adapter"
-    readonly property string connected: "Connected"
-    readonly property string disconnected: "Disconnected"
+    readonly property string connected:      "Connected"
+    readonly property string disconnected:   "Disconnected"
+    readonly property string wifi:           "Wi-Fi"
+    readonly property string wifiOff:        "Disabled"
+    readonly property string connecting:     "Connecting"
+    readonly property string limited:        "Limited connectivity"
+    readonly property string rescan:         "Rescan"
+    readonly property string scanning:       "Scanning"
+    readonly property string forgetNetwork:  "Forget"
+    readonly property string passwordPrompt: "Password"
+    readonly property string connect:        "Connect"
+    readonly property string knownNetwork:   "Saved"
 
     // Popups / Common
     readonly property string cancel: "Cancel"

@@ -4,3 +4,4 @@ singleton BarRegistry 1.0 BarRegistry.qml
 singleton SystemActions 1.0 SystemActions.qml
 singleton NetworkService 1.0 NetworkService.qml
 singleton HyprlandService 1.0 HyprlandService.qml
+WifiAccessPoint 1.0 WifiAccessPoint.qml
