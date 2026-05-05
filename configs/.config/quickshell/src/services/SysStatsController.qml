@@ -12,21 +12,21 @@ QtObject {
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
-                    const data = JSON.parse(this.text.trim());
+                    const data = JSON.parse(text.trim());
                     SysStatsState.icon = data.icon || "󰍛";
                     SysStatsState.usage = data.usage || "0%";
                     SysStatsState.temp = data.temp || "—°C";
                     SysStatsState.mem = data.mem || "0/0GB";
                     SysStatsState.labels = data.labels || ["Usage", "Temp", "RAM"];
                 } catch (e) {
-                    console.error("SysStatsController: Failed to parse JSON", e);
+                    console.error("SysStats: Failed to parse JSON", e);
                 }
             }
         }
     }
 
-    Timer {
+    property var timer: Timer {
         interval: 1000; running: true; repeat: true; triggeredOnStart: true
-        onTriggered: statsProc.running = true
+        onTriggered: root.statsProc.running = true
     }
 }

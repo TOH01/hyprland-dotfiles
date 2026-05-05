@@ -243,10 +243,10 @@ bind = $mainMod, Q, exec, $terminal
 bind = $mainMod, C, killactive,
 bind = $mainMod, E, exec, $fileManager
 bind = $mainMod, V, togglefloating,
-bind = $mainMod, R, exec, qs ipc call shell launcher
+bind = $mainMod, R, exec, qs -p ~/.config/quickshell/src/shell.qml ipc call shell launcher
 bind = $mainMod, J, layoutmsg, togglesplit
 bind = $mainMod, B, exec, firefox
-bind = $mainMod, TAB, exec, qs ipc call shell overview
+bind = $mainMod, TAB, exec, qs -p ~/.config/quickshell/src/shell.qml ipc call shell overview
 
 # Move focus with mainMod + arrow keys
 bind = $mainMod, left, movefocus, l

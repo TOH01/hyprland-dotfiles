@@ -359,8 +359,3 @@ Ui.PopupBase {
         }
     }
 }
-ding:   Theme.s1
-            onClicked: pwRow.submit(pwField.text)
-        }
-    }
-}

@@ -20,8 +20,8 @@ QtObject {
     }
 
     function enableWifi(enabled) {
-        enableWifiProc.command = ["nmcli", "radio", "wifi", enabled ? "on" : "off"];
-        enableWifiProc.running = true;
+        root.enableWifiProc.command = ["nmcli", "radio", "wifi", enabled ? "on" : "off"];
+        root.enableWifiProc.running = true;
     }
 
     function toggleWifi() {
@@ -30,11 +30,11 @@ QtObject {
 
     function rescanWifi() {
         NetworkState.wifiScanning = true;
-        rescanProcess.running = true;
+        root.rescanProcess.running = true;
     }
 
     function quickRefreshWifi() {
-        getNetworks.running = true;
+        root.getNetworks.running = true;
     }
 
     function connectToWifiNetwork(ap) {
@@ -56,18 +56,18 @@ QtObject {
     function disconnectWifiNetwork() {
         NetworkState.connectTarget = null;
         if (NetworkState.activeNetwork)
-            disconnectProc.exec(["nmcli", "connection", "down", NetworkState.activeNetwork.ssid]);
+            root.disconnectProc.exec(["nmcli", "connection", "down", NetworkState.activeNetwork.ssid]);
     }
 
     function forgetNetwork(ap) {
-        forgetProc.exec(["nmcli", "connection", "delete", ap.ssid]);
+        root.forgetProc.exec(["nmcli", "connection", "delete", ap.ssid]);
     }
 
     function _doConnect(ap, password) {
         if (password.length > 0)
-            connectProc.exec(["nmcli", "dev", "wifi", "connect", ap.ssid, "password", password]);
+            root.connectProc.exec(["nmcli", "dev", "wifi", "connect", ap.ssid, "password", password]);
         else
-            connectProc.exec(["nmcli", "dev", "wifi", "connect", ap.ssid]);
+            root.connectProc.exec(["nmcli", "dev", "wifi", "connect", ap.ssid]);
     }
 
     function formatSpeed(bps) {
@@ -80,10 +80,10 @@ QtObject {
     // ===== Internal helpers =====
 
     function _internalUpdate() {
-        devicesProc.running = true;
-        wifiStatusProcess.running = true;
-        getNetworks.running = true;
-        getKnownNetworks.running = true;
+        root.devicesProc.running = true;
+        root.wifiStatusProcess.running = true;
+        root.getNetworks.running = true;
+        root.getKnownNetworks.running = true;
     }
 
     function _parseTerse(line) {
@@ -100,8 +100,7 @@ QtObject {
     }
 
     // ===== Subscriber =====
-    Process {
-        id: subscriber
+    property var subscriber: Process {
         running: true
         command: ["nmcli", "monitor"]
         stdout: SplitParser {
@@ -109,13 +108,12 @@ QtObject {
         }
     }
 
-    Process { id: enableWifiProc }
+    property var enableWifiProc: Process { }
 
-    Process {
-        id: connectProc
+    property var connectProc: Process {
         environment: ({ LANG: "C", LC_ALL: "C" })
         stdout: SplitParser {
-            onRead: getNetworks.running = true
+            onRead: root.getNetworks.running = true
         }
         stderr: SplitParser {
             onRead: line => {
@@ -138,29 +136,25 @@ QtObject {
         }
     }
 
-    Process {
-        id: disconnectProc
-        stdout: SplitParser { onRead: getNetworks.running = true }
+    property var disconnectProc: Process {
+        stdout: SplitParser { onRead: root.getNetworks.running = true }
     }
 
-    Process {
-        id: forgetProc
+    property var forgetProc: Process {
         stdout: SplitParser { onRead: root._internalUpdate() }
     }
 
-    Process {
-        id: rescanProcess
+    property var rescanProcess: Process {
         command: ["nmcli", "dev", "wifi", "list", "--rescan", "yes"]
         stdout: SplitParser {
             onRead: {
                 NetworkState.wifiScanning = false;
-                getNetworks.running = true;
+                root.getNetworks.running = true;
             }
         }
     }
 
-    Process {
-        id: wifiStatusProcess
+    property var wifiStatusProcess: Process {
         command: ["nmcli", "radio", "wifi"]
         environment: ({ LANG: "C", LC_ALL: "C" })
         stdout: StdioCollector {
@@ -168,8 +162,7 @@ QtObject {
         }
     }
 
-    Process {
-        id: devicesProc
+    property var devicesProc: Process {
         command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE,CONNECTION", "device"]
         running: true
         stdout: StdioCollector {
@@ -199,15 +192,15 @@ QtObject {
                 else if (wifiState === "unavailable")  NetworkState.wifiStatus = "disabled";
 
                 if (eth) {
-                    wiredIpProc.command = ["nmcli", "-t", "-f", "IP4.ADDRESS", "device", "show", eth];
-                    wiredIpProc.running = true;
+                    root.wiredIpProc.command = ["nmcli", "-t", "-f", "IP4.ADDRESS", "device", "show", eth];
+                    root.wiredIpProc.running = true;
                 } else {
                     NetworkState.wiredIp4 = "";
                 }
 
                 if (wifiDev && wifiState === "connected") {
-                    wifiIpProc.command = ["nmcli", "-t", "-f", "IP4.ADDRESS", "device", "show", wifiDev];
-                    wifiIpProc.running = true;
+                    root.wifiIpProc.command = ["nmcli", "-t", "-f", "IP4.ADDRESS", "device", "show", wifiDev];
+                    root.wifiIpProc.running = true;
                 } else {
                     NetworkState.wifiIp4 = "";
                 }
@@ -215,8 +208,7 @@ QtObject {
         }
     }
 
-    Process {
-        id: wiredIpProc
+    property var wiredIpProc: Process {
         stdout: StdioCollector {
             onStreamFinished: {
                 let ip = "";
@@ -229,8 +221,7 @@ QtObject {
         }
     }
 
-    Process {
-        id: wifiIpProc
+    property var wifiIpProc: Process {
         stdout: StdioCollector {
             onStreamFinished: {
                 let ip = "";
@@ -243,8 +234,7 @@ QtObject {
         }
     }
 
-    Process {
-        id: getKnownNetworks
+    property var getKnownNetworks: Process {
         running: true
         command: ["nmcli", "-t", "-f", "NAME,TYPE", "connection", "show"]
         stdout: StdioCollector {
@@ -263,8 +253,7 @@ QtObject {
         }
     }
 
-    Process {
-        id: getNetworks
+    property var getNetworks: Process {
         running: true
         command: ["nmcli", "-g", "ACTIVE,SIGNAL,FREQ,SSID,BSSID,SECURITY", "d", "w"]
         environment: ({ LANG: "C", LC_ALL: "C" })
@@ -313,7 +302,7 @@ QtObject {
                         match.security  = net.security;
                         match.saved     = !!NetworkState.savedNetworkNames[net.ssid];
                     } else {
-                        live.push(apComp.createObject(root, {
+                        live.push(root.apComp.createObject(root, {
                             ssid:      net.ssid,
                             bssid:     net.bssid,
                             strength:  net.strength,
@@ -328,8 +317,7 @@ QtObject {
         }
     }
 
-    Process {
-        id: statsProc
+    property var statsProc: Process {
         command: ["cat", "/proc/net/dev"]
         stdout: StdioCollector {
             onStreamFinished: {
@@ -360,15 +348,23 @@ QtObject {
         }
     }
 
-    Timer {
+    property var statsTimer: Timer {
         interval: 1000; repeat: true; running: NetworkState.polling && NetworkState.wiredActive
         triggeredOnStart: true
-        onTriggered: statsProc.running = true
+        onTriggered: root.statsProc.running = true
     }
 
-    Component {
-        id: apComp
-        NetworkState.WifiAccessPoint {}
+    property var apComp: Component {
+        QtObject {
+            property string ssid:     ""
+            property string bssid:    ""
+            property int    strength: 0
+            property int    frequency: 0
+            property string security: ""
+            property bool   active:   false
+            readonly property bool secured: security !== ""
+            property bool saved: false
+        }
     }
 
     Component.onCompleted: refresh()

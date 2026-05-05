@@ -4,6 +4,7 @@ import Quickshell.Io
 import QtQuick
 import qs.config
 import qs.modules
+import qs.services
 
 ShellRoot {
     id: root

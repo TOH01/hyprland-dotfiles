@@ -4,18 +4,6 @@ import QtQuick
 QtObject {
     id: root
 
-    // ===== Inline WifiAccessPoint Component =====
-    component WifiAccessPoint: QtObject {
-        property string ssid:     ""
-        property string bssid:    ""
-        property int    strength: 0
-        property int    frequency: 0
-        property string security: ""
-        property bool   active:   false
-        readonly property bool secured: security !== ""
-        property bool saved: false
-    }
-
     // ===== Wired =====
     property string wiredDevice: ""
     property string wiredConnectionName: ""
