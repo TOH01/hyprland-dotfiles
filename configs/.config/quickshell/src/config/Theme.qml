@@ -193,4 +193,11 @@ QtObject {
 
     // --- Module: BrightnessMenu ---
     readonly property int brightnessMenuWidth: 340
+
+    // --- Module: BluetoothMenu ---
+    readonly property int bluetoothMenuWidth: 340
+    readonly property int bluetoothRowRadius: 6
+    readonly property color bluetoothRowActiveBg: Qt.rgba(1, 1, 1, 0.035)
+    readonly property int bluetoothRowPadding: 8
+    readonly property int bluetoothMenuMaxListHeight: 240
 }

@@ -45,6 +45,17 @@ QtObject {
     readonly property string eyeSaver: "Eye Saver"
     readonly property string eyeSaverDescription: "Reduces blue light globally"
 
+    // Bluetooth Menu
+    readonly property string bluetooth:             "Bluetooth"
+    readonly property string bluetoothOn:            "On"
+    readonly property string bluetoothOff:           "Disabled"
+    readonly property string bluetoothUnavailable:   "No adapter"
+    readonly property string bluetoothConnected:     "Connected"
+    readonly property string bluetoothPaired:        "Paired"
+    readonly property string bluetoothAvailable:     "Available"
+    readonly property string bluetoothScanning:      "Scanning for devices…"
+    readonly property string bluetoothNoDevices:     "No devices found"
+
     // Common Literals
     readonly property string percent: "%"
     readonly property string nullValue: "—"

@@ -10,3 +10,4 @@ singleton SysStatsState 1.0 SysStatsState.qml
 singleton SysStatsController 1.0 SysStatsController.qml
 singleton Logger 1.0 Logger.qml
 singleton BrightnessController 1.0 BrightnessController.qml
+singleton BluetoothController 1.0 BluetoothController.qml

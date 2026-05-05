@@ -92,6 +92,14 @@ PanelWindow {
     }
 
     LazyLoader {
+        id: bluetoothMenuLoader
+        component: BluetoothMenu {
+            bar: root; screen: root.screen
+            onVisibleChanged: if (!visible) bluetoothMenuLoader.active = false
+        }
+    }
+
+    LazyLoader {
         id: calendarPopupLoader
         component: CalendarPopup {
             bar: root; screen: root.screen
@@ -173,7 +181,16 @@ PanelWindow {
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 2
                     
-                    Ui.Button { icon: Icons.bluetooth; iconSize: Theme.barButtonIconSize; horizontalPadding: 6 }
+                    Ui.Button {
+                        id: bluetoothButton
+                        icon: Icons.bluetooth
+                        iconSize: Theme.barButtonIconSize
+                        horizontalPadding: 6
+                        onClicked: {
+                            bluetoothMenuLoader.active = true
+                            PopupManager.open(bluetoothMenuLoader.item, bluetoothButton)
+                        }
+                    }
                     Ui.Button { icon: Icons.clipboard; iconSize: Theme.barButtonIconSize; horizontalPadding: 6 }
                     Ui.Button {
                         id: brightnessButton
