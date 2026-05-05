@@ -10,3 +10,4 @@ VolumeMenu 1.0 VolumeMenu.qml
 SysStats 1.0 SysStats.qml
 BrightnessMenu 1.0 BrightnessMenu.qml
 BluetoothMenu 1.0 BluetoothMenu.qml
+ClipboardMenu 1.0 ClipboardMenu.qml

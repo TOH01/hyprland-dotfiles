@@ -14,6 +14,7 @@ ShellRoot {
     readonly property var _hyprController: HyprlandController
     readonly property var _statsController: SysStatsController
     readonly property var _brightnessController: BrightnessController
+    readonly property var _clipboardController: ClipboardController
 
     Variants {
         id: bars
@@ -30,6 +31,14 @@ ShellRoot {
             const bar = bars.instances.find(b => b.screen?.name === name)
                      ?? bars.instances[0]
             if (bar) bar.openLauncher()
+        }
+
+        function clipboard(): void {
+            const monitor = Hyprland.activeMonitor ?? Hyprland.focusedWorkspace?.monitor
+            const name = monitor?.name
+            const bar = bars.instances.find(b => b.screen?.name === name)
+                     ?? bars.instances[0]
+            if (bar) bar.openClipboard()
         }
 
         function overview(): void {

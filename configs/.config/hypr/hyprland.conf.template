@@ -42,7 +42,6 @@ exec-once = dunst
 exec-once = hyprpaper
 exec-once = hyprctl setcursor Bibata-Modern-Ice 24
 exec-once = CC_USER={{$CC_USER}} CC_PW={{$CC_PW}} CC_AFK={{$CC_AFK}} CC_WORK={{$CC_WORK}} CC_GAMING={{$CC_GAMING}} ~/.local/bin/waybar/mode_toggle.py --apply
-exec-once = clipse -listen 
 exec-once = hyprsunset
 
 #############################
@@ -279,7 +278,7 @@ bind = $mainMod SHIFT, 8, movetoworkspace, 8
 bind = $mainMod SHIFT, 9, movetoworkspace, 9
 bind = $mainMod SHIFT, 0, movetoworkspace, 10
 
-bind = $mainMod SHIFT, V, exec, kitty --class clipse -e clipse
+bind = $mainMod SHIFT, V, exec, qs -p ~/.config/quickshell/src/shell.qml ipc call shell clipboard
 bind = $mainMod, S, exec, bash -c 'grim -g "$(slurp)" - | swappy -f -'
 bind = $mainMod SHIFT, S, exec, bash -c 'notify-send -t 1500 "Screenshot" "Area capture starts in 3 seconds"; sleep 3; grim -g "$(slurp)" - | swappy -f -'
 

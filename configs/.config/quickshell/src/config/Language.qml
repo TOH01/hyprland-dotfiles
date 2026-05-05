@@ -56,6 +56,15 @@ QtObject {
     readonly property string bluetoothScanning:      "Scanning for devices…"
     readonly property string bluetoothNoDevices:     "No devices found"
 
+    // Clipboard Menu
+    readonly property string clipboard:          "Clipboard"
+    readonly property string clipboardEmpty:     "Clipboard is empty"
+    readonly property string clipboardClearAll:  "Clear"
+    readonly property string clipboardPinned:    "Pinned"
+    readonly property string clipboardHistory:   "History"
+    readonly property string clipboardJustNow:   "just now"
+    readonly property string clipboardCopied:    "Copied"
+
     // Common Literals
     readonly property string percent: "%"
     readonly property string nullValue: "—"

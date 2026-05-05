@@ -200,4 +200,12 @@ QtObject {
     readonly property color bluetoothRowActiveBg: Qt.rgba(1, 1, 1, 0.035)
     readonly property int bluetoothRowPadding: 8
     readonly property int bluetoothMenuMaxListHeight: 240
+
+    // --- Module: ClipboardMenu ---
+    readonly property int clipboardMenuWidth: 380
+    readonly property int clipboardMenuMaxListHeight: 360
+    readonly property int clipboardRowRadius: 6
+    readonly property color clipboardRowHoverBg: Qt.rgba(1, 1, 1, 0.06)
+    readonly property int clipboardRowPadding: 8
+    readonly property int clipboardSearchBarHeight: 27
 }

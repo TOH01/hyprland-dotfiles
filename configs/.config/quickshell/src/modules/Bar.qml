@@ -23,6 +23,11 @@ PanelWindow {
         PopupManager.open(workspaceOverviewLoader.item, null)
     }
 
+    function openClipboard() {
+        clipboardMenuLoader.active = true
+        PopupManager.open(clipboardMenuLoader.item, null)
+    }
+
     screen: root.modelData
     implicitHeight: Theme.barHeight
     color: "transparent"
@@ -88,6 +93,14 @@ PanelWindow {
         component: BrightnessMenu {
             bar: root; screen: root.screen
             onVisibleChanged: if (!visible) brightnessMenuLoader.active = false
+        }
+    }
+
+    LazyLoader {
+        id: clipboardMenuLoader
+        component: ClipboardMenu {
+            bar: root; screen: root.screen
+            onVisibleChanged: if (!visible) clipboardMenuLoader.active = false
         }
     }
 
@@ -191,7 +204,16 @@ PanelWindow {
                             PopupManager.open(bluetoothMenuLoader.item, bluetoothButton)
                         }
                     }
-                    Ui.Button { icon: Icons.clipboard; iconSize: Theme.barButtonIconSize; horizontalPadding: 6 }
+                    Ui.Button {
+                        id: clipboardButton
+                        icon: Icons.clipboard
+                        iconSize: Theme.barButtonIconSize
+                        horizontalPadding: 6
+                        onClicked: {
+                            clipboardMenuLoader.active = true
+                            PopupManager.open(clipboardMenuLoader.item, clipboardButton)
+                        }
+                    }
                     Ui.Button {
                         id: brightnessButton
                         icon: Icons.brightness
