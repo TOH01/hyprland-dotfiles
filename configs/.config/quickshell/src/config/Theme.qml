@@ -190,4 +190,7 @@ QtObject {
     readonly property int workspaceOverviewMinWorkspaces: 2
     readonly property int workspaceOverviewMaxWorkspaces: 10
     readonly property int workspaceOverviewIconSize: 22
+
+    // --- Module: BrightnessMenu ---
+    readonly property int brightnessMenuWidth: 340
 }

@@ -40,6 +40,11 @@ QtObject {
     readonly property string confirm: "Confirm"
     readonly property string autoCancelTemplate: "Auto-cancel in %1s"
 
+    // Brightness Menu
+    readonly property string brightness: "Brightness"
+    readonly property string eyeSaver: "Eye Saver"
+    readonly property string eyeSaverDescription: "Reduces blue light globally"
+
     // Common Literals
     readonly property string percent: "%"
     readonly property string nullValue: "—"

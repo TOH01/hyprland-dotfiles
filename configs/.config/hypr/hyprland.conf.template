@@ -43,6 +43,7 @@ exec-once = hyprpaper
 exec-once = hyprctl setcursor Bibata-Modern-Ice 24
 exec-once = CC_USER={{$CC_USER}} CC_PW={{$CC_PW}} CC_AFK={{$CC_AFK}} CC_WORK={{$CC_WORK}} CC_GAMING={{$CC_GAMING}} ~/.local/bin/waybar/mode_toggle.py --apply
 exec-once = clipse -listen 
+exec-once = hyprsunset
 
 #############################
 ### ENVIRONMENT VARIABLES ###

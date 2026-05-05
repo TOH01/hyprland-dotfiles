@@ -84,6 +84,14 @@ PanelWindow {
     }
 
     LazyLoader {
+        id: brightnessMenuLoader
+        component: BrightnessMenu {
+            bar: root; screen: root.screen
+            onVisibleChanged: if (!visible) brightnessMenuLoader.active = false
+        }
+    }
+
+    LazyLoader {
         id: calendarPopupLoader
         component: CalendarPopup {
             bar: root; screen: root.screen
@@ -167,7 +175,16 @@ PanelWindow {
                     
                     Ui.Button { icon: Icons.bluetooth; iconSize: Theme.barButtonIconSize; horizontalPadding: 6 }
                     Ui.Button { icon: Icons.clipboard; iconSize: Theme.barButtonIconSize; horizontalPadding: 6 }
-                    Ui.Button { icon: Icons.brightness; iconSize: Theme.barButtonIconSize; horizontalPadding: 6 }
+                    Ui.Button {
+                        id: brightnessButton
+                        icon: Icons.brightness
+                        iconSize: Theme.barButtonIconSize
+                        horizontalPadding: 6
+                        onClicked: {
+                            brightnessMenuLoader.active = true
+                            PopupManager.open(brightnessMenuLoader.item, brightnessButton)
+                        }
+                    }
 
                     Ui.Button {
                         id: networkButton

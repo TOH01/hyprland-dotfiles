@@ -59,4 +59,6 @@ QtObject {
     readonly property string bluetooth:  "󰂯"
     readonly property string clipboard:  "󰅍"
     readonly property string brightness: "󰃠"
+    readonly property string brightnessLow: "󰃞"
+    readonly property string eyeSaver: "󰖔"
 }

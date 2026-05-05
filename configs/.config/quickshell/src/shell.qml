@@ -13,6 +13,7 @@ ShellRoot {
     readonly property var _netController: NetworkController
     readonly property var _hyprController: HyprlandController
     readonly property var _statsController: SysStatsController
+    readonly property var _brightnessController: BrightnessController
 
     Variants {
         id: bars
